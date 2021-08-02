@@ -1,0 +1,16 @@
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\bin\Debug\net5.0\NPCConsoleTesting.exe
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\bin\Debug\net5.0\NPCConsoleTesting.deps.json
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\bin\Debug\net5.0\NPCConsoleTesting.runtimeconfig.json
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\bin\Debug\net5.0\NPCConsoleTesting.runtimeconfig.dev.json
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\bin\Debug\net5.0\NPCConsoleTesting.dll
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\bin\Debug\net5.0\ref\NPCConsoleTesting.dll
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\bin\Debug\net5.0\NPCConsoleTesting.pdb
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\NPCConsoleTesting.csproj.AssemblyReference.cache
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\NPCConsoleTesting.GeneratedMSBuildEditorConfig.editorconfig
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\NPCConsoleTesting.AssemblyInfoInputs.cache
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\NPCConsoleTesting.AssemblyInfo.cs
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\NPCConsoleTesting.csproj.CoreCompileInputs.cache
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\NPCConsoleTesting.dll
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\ref\NPCConsoleTesting.dll
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\NPCConsoleTesting.pdb
+C:\Development\NPCConsoleTesting\NPCConsoleTesting\obj\Debug\net5.0\NPCConsoleTesting.genruntimeconfig.cache
