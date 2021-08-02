@@ -21,13 +21,12 @@ namespace NPCConsoleTesting
             //Console.WriteLine($"character1 HP: {npc1HP}");
             //Console.WriteLine($"character1 initMod: {npc1InitMod}");
 
-            Character npc1 = new Character(npc1HP, npc1InitMod, npc1AC, npc1Thac0);
-
-
             //user enters stats for NPC2
 
             //character objects are hydrated with above data
-            Character npc1 = new Character();
+            Character npc1 = new Character(npc1HP, npc1InitMod, npc1AC, npc1Thac0);
+
+            
             //Console.WriteLine($"{npc1.calcDmg()}");
 
             //do a fight
