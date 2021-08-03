@@ -6,10 +6,12 @@ namespace NPCConsoleTesting
     {
         static void Main(string[] args)
         {
-            Build _builder = new Build();
-            _builder.BuildCharacter();
+            Build builder = new();
+            builder.BuildCharacter();
 
             //do a fight
+            Combat combat = new();
+            combat.Fight();
 
             //print results/combat log
 
