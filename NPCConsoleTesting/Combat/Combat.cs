@@ -6,11 +6,30 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
-    class Combat
+    public class Combat
     {
-        public void Fight(Character char1, Character char2)
+        public List<String> Fight(Character char1, Character char2)
         {
-            Console.WriteLine("test");
+            var combatLog = new List<String> { "test1", "test2", "test3" };
+
+            DoARound(char1, char2);
+
+            //repeat if necessary
+
+            return combatLog;
+        }
+
+        public void DoARound(Character char1, Character char2)
+        {
+            //determine init
+
+            //first char attack
+
+            //check hp
+
+            //second char attack
+
+            //check hp
         }
 
         public int CalcDmg(int numberOfDice, int typeOfDie, int modifier)
