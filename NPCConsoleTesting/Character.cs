@@ -6,19 +6,26 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
-    class Character
+    public class Character
     {
-        private int hp;
-        private int initMod;
-        private int ac;
-        private int thac0;
-        
+        public int hp;
+        public int initMod;
+        public int ac;
+        public int thac0;
+        //public int numberOfDice;
+        //public int typeOfDie;
+        //public int modifier;
+
+        //public Character(int charHp, int charInitMod, int charAc, int charThac0, int charNumOfDice, int charTypeOfDie, int charModifier)
         public Character(int charHp, int charInitMod, int charAc, int charThac0)
         {
             hp = charHp;
             initMod = charInitMod;
             ac = charAc;
             thac0 = charThac0;
+            //numberOfDice = charNumOfDice;
+            //typeOfDie = charTypeOfDie;
+            //modifier = charModifier;
         }
     }
 }
