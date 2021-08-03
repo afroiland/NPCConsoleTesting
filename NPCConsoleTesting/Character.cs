@@ -12,20 +12,19 @@ namespace NPCConsoleTesting
         public int initMod;
         public int ac;
         public int thac0;
-        //public int numberOfDice;
-        //public int typeOfDie;
-        //public int modifier;
+        public int numberOfDice;
+        public int typeOfDie;
+        public int modifier;
 
-        //public Character(int charHp, int charInitMod, int charAc, int charThac0, int charNumOfDice, int charTypeOfDie, int charModifier)
-        public Character(int charHp, int charInitMod, int charAc, int charThac0)
+        public Character(int charHp, int charInitMod, int charAc, int charThac0, int charNumOfDice, int charTypeOfDie, int charModifier)
         {
             hp = charHp;
             initMod = charInitMod;
             ac = charAc;
             thac0 = charThac0;
-            //numberOfDice = charNumOfDice;
-            //typeOfDie = charTypeOfDie;
-            //modifier = charModifier;
+            numberOfDice = charNumOfDice;
+            typeOfDie = charTypeOfDie;
+            modifier = charModifier;
         }
     }
 }

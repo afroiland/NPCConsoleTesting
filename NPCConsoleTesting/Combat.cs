@@ -8,5 +8,9 @@ namespace NPCConsoleTesting
 {
     class Combat
     {
+        public void Fight()
+        {
+            Console.WriteLine("test");
+        }
     }
 }
