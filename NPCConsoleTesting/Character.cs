@@ -8,15 +8,17 @@ namespace NPCConsoleTesting
 {
     class Character
     {
-        int hp;
-        int initMod;
-        int ac;
-        int thac0;
-        public int calcDmg()
+        private int hp;
+        private int initMod;
+        private int ac;
+        private int thac0;
+        
+        public Character(int charHp, int charInitMod, int charAc, int charThac0)
         {
-            Random _random = new Random();
-            return _random.Next(1, 6);
+            hp = charHp;
+            initMod = charInitMod;
+            ac = charAc;
+            thac0 = charThac0;
         }
-                
     }
 }
