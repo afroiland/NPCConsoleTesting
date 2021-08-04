@@ -8,9 +8,10 @@ namespace NPCConsoleTesting
 {
     class Build
     {
-        public Character BuildCharacter()
+        public static Character BuildCharacter()
         {
             Console.WriteLine("Enter HP for character1");
+            
             int npcHP = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Enter initMod for character1");
