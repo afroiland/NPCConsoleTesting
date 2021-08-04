@@ -6,30 +6,32 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
-    public class Combat
+    class Combat
     {
-        public List<String> Fight(Character char1, Character char2)
+        public static List<String> Fight(Character char1, Character char2)
         {
+            Character tempChar1 = char1;
+            Character tempChar2 = char2;
+            //var combatLog = new List<String>();
             var combatLog = new List<String> { "test1", "test2", "test3" };
 
-            DoARound(char1, char2);
+            //whole thing in an if stmt from here?
 
-            //repeat if necessary
-
-            return combatLog;
-        }
-
-        public void DoARound(Character char1, Character char2)
-        {
             //determine init
 
-            //first char attack
+
+            //first char attack (attack could be a separate method, just returns a pos or neg int?)
 
             //check hp
 
             //second char attack
 
             //check hp
+
+            //repeat if necessary
+            //reset init?
+
+            return combatLog;
         }
 
         public int CalcDmg(int numberOfDice, int typeOfDie, int modifier)
