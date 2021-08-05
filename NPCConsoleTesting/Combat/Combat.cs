@@ -10,35 +10,35 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        public static List<String> Fight(Character char1, Character char2)
+        public static List<String> Fight(List<Character> combatants)
         {
-            Character tempChar1 = char1;
-            Character tempChar2 = char2;
             //var combatLog = new List<String>();
             var combatLog = new List<String> { "test1", "test2", "test3" };
-
-            //Random _random = new();
 
             //whole thing in an if/while stmt from here?
 
             //determine init
-            var char1Init = _random.Next(1, 10) + char1.initMod;
-            var char2Init = _random.Next(1, 10) + char2.initMod;
-            //Console.WriteLine($"char1Init: {char1Init}");
-            //Console.WriteLine($"char2Init: {char2Init}");
+            foreach (Character ch in combatants)
+            {
+                ch.init = _random.Next(1, 10) + ch.initMod;
+            }
+
+            //show inits
+            //for (int i = 0; i < combatants.Count; i++)
+            //{
+            //    Console.WriteLine($"char {i+1} init: {combatants[i].init}");
+            //}
             //Console.ReadLine();
 
-            //first char attack (attack could be a separate method, just returns a pos or neg int?)
-            bool simultaneous = char1Init == char2Init ? true : false;
+            //bool simultaneous = char1Init == char2Init ? true : false;
 
-            //find char w/ lowest init
-            
+            //order chars by init
+            List<Character> sortedByInit = combatants.OrderBy(x => x.init).ToList();
+            Console.WriteLine(sortedByInit[0].name + " init: " + sortedByInit[0].init);
+            Console.WriteLine(sortedByInit[1].name + " init: " + sortedByInit[1].init);
+            Console.ReadLine();
 
-
-            //string attackerName = attacker.name;
-            //string defenderName = defender.name;
-
-            //that char does an attack
+            //first char does an attack
             //int attackResult = Attack(attackerName.thac0, defenderName.ac, attackerName.numberOfDice, attackerName.typeOfDie, attackerName.modifier);
 
 

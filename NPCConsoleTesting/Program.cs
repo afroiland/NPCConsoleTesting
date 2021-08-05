@@ -7,7 +7,9 @@ namespace NPCConsoleTesting
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("CHARACTER 1");
             Character npc1 = Build.BuildCharacter();
+            Console.WriteLine("CHARACTER 2");
             Character npc2 = Build.BuildCharacter();
 
             Console.WriteLine($"character1 HP: {npc1.hp}");
@@ -24,8 +26,12 @@ namespace NPCConsoleTesting
             Console.WriteLine($"character2 dmg: {npc2.numberOfDice}d{npc2.typeOfDie}+{npc2.modifier}");
             Console.WriteLine();
 
+            List<Character> combatants = new();
+            combatants.Add(npc1);
+            combatants.Add(npc2);
+
             //do a fight
-            var log = new List<String>(Combat.Fight(npc1, npc2));
+            var log = new List<String>(Combat.Fight(combatants));
 
             log.ForEach(i => Console.WriteLine(i));
             Console.ReadLine();
