@@ -31,9 +31,9 @@ namespace NPCConsoleTesting
             combatants.Add(npc2);
 
             //do a fight
-            var log = new List<String>(Combat.Fight(combatants));
+            RoundResults log = Combat.CombatRound(combatants);
 
-            log.ForEach(i => Console.WriteLine(i));
+            log.roundLog.ForEach(i => Console.WriteLine(i));
             Console.ReadLine();
         }
     }
