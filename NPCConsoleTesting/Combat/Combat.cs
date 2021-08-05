@@ -9,6 +9,8 @@ namespace NPCConsoleTesting
     class Combat
     {
         static Random _random = new();
+        private static readonly bool doReadLines;
+        //private static readonly bool doReadLines = true;
 
         public static RoundResults CombatRound(List<Character> combatants)
         {
@@ -30,12 +32,13 @@ namespace NPCConsoleTesting
             {
                 Console.WriteLine($"{combatants[i].name} target: {combatants[i].target}");
             }
-            Console.ReadLine();
+            if (doReadLines) { Console.ReadLine(); }
 
             //set inits
             foreach (Character ch in combatants)
             {
                 ch.init = _random.Next(1, 10) + ch.initMod;
+                //ch.init = 5;
             }
             //show inits
             //for (int i = 0; i < combatants.Count; i++)
@@ -51,7 +54,7 @@ namespace NPCConsoleTesting
             {
                 Console.WriteLine($"{sortedByInit[i].name} init: {sortedByInit[i].init}");
             }
-            Console.ReadLine();
+            if (doReadLines) { Console.ReadLine(); }
 
             //start tracking segments
             int segment = 0;
@@ -63,34 +66,37 @@ namespace NPCConsoleTesting
                 while (segment < sortedByInit[priorityIndex].init)
                 {
                     segment++;
+                    //if priority char has 0 or fewer hp, advance priority index and stop advancing segments
+                    if (sortedByInit[priorityIndex].hp <= 0)
+                    {
+                        priorityIndex++;
+                        break;
+                    }
+                }
+
+                //TODO: Fix this
+                //Janky, but this check allows an attack from a char at <1 hp in the case of simultaneous init
+                if (priorityIndex >= sortedByInit.Count)
+                {
+                    break;
                 }
 
                 Console.WriteLine($"It is segment {segment}, {sortedByInit[priorityIndex].name} is about to attack {sortedByInit[priorityIndex].target}");
-                Console.ReadLine();
+                if (doReadLines) { Console.ReadLine(); }
 
                 //set targetIndex based on priority char's target
                 targetIndex = sortedByInit.FindIndex(x => x.name == sortedByInit[priorityIndex].target);
                 Console.WriteLine($"priorityIndex: {priorityIndex}");
                 Console.WriteLine($"targetIndex: {targetIndex}");
-                Console.ReadLine();
+                if (doReadLines) { Console.ReadLine(); }
 
                 //priority char does an attack against target
                 int attackResult = Attack(sortedByInit[priorityIndex].thac0, sortedByInit[targetIndex].ac, sortedByInit[priorityIndex].numberOfDice, sortedByInit[priorityIndex].typeOfDie, sortedByInit[priorityIndex].modifier);
                 Console.WriteLine($"attackResult: {attackResult}");
-                Console.ReadLine();
+                if (doReadLines) { Console.ReadLine(); }
 
                 //adjust target hp
                 sortedByInit[targetIndex].hp -= attackResult;
-
-                //check hp of target
-
-                //check if the next char has the same init (current segment)
-                //if yes, they attack
-                //else
-                //while (segment < sortedByInit[priorityIndex].init)
-                //{
-                //    segment++;
-                //}
 
                 //advance priorityIndex
                 priorityIndex++;
@@ -107,7 +113,6 @@ namespace NPCConsoleTesting
 
         public static int CalcDmg(int numberOfDice, int typeOfDie, int modifier)
         {
-            //Random _random = new();
             int result = 0;
 
             for (int i = 0; i < numberOfDice; i++)
