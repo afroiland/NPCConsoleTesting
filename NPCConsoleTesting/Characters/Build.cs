@@ -10,30 +10,31 @@ namespace NPCConsoleTesting
     {
         public static Character BuildCharacter()
         {
-            Console.WriteLine("Enter HP for character1");
-            
-            int npcHP = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter name for character");
+            string name = Console.ReadLine();
 
-            Console.WriteLine("Enter initMod for character1");
-            int npcInitMod = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter HP for character");
+            int HP = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter AC for character1");
-            int npcAC = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter initMod for character");
+            int initMod = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter thac0 for character1");
-            int npcThac0 = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter AC for character");
+            int AC = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter numberOfDice for character1");
-            int npcNumberOfDice = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter thac0 for character");
+            int thac0 = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter typeOfDie for character1");
-            int npcTypeOfDie = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter numberOfDice for character");
+            int numberOfDice = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter modifier for character1");
-            int npcModifier = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter typeOfDie for character");
+            int typeOfDie = int.Parse(Console.ReadLine());
 
-            Character npc = new(npcHP, npcInitMod, npcAC, npcThac0, npcNumberOfDice, npcTypeOfDie, npcModifier);
+            Console.WriteLine("Enter modifier for character");
+            int modifier = int.Parse(Console.ReadLine());
 
+            Character npc = new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
             return npc;
         }
     }

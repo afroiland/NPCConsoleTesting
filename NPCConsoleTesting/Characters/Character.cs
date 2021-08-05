@@ -8,6 +8,7 @@ namespace NPCConsoleTesting
 {
     public class Character
     {
+        public string name;
         public int hp;
         public int initMod;
         public int ac;
@@ -15,9 +16,12 @@ namespace NPCConsoleTesting
         public int numberOfDice;
         public int typeOfDie;
         public int modifier;
+        public int init;
+        public string target;
 
-        public Character(int charHp, int charInitMod, int charAc, int charThac0, int charNumOfDice, int charTypeOfDie, int charModifier)
+        public Character(string charName, int charHp, int charInitMod, int charAc, int charThac0, int charNumOfDice, int charTypeOfDie, int charModifier)
         {
+            name = charName;
             hp = charHp;
             initMod = charInitMod;
             ac = charAc;
@@ -25,6 +29,8 @@ namespace NPCConsoleTesting
             numberOfDice = charNumOfDice;
             typeOfDie = charTypeOfDie;
             modifier = charModifier;
+            init = 0;
+            target = null;
         }
     }
 }

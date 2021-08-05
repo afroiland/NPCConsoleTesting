@@ -8,9 +8,6 @@ namespace NPCConsoleTesting
 {
     class InitOrder
     {
-        //public List<string> DetermineOrder()
-        //{
-
-        //}
+        
     }
 }
