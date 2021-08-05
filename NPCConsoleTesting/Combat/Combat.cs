@@ -10,35 +10,62 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        public static List<String> Fight(List<Character> combatants)
+        public static RoundResults CombatRound(List<Character> combatants)
         {
-            //var combatLog = new List<String>();
-            var combatLog = new List<String> { "test1", "test2", "test3" };
+            var emptyCharList = new List<Character>();
+            var sampleRoundLog = new List<String> { "test1", "test2", "test3" };
+            var results = new RoundResults(emptyCharList, sampleRoundLog);
 
-            //whole thing in an if/while stmt from here?
+            //set targets if needed
+            foreach (Character ch in combatants)
+            {
+                if (ch.target == "")
+                {
+                    List<string> others = combatants.Where(x => ch.name != x.name).Select(x => x.name).ToList();
+                    ch.target = others[_random.Next(0, others.Count)];
+                }
+            }
+            //show targets
+            for (int i = 0; i < combatants.Count; i++)
+            {
+                Console.WriteLine($"{combatants[i].name} target: {combatants[i].target}");
+            }
+            Console.ReadLine();
 
-            //determine init
+            //set inits
             foreach (Character ch in combatants)
             {
                 ch.init = _random.Next(1, 10) + ch.initMod;
             }
-
             //show inits
-            //for (int i = 0; i < combatants.Count; i++)
-            //{
-            //    Console.WriteLine($"char {i+1} init: {combatants[i].init}");
-            //}
-            //Console.ReadLine();
-
-            //bool simultaneous = char1Init == char2Init ? true : false;
+            for (int i = 0; i < combatants.Count; i++)
+            {
+                Console.WriteLine($"{combatants[i].name} init: {combatants[i].init}");
+            }
+            Console.ReadLine();
 
             //order chars by init
             List<Character> sortedByInit = combatants.OrderBy(x => x.init).ToList();
-            Console.WriteLine(sortedByInit[0].name + " init: " + sortedByInit[0].init);
-            Console.WriteLine(sortedByInit[1].name + " init: " + sortedByInit[1].init);
+            //show init order
+            for (int i = 0; i < sortedByInit.Count; i++)
+            {
+                Console.WriteLine($"{sortedByInit[i].name} init: {sortedByInit[i].init}");
+            }
+            Console.ReadLine();
+
+            //start tracking segments
+            int segment = 0;
+            int priorityIndex = 0;
+            while (segment < sortedByInit[priorityIndex].init)
+            {
+                segment++;
+            }
+
+            Console.WriteLine($"It is segment {segment}, {sortedByInit[priorityIndex].name} attacks {sortedByInit[priorityIndex].target}");
             Console.ReadLine();
 
             //first char does an attack
+
             //int attackResult = Attack(attackerName.thac0, defenderName.ac, attackerName.numberOfDice, attackerName.typeOfDie, attackerName.modifier);
 
 
@@ -55,7 +82,7 @@ namespace NPCConsoleTesting
             //repeat if necessary
             //reset init?
 
-            return combatLog;
+            return results;
         }
 
         public int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int modifier)

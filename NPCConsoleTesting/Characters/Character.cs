@@ -30,7 +30,7 @@ namespace NPCConsoleTesting
             typeOfDie = charTypeOfDie;
             modifier = charModifier;
             init = 0;
-            target = null;
+            target = "";
         }
     }
 }
