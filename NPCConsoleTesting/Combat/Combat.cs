@@ -9,14 +9,17 @@ namespace NPCConsoleTesting
     class Combat
     {
         static Random _random = new();
-        private static readonly bool doReadLines;
-        //private static readonly bool doReadLines = true;
+        //private static readonly bool doReadLines = false;
+        private static readonly bool doReadLines = true;
 
         public static RoundResults CombatRound(List<Character> combatants)
         {
-            var emptyCharList = new List<Character>();
-            var sampleRoundLog = new List<String> { "test1", "test2", "test3" };
-            var results = new RoundResults(emptyCharList, sampleRoundLog);
+            //var emptyCharList = new List<Character>();
+            //var sampleRoundLog = new List<String> { "test1", "test2", "test3" };
+            //var results = new RoundResults(emptyCharList, sampleRoundLog);
+
+            List<Character> charResults = new();
+            List<String> logResults = new();
 
             //set targets if needed
             foreach (Character ch in combatants)
@@ -86,24 +89,44 @@ namespace NPCConsoleTesting
 
                 //set targetIndex based on priority char's target
                 targetIndex = sortedByInit.FindIndex(x => x.name == sortedByInit[priorityIndex].target);
-                Console.WriteLine($"priorityIndex: {priorityIndex}");
-                Console.WriteLine($"targetIndex: {targetIndex}");
-                if (doReadLines) { Console.ReadLine(); }
+                //Console.WriteLine($"priorityIndex: {priorityIndex}");
+                //Console.WriteLine($"targetIndex: {targetIndex}");
+                //if (doReadLines) { Console.ReadLine(); }
 
                 //priority char does an attack against target
                 int attackResult = Attack(sortedByInit[priorityIndex].thac0, sortedByInit[targetIndex].ac, sortedByInit[priorityIndex].numberOfDice, sortedByInit[priorityIndex].typeOfDie, sortedByInit[priorityIndex].modifier);
                 Console.WriteLine($"attackResult: {attackResult}");
                 if (doReadLines) { Console.ReadLine(); }
 
+                //update log
+                if (attackResult > 0)
+                {
+                    logResults.Add($"{sortedByInit[priorityIndex].name} struck {sortedByInit[targetIndex].name} for {attackResult} damage.");
+                }
+                else
+                {
+                    logResults.Add($"{sortedByInit[priorityIndex].name} misses {sortedByInit[targetIndex].name}.");
+                }
+
                 //adjust target hp
                 sortedByInit[targetIndex].hp -= attackResult;
+                if (sortedByInit[targetIndex].hp <= 0)
+                {
+                    logResults.Add($"{sortedByInit[targetIndex].name} has fallen.");
+                }
 
                 //advance priorityIndex
                 priorityIndex++;
             }
 
-            //update results
-            return results;
+            //add orderedbyinit to charResults
+            foreach (Character ch in sortedByInit)
+            {
+                charResults.Add(ch);
+            }
+
+            return new RoundResults(charResults, logResults);
+            //return results;
         }
 
         public static int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int modifier)
