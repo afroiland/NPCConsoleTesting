@@ -30,11 +30,56 @@ namespace NPCConsoleTesting
             combatants.Add(npc1);
             combatants.Add(npc2);
 
-            //do a fight
-            RoundResults log = Combat.CombatRound(combatants);
+            //do a round
+            //RoundResults roundResults = Combat.CombatRound(combatants);
+            //roundResults.roundLog.ForEach(i => Console.WriteLine(i));
+            //Console.ReadLine();
 
-            log.roundLog.ForEach(i => Console.WriteLine(i));
-            Console.ReadLine();
+
+            //do a whole fight
+            List<string> wholeFightLog = new();
+            bool downToOne = false;
+            
+            while (!downToOne)
+            {
+                RoundResults roundResults = Combat.CombatRound(combatants);
+
+                //TODO: ensure there is not a shorter way to do this. No luck briefly with Join, Concat
+                //add roundLog to wholeFightLog
+                foreach (string log in roundResults.roundLog)
+                {
+                    wholeFightLog.Add(log);
+                }
+
+                //TODO: clean this up, likely using LINQ
+                //check if we're down to one
+                int numberOfSurvivors = 0;
+                foreach (Character ch in roundResults.characters)
+                {
+                    if (ch.hp > 0)
+                    {
+                        numberOfSurvivors++;
+                    }
+                }
+                if (numberOfSurvivors == 1)
+                {
+                    //the fight has ended
+                    downToOne = true;
+
+                    wholeFightLog.ForEach(i => Console.WriteLine(i));
+                    Console.ReadLine();
+                }
+
+                //lol
+                if (numberOfSurvivors < 1)
+                {
+                    Console.WriteLine("lol");
+                    break;
+                }
+
+                //update combatants list with returned
+                combatants = roundResults.characters;
+            }
         }
     }
 }

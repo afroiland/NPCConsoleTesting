@@ -9,8 +9,8 @@ namespace NPCConsoleTesting
     class Combat
     {
         static Random _random = new();
-        //private static readonly bool doReadLines = false;
-        private static readonly bool doReadLines = true;
+        private static readonly bool doReadLines = false;
+        //private static readonly bool doReadLines = true;
 
         public static RoundResults CombatRound(List<Character> combatants)
         {
