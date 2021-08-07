@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NPCConsoleTesting
 {
@@ -11,6 +12,8 @@ namespace NPCConsoleTesting
             Character npc1 = Build.BuildCharacter();
             Console.WriteLine("CHARACTER 2");
             Character npc2 = Build.BuildCharacter();
+            Console.WriteLine("CHARACTER 3");
+            Character npc3 = Build.BuildCharacter();
 
             Console.WriteLine($"character1 HP: {npc1.hp}");
             Console.WriteLine($"character1 initMod: {npc1.initMod}");
@@ -26,9 +29,17 @@ namespace NPCConsoleTesting
             Console.WriteLine($"character2 dmg: {npc2.numberOfDice}d{npc2.typeOfDie}+{npc2.modifier}");
             Console.WriteLine();
 
+            Console.WriteLine($"character3 HP: {npc3.hp}");
+            Console.WriteLine($"character3 initMod: {npc3.initMod}");
+            Console.WriteLine($"character3 AC: {npc3.ac}");
+            Console.WriteLine($"character3 thac0: {npc3.thac0}");
+            Console.WriteLine($"character3 dmg: {npc3.numberOfDice}d{npc3.typeOfDie}+{npc3.modifier}");
+            Console.WriteLine();
+
             List<Character> combatants = new();
             combatants.Add(npc1);
             combatants.Add(npc2);
+            combatants.Add(npc3);
 
             //do a round
             //RoundResults roundResults = Combat.CombatRound(combatants);
@@ -65,6 +76,9 @@ namespace NPCConsoleTesting
                 {
                     //the fight has ended
                     downToOne = true;
+
+                    List<string> winner = combatants.Where(x => x.hp != 0).Select(x => x.name).ToList();
+                    wholeFightLog.Add($"{winner[0]} wins.");
 
                     wholeFightLog.ForEach(i => Console.WriteLine(i));
                     Console.ReadLine();
