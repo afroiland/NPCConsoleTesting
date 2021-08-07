@@ -9,8 +9,8 @@ namespace NPCConsoleTesting
     class Combat
     {
         static Random _random = new();
-        private static readonly bool doReadLines = false;
-        //private static readonly bool doReadLines = true;
+        //private static readonly bool doReadLines = false;
+        private static readonly bool doReadLines = true;
 
         public static RoundResults CombatRound(List<Character> combatants)
         {
@@ -102,18 +102,23 @@ namespace NPCConsoleTesting
                 if (attackResult > 0)
                 {
                     logResults.Add($"{sortedByInit[priorityIndex].name} struck {sortedByInit[targetIndex].name} for {attackResult} damage.");
+
+                    //adjust target hp
+                    sortedByInit[targetIndex].hp -= attackResult;
+                    if (sortedByInit[targetIndex].hp <= 0)
+                    {
+                        logResults.Add($"{sortedByInit[targetIndex].name} has fallen.");
+                    }
+
+                    Console.WriteLine($"{sortedByInit[priorityIndex].name} struck {sortedByInit[targetIndex].name} for {attackResult} damage.");
+                    Console.WriteLine($"{sortedByInit[targetIndex].name} is at {sortedByInit[targetIndex].hp}hp.");
                 }
                 else
                 {
                     logResults.Add($"{sortedByInit[priorityIndex].name} misses {sortedByInit[targetIndex].name}.");
                 }
 
-                //adjust target hp
-                sortedByInit[targetIndex].hp -= attackResult;
-                if (sortedByInit[targetIndex].hp <= 0)
-                {
-                    logResults.Add($"{sortedByInit[targetIndex].name} has fallen.");
-                }
+                
 
                 //advance priorityIndex
                 priorityIndex++;
