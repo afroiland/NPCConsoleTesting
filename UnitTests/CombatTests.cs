@@ -19,20 +19,23 @@ namespace UnitTests
         public void Targets_Get_Set_for_All_Chars()
         {
             //Act
-            var result = Combat.CombatRound(testList);
+            var result = CombatMethods.DetermineTargets(testList);
 
             //Assert
-            foreach  (Character ch in result.characters)
+            foreach (Character ch in result)
             {
                 Assert.AreNotEqual(ch.target, "");
             }
+
+            //TODO: The following seems cleaner once "target" has been made into a property
+            //Assert.That(List.Map(result).Property("target"), Is.Not.EqualTo(""));
         }
 
         [Test]
         public void Inits_Get_Set_for_All_Chars()
         {
             //Act
-            var result = Combat.DetermineInit(testList);
+            var result = CombatMethods.DetermineInit(testList);
 
             //Assert
             Assert.That(result, Is.Ordered.By("init"));

@@ -6,7 +6,7 @@ namespace NPCConsoleTesting
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Console.WriteLine("CHARACTER 1");
             Character npc1 = Build.BuildCharacter();
