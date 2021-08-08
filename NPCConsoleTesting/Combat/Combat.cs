@@ -14,63 +14,24 @@ namespace NPCConsoleTesting
 
         public static RoundResults CombatRound(List<Character> combatants)
         {
-            //var emptyCharList = new List<Character>();
-            //var sampleRoundLog = new List<String> { "test1", "test2", "test3" };
-            //var results = new RoundResults(emptyCharList, sampleRoundLog);
-
             List<Character> charResults = new();
             List<String> logResults = new();
-
-            //set targets if needed
-            foreach (Character ch in combatants)
-            {
-                if (ch.target == "")
-                {
-                    List<string> others = combatants.Where(x => ch.name != x.name).Select(x => x.name).ToList();
-                    ch.target = others[_random.Next(0, others.Count - 1)];
-                }
-            }
-            //show targets
-            for (int i = 0; i < combatants.Count; i++)
-            {
-                Console.WriteLine($"{combatants[i].name} target: {combatants[i].target}");
-            }
-            if (doReadLines) { Console.ReadLine(); }
-
-            //set inits
-            foreach (Character ch in combatants)
-            {
-                ch.init = _random.Next(1, 10) + ch.initMod;
-                //ch.init = 5;
-            }
-            //show inits
-            //for (int i = 0; i < combatants.Count; i++)
-            //{
-            //    Console.WriteLine($"{combatants[i].name} init: {combatants[i].init}");
-            //}
-            //Console.ReadLine();
-
-            //order chars by init
-            List<Character> sortedByInit = combatants.OrderBy(x => x.init).ToList();
-            //show init order
-            for (int i = 0; i < sortedByInit.Count; i++)
-            {
-                Console.WriteLine($"{sortedByInit[i].name} init: {sortedByInit[i].init}");
-            }
-            if (doReadLines) { Console.ReadLine(); }
+            
+            combatants = DetermineTargets(combatants);
+            combatants = DetermineInit(combatants);
 
             //start tracking segments
             int segment = 0;
             int priorityIndex = 0;
             int targetIndex = 0;
 
-            while (priorityIndex <= sortedByInit.Count - 1)
+            while (priorityIndex <= combatants.Count - 1)
             {
-                while (segment < sortedByInit[priorityIndex].init)
+                while (segment < combatants[priorityIndex].init)
                 {
                     segment++;
                     //if priority char has 0 or fewer hp, advance priority index and stop advancing segments
-                    if (sortedByInit[priorityIndex].hp <= 0)
+                    if (combatants[priorityIndex].hp <= 0)
                     {
                         priorityIndex++;
                         break;
@@ -79,43 +40,40 @@ namespace NPCConsoleTesting
 
                 //TODO: Fix this
                 //Janky, but this check allows an attack from a char at <1 hp in the case of simultaneous init
-                if (priorityIndex >= sortedByInit.Count)
+                if (priorityIndex >= combatants.Count)
                 {
                     break;
                 }
 
-                Console.WriteLine($"It is segment {segment}, {sortedByInit[priorityIndex].name} is about to attack {sortedByInit[priorityIndex].target}");
+                Console.WriteLine($"It is segment {segment}, {combatants[priorityIndex].name} is about to attack {combatants[priorityIndex].target}");
                 if (doReadLines) { Console.ReadLine(); }
 
                 //set targetIndex based on priority char's target
-                targetIndex = sortedByInit.FindIndex(x => x.name == sortedByInit[priorityIndex].target);
-                //Console.WriteLine($"priorityIndex: {priorityIndex}");
-                //Console.WriteLine($"targetIndex: {targetIndex}");
-                //if (doReadLines) { Console.ReadLine(); }
-
+                targetIndex = combatants.FindIndex(x => x.name == combatants[priorityIndex].target);
+                
                 //priority char does an attack against target
-                int attackResult = Attack(sortedByInit[priorityIndex].thac0, sortedByInit[targetIndex].ac, sortedByInit[priorityIndex].numberOfDice, sortedByInit[priorityIndex].typeOfDie, sortedByInit[priorityIndex].modifier);
+                int attackResult = Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac, combatants[priorityIndex].numberOfDice, combatants[priorityIndex].typeOfDie, combatants[priorityIndex].modifier);
                 Console.WriteLine($"attackResult: {attackResult}");
                 if (doReadLines) { Console.ReadLine(); }
 
                 //update log
                 if (attackResult > 0)
                 {
-                    logResults.Add($"{sortedByInit[priorityIndex].name} struck {sortedByInit[targetIndex].name} for {attackResult} damage.");
+                    logResults.Add($"{combatants[priorityIndex].name} struck {combatants[targetIndex].name} for {attackResult} damage.");
 
                     //adjust target hp
-                    sortedByInit[targetIndex].hp -= attackResult;
-                    if (sortedByInit[targetIndex].hp <= 0)
+                    combatants[targetIndex].hp -= attackResult;
+                    if (combatants[targetIndex].hp <= 0)
                     {
-                        logResults.Add($"{sortedByInit[targetIndex].name} has fallen.");
+                        logResults.Add($"{combatants[targetIndex].name} has fallen.");
                     }
 
-                    Console.WriteLine($"{sortedByInit[priorityIndex].name} struck {sortedByInit[targetIndex].name} for {attackResult} damage.");
-                    Console.WriteLine($"{sortedByInit[targetIndex].name} is at {sortedByInit[targetIndex].hp}hp.");
+                    Console.WriteLine($"{combatants[priorityIndex].name} struck {combatants[targetIndex].name} for {attackResult} damage.");
+                    Console.WriteLine($"{combatants[targetIndex].name} is at {combatants[targetIndex].hp}hp.");
                 }
                 else
                 {
-                    logResults.Add($"{sortedByInit[priorityIndex].name} misses {sortedByInit[targetIndex].name}.");
+                    logResults.Add($"{combatants[priorityIndex].name} misses {combatants[targetIndex].name}.");
                 }
 
                 //advance priorityIndex
@@ -123,13 +81,12 @@ namespace NPCConsoleTesting
             }
 
             //add orderedbyinit to charResults
-            foreach (Character ch in sortedByInit)
+            foreach (Character ch in combatants)
             {
                 charResults.Add(ch);
             }
 
             return new RoundResults(charResults, logResults);
-            //return results;
         }
 
         public static int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int modifier)
@@ -147,6 +104,54 @@ namespace NPCConsoleTesting
             }
 
             return result + modifier;
+        }
+
+        public static List<Character> DetermineInit(List<Character> chars)
+        {
+            //set inits
+            foreach (Character ch in chars)
+            {
+                ch.init = _random.Next(1, 10) + ch.initMod;
+                //ch.init = 5;
+            }
+            //show inits
+            //for (int i = 0; i < chars.Count; i++)
+            //{
+            //    Console.WriteLine($"{chars[i].name} init: {chars[i].init}");
+            //}
+            //if (doReadLines) { Console.ReadLine(); }
+
+            //order chars by init
+            chars = chars.OrderBy(x => x.init).ToList();
+            //show init order
+            for (int i = 0; i < chars.Count; i++)
+            {
+                Console.WriteLine($"{chars[i].name} init: {chars[i].init}");
+            }
+            if (doReadLines) { Console.ReadLine(); }
+
+            return chars;
+        }
+
+        public static List<Character> DetermineTargets(List<Character> chars)
+        {
+            //set targets if needed
+            foreach (Character ch in chars)
+            {
+                if (ch.target == "")
+                {
+                    List<string> others = chars.Where(x => ch.name != x.name).Select(x => x.name).ToList();
+                    ch.target = others[_random.Next(0, others.Count - 1)];
+                }
+            }
+            //show targets
+            for (int i = 0; i < chars.Count; i++)
+            {
+                Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
+            }
+            if (doReadLines) { Console.ReadLine(); }
+
+            return chars;
         }
     }
 }
