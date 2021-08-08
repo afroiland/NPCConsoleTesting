@@ -7,6 +7,7 @@ namespace UnitTests
     //[TestFixture]
     public class CombatTests
     {
+        //Arrange
         List<Character> testList = new()
         {
             new Character("testChar1", 10, 0, 10, 1, 1, 4, 1),
@@ -17,15 +18,24 @@ namespace UnitTests
         [Test]
         public void Targets_Get_Set_for_All_Chars()
         {
-            //arrange
+            //Act
+            var result = Combat.CombatRound(testList);
 
+            //Assert
+            foreach  (Character ch in result.characters)
+            {
+                Assert.AreNotEqual(ch.target, "");
+            }
+        }
 
-            //act
-            Combat.CombatRound(testList);
+        [Test]
+        public void Inits_Get_Set_for_All_Chars()
+        {
+            //Act
+            var result = Combat.DetermineInit(testList);
 
-            //assert
-            Assert.Pass();
+            //Assert
+            Assert.That(result, Is.Ordered.By("init"));
         }
     }
-
 }
