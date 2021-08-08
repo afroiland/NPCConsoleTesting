@@ -46,7 +46,6 @@ namespace NPCConsoleTesting
             //roundResults.roundLog.ForEach(i => Console.WriteLine(i));
             //Console.ReadLine();
 
-
             //do a whole fight
             List<string> wholeFightLog = new();
             bool downToOne = false;
