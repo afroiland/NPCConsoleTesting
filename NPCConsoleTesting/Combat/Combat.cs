@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
-    class Combat
+    public class Combat
     {
         static Random _random = new();
-        //private static readonly bool doReadLines = false;
-        private static readonly bool doReadLines = true;
+        private static readonly bool doReadLines = false;
+        //private static readonly bool doReadLines = true;
 
         public static RoundResults CombatRound(List<Character> combatants)
         {
@@ -27,7 +27,7 @@ namespace NPCConsoleTesting
                 if (ch.target == "")
                 {
                     List<string> others = combatants.Where(x => ch.name != x.name).Select(x => x.name).ToList();
-                    ch.target = others[_random.Next(0, others.Count)];
+                    ch.target = others[_random.Next(0, others.Count - 1)];
                 }
             }
             //show targets
@@ -117,8 +117,6 @@ namespace NPCConsoleTesting
                 {
                     logResults.Add($"{sortedByInit[priorityIndex].name} misses {sortedByInit[targetIndex].name}.");
                 }
-
-                
 
                 //advance priorityIndex
                 priorityIndex++;
