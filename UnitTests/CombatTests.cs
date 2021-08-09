@@ -7,11 +7,11 @@ namespace UnitTests
     public class CombatTests
     {
         //Arrange
-        List<Character> testList = new()
+        List<Combatant> testList = new()
         {
-            new Character("testChar1", 10, 0, 10, 1, 1, 4, 1),
-            new Character("testChar2", 10, 0, 10, 1, 1, 4, 1),
-            new Character("testChar3", 10, 0, 10, 1, 1, 4, 1)
+            new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1),
+            new Combatant("testChar2", 10, 0, 10, 1, 1, 4, 1),
+            new Combatant("testChar3", 10, 0, 10, 1, 1, 4, 1)
         };
 
         [Test]
@@ -75,7 +75,7 @@ namespace UnitTests
             var result = CombatMethods.DetermineTargets(testList);
 
             //Assert
-            foreach (Character ch in result)
+            foreach (Combatant ch in result)
             {
                 Assert.AreNotEqual(ch.target, "");
             }

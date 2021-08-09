@@ -11,9 +11,9 @@ namespace NPCConsoleTesting
         private static readonly bool doReadLines = false;
         //private static readonly bool doReadLines = true;
 
-        public static RoundResults CombatRound(List<Character> combatants)
+        public static RoundResults CombatRound(List<Combatant> combatants)
         {
-            List<Character> charResults = new();
+            List<Combatant> charResults = new();
             List<String> logResults = new();
             
             combatants = CombatMethods.DetermineTargets(combatants);
@@ -66,7 +66,7 @@ namespace NPCConsoleTesting
 
                     if (combatants[targetIndex].hp <= 0)
                     {
-                        logResults.Add($"{combatants[targetIndex].name} has fallen.");
+                        logResults.Add($"{combatants[targetIndex].name} fell.");
 
                         if (combatants[targetIndex].init == segment)
                         {
@@ -79,14 +79,14 @@ namespace NPCConsoleTesting
                 }
                 else
                 {
-                    logResults.Add($"{combatants[priorityIndex].name} misses {combatants[targetIndex].name}.");
+                    logResults.Add($"{combatants[priorityIndex].name} missed {combatants[targetIndex].name}.");
                 }
 
                 priorityIndex++;
             }
 
             //add combatants to charResults
-            foreach (Character ch in combatants)
+            foreach (Combatant ch in combatants)
             {
                 charResults.Add(ch);
             }

@@ -9,11 +9,11 @@ namespace NPCConsoleTesting
         static void Main()
         {
             Console.WriteLine("CHARACTER 1");
-            Character npc1 = Build.BuildCharacter();
+            Combatant npc1 = Build.BuildCombatant();
             Console.WriteLine("CHARACTER 2");
-            Character npc2 = Build.BuildCharacter();
+            Combatant npc2 = Build.BuildCombatant();
             Console.WriteLine("CHARACTER 3");
-            Character npc3 = Build.BuildCharacter();
+            Combatant npc3 = Build.BuildCombatant();
 
             Console.WriteLine($"character1 HP: {npc1.hp}");
             Console.WriteLine($"character1 initMod: {npc1.initMod}");
@@ -36,7 +36,7 @@ namespace NPCConsoleTesting
             Console.WriteLine($"character3 dmg: {npc3.numberOfDice}d{npc3.typeOfDie}+{npc3.modifier}");
             Console.WriteLine();
 
-            List<Character> combatants = new();
+            List<Combatant> combatants = new();
             combatants.Add(npc1);
             combatants.Add(npc2);
             combatants.Add(npc3);
@@ -64,7 +64,7 @@ namespace NPCConsoleTesting
                 //TODO: clean this up, likely using LINQ
                 //check if we're down to one
                 int numberOfSurvivors = 0;
-                foreach (Character ch in roundResults.characters)
+                foreach (Combatant ch in roundResults.combatants)
                 {
                     if (ch.hp > 0)
                     {
@@ -76,8 +76,8 @@ namespace NPCConsoleTesting
                     //the fight has ended
                     downToOne = true;
 
-                    List<string> winner = combatants.Where(x => x.hp != 0).Select(x => x.name).ToList();
-                    wholeFightLog.Add($"{winner[0]} wins.");
+                    List<string> winner = combatants.Where(x => x.hp > 0).Select(x => x.name).ToList();
+                    wholeFightLog.Add($"{winner[0]} won.");
 
                     wholeFightLog.ForEach(i => Console.WriteLine(i));
                     Console.ReadLine();
@@ -91,7 +91,7 @@ namespace NPCConsoleTesting
                 }
 
                 //update combatants list with returned
-                combatants = roundResults.characters;
+                combatants = roundResults.combatants;
             }
         }
     }

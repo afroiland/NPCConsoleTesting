@@ -8,12 +8,12 @@ namespace NPCConsoleTesting
 {
     public class RoundResults
     {
-        public List<Character> characters;
+        public List<Combatant> combatants;
         public List<string> roundLog;
 
-        public RoundResults(List<Character> chars, List<string> log)
+        public RoundResults(List<Combatant> cmbts, List<string> log)
         {
-            characters = chars;
+            combatants = cmbts;
             roundLog = log;
         }
     }
