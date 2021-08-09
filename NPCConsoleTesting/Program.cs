@@ -47,7 +47,7 @@ namespace NPCConsoleTesting
             //Console.ReadLine();
 
             //do a whole fight
-            List<string> wholeFightLog = new() { "Here's what happened:"};
+            List<string> wholeFightLog = new() {" ", "Here's what happened:"};
             bool downToOne = false;
             
             while (!downToOne)

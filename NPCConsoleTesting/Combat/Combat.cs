@@ -8,8 +8,8 @@ namespace NPCConsoleTesting
 {
     public class Combat
     {
-        //private static readonly bool doReadLines = false;
-        private static readonly bool doReadLines = true;
+        private static readonly bool doReadLines = false;
+        //private static readonly bool doReadLines = true;
 
         public static RoundResults CombatRound(List<Character> combatants)
         {
@@ -21,8 +21,11 @@ namespace NPCConsoleTesting
 
             Console.WriteLine($"{combatants[0].name} hp: {combatants[0].hp}");
             Console.WriteLine($"{combatants[1].name} hp: {combatants[1].hp}");
-            Console.WriteLine($"{combatants[2].name} hp: {combatants[2].hp}");
-
+            if (combatants.Count > 2)
+            {
+                Console.WriteLine($"{combatants[2].name} hp: {combatants[2].hp}");
+            }
+                
             int segment = 0;
             int priorityIndex = 0;
             int targetIndex = 0;
@@ -36,7 +39,10 @@ namespace NPCConsoleTesting
                     opportunityForSimulAttack = false;
                 }
 
-                //maybe something like
+                //set targetIndex based on priority combatant's target
+                targetIndex = combatants.FindIndex(x => x.name == combatants[priorityIndex].target);
+
+                //no attacks by or against dead combatants, unless there is a simultaneous attack
                 if ((combatants[priorityIndex].hp <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].hp <= 0)
                 {
                     priorityIndex++;
@@ -45,11 +51,8 @@ namespace NPCConsoleTesting
 
                 Console.WriteLine($"It is segment {segment}, {combatants[priorityIndex].name} is about to attack {combatants[priorityIndex].target}");
                 if (doReadLines) { Console.ReadLine(); }
-
-                //set targetIndex based on priority char's target
-                targetIndex = combatants.FindIndex(x => x.name == combatants[priorityIndex].target);
                 
-                //priority char does an attack against target
+                //priority combatant does an attack against target
                 int attackResult = CombatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac, combatants[priorityIndex].numberOfDice, combatants[priorityIndex].typeOfDie, combatants[priorityIndex].modifier);
                 Console.WriteLine($"attackResult: {attackResult}");
                 if (doReadLines) { Console.ReadLine(); }
