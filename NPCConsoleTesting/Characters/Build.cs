@@ -8,7 +8,7 @@ namespace NPCConsoleTesting
 {
     class Build
     {
-        public static Character BuildCharacter()
+        public static Combatant BuildCombatant()
         {
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
@@ -34,7 +34,7 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter modifier for character");
             int modifier = int.Parse(Console.ReadLine());
 
-            Character npc = new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
+            Combatant npc = new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
             return npc;
         }
     }

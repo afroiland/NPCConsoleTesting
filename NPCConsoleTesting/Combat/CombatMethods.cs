@@ -29,10 +29,10 @@ namespace NPCConsoleTesting
             return result + modifier;
         }
 
-        public static List<Character> DetermineInit(List<Character> chars)
+        public static List<Combatant> DetermineInit(List<Combatant> chars)
         {
             //set inits
-            foreach (Character ch in chars)
+            foreach (Combatant ch in chars)
             {
                 ch.init = _random.Next(1, 11) + ch.initMod;
                 //ch.init = 5;
@@ -52,10 +52,10 @@ namespace NPCConsoleTesting
             return chars;
         }
 
-        public static List<Character> DetermineTargets(List<Character> chars)
+        public static List<Combatant> DetermineTargets(List<Combatant> chars)
         {
             //set targets if needed
-            foreach (Character ch in chars)
+            foreach (Combatant ch in chars)
             {
                 if (ch.target == "" || chars.Where(x => x.name == ch.target).Select(x => x.hp).ToList()[0] <= 0)
                 {
