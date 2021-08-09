@@ -8,8 +8,8 @@ namespace NPCConsoleTesting
 {
     public class Combat
     {
-        private static readonly bool doReadLines = false;
-        //private static readonly bool doReadLines = true;
+        //private static readonly bool doReadLines = false;
+        private static readonly bool doReadLines = true;
 
         public static RoundResults CombatRound(List<Character> combatants)
         {
@@ -19,28 +19,27 @@ namespace NPCConsoleTesting
             combatants = CombatMethods.DetermineTargets(combatants);
             combatants = CombatMethods.DetermineInit(combatants);
 
-            //start tracking segments
+            Console.WriteLine($"{combatants[0].name} hp: {combatants[0].hp}");
+            Console.WriteLine($"{combatants[1].name} hp: {combatants[1].hp}");
+            Console.WriteLine($"{combatants[2].name} hp: {combatants[2].hp}");
+
             int segment = 0;
             int priorityIndex = 0;
             int targetIndex = 0;
+            bool opportunityForSimulAttack = false;
 
             while (priorityIndex <= combatants.Count - 1)
             {
                 while (segment < combatants[priorityIndex].init)
                 {
                     segment++;
-                    //if priority char has 0 or fewer hp, advance priority index and stop advancing segments
-                    if (combatants[priorityIndex].hp <= 0)
-                    {
-                        priorityIndex++;
-                        break;
-                    }
+                    opportunityForSimulAttack = false;
                 }
 
-                //TODO: Fix this
-                //Janky, but this check allows an attack from a char at <1 hp in the case of simultaneous init
-                if (priorityIndex >= combatants.Count)
+                //maybe something like
+                if ((combatants[priorityIndex].hp <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].hp <= 0)
                 {
+                    priorityIndex++;
                     break;
                 }
 
@@ -55,17 +54,21 @@ namespace NPCConsoleTesting
                 Console.WriteLine($"attackResult: {attackResult}");
                 if (doReadLines) { Console.ReadLine(); }
 
-                //update log
                 if (attackResult > 0)
                 {
                     logResults.Add($"{combatants[priorityIndex].name} struck {combatants[targetIndex].name} for {attackResult} damage.");
 
-                    //TODO: Surely this isn't the best spot for this, no?
                     //adjust target hp
                     combatants[targetIndex].hp -= attackResult;
+
                     if (combatants[targetIndex].hp <= 0)
                     {
                         logResults.Add($"{combatants[targetIndex].name} has fallen.");
+
+                        if (combatants[targetIndex].init == segment)
+                        {
+                            opportunityForSimulAttack = true;
+                        }
                     }
 
                     Console.WriteLine($"{combatants[priorityIndex].name} struck {combatants[targetIndex].name} for {attackResult} damage.");
@@ -79,7 +82,7 @@ namespace NPCConsoleTesting
                 priorityIndex++;
             }
 
-            //add orderedbyinit to charResults
+            //add combatants to charResults
             foreach (Character ch in combatants)
             {
                 charResults.Add(ch);
