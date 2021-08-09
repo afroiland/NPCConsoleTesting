@@ -9,8 +9,8 @@ namespace NPCConsoleTesting
     public class CombatMethods
     {
         static Random _random = new();
-        private static readonly bool doReadLines = false;
-        //private static readonly bool doReadLines = true;
+        //private static readonly bool doReadLines = false;
+        private static readonly bool doReadLines = true;
 
         public static int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int modifier)
         {
@@ -46,6 +46,8 @@ namespace NPCConsoleTesting
 
             //order chars by init
             chars = chars.OrderBy(x => x.init).ToList();
+            //chars = chars.Where(x => x.hp > 0).OrderBy(x => x.init).ToList();
+
             //show init order
             for (int i = 0; i < chars.Count; i++)
             {
@@ -61,10 +63,10 @@ namespace NPCConsoleTesting
             //set targets if needed
             foreach (Character ch in chars)
             {
-                if (ch.target == "")
+                if (ch.target == "" || chars.Where(x => x.name == ch.target).Select(x => x.hp).ToList()[0] <= 0)
                 {
-                    List<string> others = chars.Where(x => ch.name != x.name).Select(x => x.name).ToList();
-                    ch.target = others[_random.Next(0, others.Count - 1)];
+                    List<string> potentialTargets = chars.Where(x => ch.name != x.name && x.hp > 0).Select(x => x.name).ToList();
+                    ch.target = potentialTargets[_random.Next(0, potentialTargets.Count - 1)];
                 }
             }
             //show targets
