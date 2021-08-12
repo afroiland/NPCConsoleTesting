@@ -8,16 +8,16 @@ namespace NPCConsoleTesting
 {
     public class Combatant
     {
-        public string name;
-        public int hp;
-        public int initMod;
-        public int ac;
-        public int thac0;
-        public int numberOfDice;
-        public int typeOfDie;
-        public int modifier;
-        public int init;
-        public string target;
+        public string name { get; set; }
+        public int hp { get; set; }
+        public int initMod { get; set; }
+        public int ac { get; set; }
+        public int thac0 { get; set; }
+        public int numberOfDice { get; set; }
+        public int typeOfDie { get; set; }
+        public int modifier { get; set; }
+        public int init { get; set; }
+        public string target { get; set; }
 
         public Combatant(string charName, int charHp, int charInitMod, int charAc, int charThac0, int charNumOfDice, int charTypeOfDie, int charModifier)
         {
