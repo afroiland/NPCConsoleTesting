@@ -1,6 +1,7 @@
 using NPCConsoleTesting;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests
 {
@@ -35,8 +36,11 @@ namespace UnitTests
             }
 
             //Assert
-            Assert.That(resultsListPoorAC, Is.All.GreaterThan(0));
-            Assert.That(resultsListGoodAC, Is.All.LessThan(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultsListPoorAC, Is.All.GreaterThan(0));
+                Assert.That(resultsListGoodAC, Is.All.LessThan(1));
+            });
         }
 
         [Test]
@@ -89,8 +93,7 @@ namespace UnitTests
             var result = CombatMethods.DetermineTargets(testList);
 
             //Assert
-            //TODO: Fix obsolete use of List (or revert to foreach?)
-            Assert.That(List.Map(result).Property("target"), Is.Not.EqualTo(""));
+            CollectionAssert.DoesNotContain(result.Select(x => x.target), "");
         }
     }
 }
