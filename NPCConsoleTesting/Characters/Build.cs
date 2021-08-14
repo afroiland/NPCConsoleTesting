@@ -34,8 +34,8 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter modifier for character");
             int modifier = int.Parse(Console.ReadLine());
 
-            Combatant npc = new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
-            return npc;
+            //Combatant npc = new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
+            return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
         }
     }
 }

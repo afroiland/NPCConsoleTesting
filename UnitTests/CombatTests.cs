@@ -59,6 +59,20 @@ namespace UnitTests
         }
 
         [Test]
+        public void CombatRound_returns_RoundResults()
+        {
+            //Act
+            var result = Combat.CombatRound(testList);
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.combatants, Is.Not.Null);
+                Assert.That(result.roundLog, Is.Not.Null);
+            });
+        }
+
+        [Test]
         public void Inits_get_set_for_all_chars()
         {
             //Act
@@ -75,13 +89,8 @@ namespace UnitTests
             var result = CombatMethods.DetermineTargets(testList);
 
             //Assert
-            foreach (Combatant ch in result)
-            {
-                Assert.AreNotEqual(ch.target, "");
-            }
-
-            //TODO: The following seems cleaner once "target" has been made into a property
-            //Assert.That(List.Map(result).Property("target"), Is.Not.EqualTo(""));
+            //TODO: Fix obsolete use of List (or revert to foreach?)
+            Assert.That(List.Map(result).Property("target"), Is.Not.EqualTo(""));
         }
     }
 }
