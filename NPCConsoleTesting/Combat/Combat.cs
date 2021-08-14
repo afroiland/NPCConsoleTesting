@@ -13,11 +13,12 @@ namespace NPCConsoleTesting
 
         public static RoundResults CombatRound(List<Combatant> combatants)
         {
+            ICombatMethods combatMethods = new CombatMethods();
             List<Combatant> charResults = new();
             List<String> logResults = new();
             
-            combatants = CombatMethods.DetermineTargets(combatants);
-            combatants = CombatMethods.DetermineInit(combatants);
+            combatants = combatMethods.DetermineTargets(combatants);
+            combatants = combatMethods.DetermineInit(combatants);
 
             Console.WriteLine($"{combatants[0].name} hp: {combatants[0].hp}");
             Console.WriteLine($"{combatants[1].name} hp: {combatants[1].hp}");
@@ -53,7 +54,7 @@ namespace NPCConsoleTesting
                 if (doReadLines) { Console.ReadLine(); }
                 
                 //priority combatant does an attack against target
-                int attackResult = CombatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac, combatants[priorityIndex].numberOfDice, combatants[priorityIndex].typeOfDie, combatants[priorityIndex].modifier);
+                int attackResult = combatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac, combatants[priorityIndex].numberOfDice, combatants[priorityIndex].typeOfDie, combatants[priorityIndex].modifier);
                 Console.WriteLine($"attackResult: {attackResult}");
                 if (doReadLines) { Console.ReadLine(); }
 

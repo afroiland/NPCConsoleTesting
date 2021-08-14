@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
-    public class CombatMethods
+    public class CombatMethods : ICombatMethods
     {
         static Random _random = new();
         private static readonly bool doReadLines = false;
         //private static readonly bool doReadLines = true;
 
-        public static int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int modifier)
+        public int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int modifier)
         {
             return thac0 > ac + _random.Next(1, 21) ? 0 : CalcDmg(numberOfDice, typeOfDie, modifier);
         }
 
-        public static int CalcDmg(int numberOfDice, int typeOfDie, int modifier)
+        public int CalcDmg(int numberOfDice, int typeOfDie, int modifier)
         {
             int result = 0;
 
@@ -29,7 +29,7 @@ namespace NPCConsoleTesting
             return result + modifier;
         }
 
-        public static List<Combatant> DetermineInit(List<Combatant> chars)
+        public List<Combatant> DetermineInit(List<Combatant> chars)
         {
             //set inits
             foreach (Combatant ch in chars)
@@ -52,7 +52,7 @@ namespace NPCConsoleTesting
             return chars;
         }
 
-        public static List<Combatant> DetermineTargets(List<Combatant> chars)
+        public List<Combatant> DetermineTargets(List<Combatant> chars)
         {
             //set targets if needed
             foreach (Combatant ch in chars)

@@ -8,6 +8,7 @@ namespace UnitTests
     public class CombatTests
     {
         //Arrange
+        ICombatMethods combatMethods = new CombatMethods();
         List<Combatant> testList = new()
         {
             new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1),
@@ -31,8 +32,8 @@ namespace UnitTests
             //Act
             for (int i = 0; i < 50; i++)
             {
-                resultsListPoorAC.Add(CombatMethods.Attack(thac0, poorAC, numOfDice, typeOfDie, modifier));
-                resultsListGoodAC.Add(CombatMethods.Attack(thac0, goodAC, numOfDice, typeOfDie, modifier));
+                resultsListPoorAC.Add(combatMethods.Attack(thac0, poorAC, numOfDice, typeOfDie, modifier));
+                resultsListGoodAC.Add(combatMethods.Attack(thac0, goodAC, numOfDice, typeOfDie, modifier));
             }
 
             //Assert
@@ -55,7 +56,7 @@ namespace UnitTests
             //Act
             for (int i = 0; i < 50; i++)
             {
-                resultsList.Add(CombatMethods.CalcDmg(numOfDice, typeOfDie, modifier));
+                resultsList.Add(combatMethods.CalcDmg(numOfDice, typeOfDie, modifier));
             }
 
             //Assert
@@ -80,7 +81,7 @@ namespace UnitTests
         public void Inits_get_set_for_all_chars()
         {
             //Act
-            var result = CombatMethods.DetermineInit(testList);
+            var result = combatMethods.DetermineInit(testList);
 
             //Assert
             Assert.That(result, Is.Ordered.By("init"));
@@ -90,7 +91,7 @@ namespace UnitTests
         public void Targets_get_set_for_all_chars()
         {
             //Act
-            var result = CombatMethods.DetermineTargets(testList);
+            var result = combatMethods.DetermineTargets(testList);
 
             //Assert
             CollectionAssert.DoesNotContain(result.Select(x => x.target), "");
