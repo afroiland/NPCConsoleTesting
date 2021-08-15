@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
-    class Build
+    public static class Build
     {
         static Random _random = new();
 
@@ -56,7 +56,6 @@ namespace NPCConsoleTesting
 
         public static string GenerateRandomName()
         {
-            //TODO: This method could use a lot of cleanup. Enum, comments, etc.
             string[] consonants = {"b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "qu", "r", "s", "t", "v", "w", "x", "z"};
             string[] startingBlends = {"bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "sl",
                 "sn", "sw", "tr", "tw", "wh", "wr", "scr", "shr", "sph", "spl", "spr", "squ", "str", "thr"};
@@ -66,41 +65,48 @@ namespace NPCConsoleTesting
                 "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo"};
 
             int patternLength = _random.Next(3, 7);
-            List<int> pattern = new() {_random.Next(1, 5)};
+            //the pattern will be a list of ints between 0 and 3 that each correspond to a LetterGroup (consonants, etc.)
+
+            //initialize the pattern with a random int between 0 and 3
+            List<int> pattern = new() {_random.Next(0, 4)};
             string name = new("");
 
-            //determine pattern
+            //add random ints to the pattern according to patternLength
             while (pattern.Count < patternLength)
             {
-                if (pattern[pattern.Count - 1] != 4)
+                //avoid assigning multiple vowels or non-vowels in a row
+                if (pattern[pattern.Count - 1] != (int)LetterGroups.vowels)
                 {
-                    pattern.Add(4);
+                    pattern.Add((int)LetterGroups.vowels);
                 }
                 else
                 {
-                    pattern.Add(_random.Next(1, 4));
+                    //0, 1 and 2 all correspond to non-vowels
+                    pattern.Add(_random.Next(0, 3));
                 }
-                if (pattern[pattern.Count - 1] == 2)
+                //ensure pattern does not end with a startingBlend
+                if (pattern[pattern.Count - 1] == (int)LetterGroups.startingBlends)
                 {
                     pattern.RemoveAt(pattern.Count - 1);
                 }
             }
 
-            //add letter strings according to pattern
+            //build name with letter strings according to pattern
             for (int i = 0; i < pattern.Count; i++)
             {
                 switch (pattern[i])
                 {
-                    case 1:
+                    case (int)LetterGroups.consonants:
                         name += consonants[_random.Next(1, consonants.Length - 1)];
                         break;
-                    case 2:
+                    case (int)LetterGroups.startingBlends:
                         name += startingBlends[_random.Next(1, startingBlends.Length - 1)];
                         break;
-                    case 3:
+                    case (int)LetterGroups.endingBlends:
                         name += endingBlends[_random.Next(1, endingBlends.Length - 1)];
                         break;
-                    case 4:
+                    case (int)LetterGroups.vowels:
+                        //use single vowels slightly more often (60% of the time) than double vowels
                         if (_random.Next(1, 11) > 4)
                         {
                             name += vowels[_random.Next(1, vowels.Length - 1)];
@@ -116,6 +122,11 @@ namespace NPCConsoleTesting
 
             //Capitalize first letter and return
             return char.ToUpper(name[0]) + name[1..];
+        }
+
+        public enum LetterGroups
+        {
+            consonants, startingBlends, endingBlends, vowels
         }
     }
 }

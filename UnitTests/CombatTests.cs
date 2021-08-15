@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace UnitTests
 {
-    public class CombatTests
+    class CombatTests
     {
         //Arrange
         ICombatMethods combatMethods = new CombatMethods();
