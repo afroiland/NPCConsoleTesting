@@ -20,11 +20,9 @@ namespace NPCConsoleTesting
             combatants = combatMethods.DetermineTargets(combatants);
             combatants = combatMethods.DetermineInit(combatants);
 
-            Console.WriteLine($"{combatants[0].name} hp: {combatants[0].hp}");
-            Console.WriteLine($"{combatants[1].name} hp: {combatants[1].hp}");
-            if (combatants.Count > 2)
+            foreach (Combatant x in combatants)
             {
-                Console.WriteLine($"{combatants[2].name} hp: {combatants[2].hp}");
+                Console.WriteLine($"{x.name} hp: {x.hp}");
             }
                 
             int segment = 0;

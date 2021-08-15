@@ -66,7 +66,10 @@ namespace NPCConsoleTesting
             //show targets
             for (int i = 0; i < chars.Count; i++)
             {
-                Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
+                if (chars[i].hp > 0)
+                {
+                    Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
+                }
             }
             if (doReadLines) { Console.ReadLine(); }
 

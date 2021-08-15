@@ -8,7 +8,23 @@ namespace NPCConsoleTesting
 {
     class Build
     {
-        public static Combatant BuildCombatant()
+        public static Combatant BuildCombatantRandomly()
+        {
+            Random _random = new();
+
+            string name = "random" + _random.Next(10000, 100000).ToString();
+            int HP = _random.Next(1, 11);
+            int initMod = _random.Next(1, 6);
+            int AC = _random.Next(-10, 11);
+            int thac0 = _random.Next(1, 21);
+            int numberOfDice = _random.Next(1, 3);
+            int typeOfDie = _random.Next(1, 7);
+            int modifier = _random.Next(1, 3);
+
+            return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
+        }
+
+        public static Combatant BuildCombatantViaConsole()
         {
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
@@ -34,7 +50,6 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter modifier for character");
             int modifier = int.Parse(Console.ReadLine());
 
-            //Combatant npc = new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
             return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
         }
     }
