@@ -48,13 +48,13 @@ namespace NPCConsoleTesting
                     break;
                 }
 
-                Console.WriteLine($"It is segment {segment}, {combatants[priorityIndex].name} is about to attack {combatants[priorityIndex].target}");
-                if (doReadLines) { Console.ReadLine(); }
+                //Console.WriteLine($"It is segment {segment}, {combatants[priorityIndex].name} is about to attack {combatants[priorityIndex].target}");
+                //if (doReadLines) { Console.ReadLine(); }
                 
                 //priority combatant does an attack against target
                 int attackResult = combatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac, combatants[priorityIndex].numberOfDice, combatants[priorityIndex].typeOfDie, combatants[priorityIndex].modifier);
-                Console.WriteLine($"attackResult: {attackResult}");
-                if (doReadLines) { Console.ReadLine(); }
+                //Console.WriteLine($"attackResult: {attackResult}");
+                //if (doReadLines) { Console.ReadLine(); }
 
                 if (attackResult > 0)
                 {

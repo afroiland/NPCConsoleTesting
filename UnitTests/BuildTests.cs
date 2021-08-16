@@ -13,6 +13,7 @@ namespace UnitTests
         [Test]
         public void BuildCombatantRandomly_returns_combatant_within_ranges()
         {
+            //TODO: create multiple combatants and check ranges
             Combatant result = Build.BuildCombatantRandomly();
 
             Assert.That(result, Is.Not.Null);
@@ -21,6 +22,7 @@ namespace UnitTests
         [Test]
         public void GenerateRandomName_returns_name_within_ranges()
         {
+            //TODO: create multiplt names and check ranges
             string result = Build.GenerateRandomName();
 
             Assert.That(result, Is.Not.Null);

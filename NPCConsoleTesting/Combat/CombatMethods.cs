@@ -43,11 +43,11 @@ namespace NPCConsoleTesting
             chars = chars.Where(x => x.hp > 0).OrderBy(x => x.init).ToList();
 
             //show init order
-            for (int i = 0; i < chars.Count; i++)
-            {
-                Console.WriteLine($"{chars[i].name} init: {chars[i].init}");
-            }
-            if (doReadLines) { Console.ReadLine(); }
+            //for (int i = 0; i < chars.Count; i++)
+            //{
+            //    Console.WriteLine($"{chars[i].name} init: {chars[i].init}");
+            //}
+            //if (doReadLines) { Console.ReadLine(); }
 
             return chars;
         }
@@ -64,14 +64,14 @@ namespace NPCConsoleTesting
                 }
             }
             //show targets
-            for (int i = 0; i < chars.Count; i++)
-            {
-                if (chars[i].hp > 0)
-                {
-                    Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
-                }
-            }
-            if (doReadLines) { Console.ReadLine(); }
+            //for (int i = 0; i < chars.Count; i++)
+            //{
+            //    if (chars[i].hp > 0)
+            //    {
+            //        Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
+            //    }
+            //}
+            //if (doReadLines) { Console.ReadLine(); }
 
             return chars;
         }

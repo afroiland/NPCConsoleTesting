@@ -13,7 +13,6 @@ namespace NPCConsoleTesting
         public static Combatant BuildCombatantRandomly()
         {
             string name = GenerateRandomName();
-            //string name = "random" + _random.Next(10000, 100000).ToString();
             int HP = _random.Next(1, 11);
             int initMod = _random.Next(1, 6);
             int AC = _random.Next(-10, 11);
@@ -65,17 +64,17 @@ namespace NPCConsoleTesting
                 "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo"};
 
             int patternLength = _random.Next(3, 7);
-            //the pattern will be a list of ints between 0 and 3 that each correspond to a LetterGroup (consonants, etc.)
+            //the pattern will be a list of 3 to 6 ints with values between 0 and 3, each int corresponding to a LetterGroup (consonants, etc.)
 
             //initialize the pattern with a random int between 0 and 3
             List<int> pattern = new() {_random.Next(0, 4)};
             string name = new("");
 
-            //add random ints to the pattern according to patternLength
+            //add random ints to the pattern until patternLength is met
             while (pattern.Count < patternLength)
             {
                 //avoid assigning multiple vowels or non-vowels in a row
-                if (pattern[pattern.Count - 1] != (int)LetterGroups.vowels)
+                if (pattern[^1] != (int)LetterGroups.vowels)
                 {
                     pattern.Add((int)LetterGroups.vowels);
                 }
@@ -85,7 +84,7 @@ namespace NPCConsoleTesting
                     pattern.Add(_random.Next(0, 3));
                 }
                 //ensure pattern does not end with a startingBlend
-                if (pattern[pattern.Count - 1] == (int)LetterGroups.startingBlends)
+                if (pattern[^1] == (int)LetterGroups.startingBlends)
                 {
                     pattern.RemoveAt(pattern.Count - 1);
                 }
