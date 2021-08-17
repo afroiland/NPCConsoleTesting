@@ -1,10 +1,6 @@
 ﻿using NPCConsoleTesting;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UnitTests
 {
@@ -33,8 +29,8 @@ namespace UnitTests
                     Assert.That(cmbt.initMod, Is.GreaterThan(0) & Is.LessThan(6));
                     Assert.That(cmbt.ac, Is.GreaterThan(-11) & Is.LessThan(11));
                     Assert.That(cmbt.thac0, Is.GreaterThan(0) & Is.LessThan(21));
-                    Assert.That(cmbt.numberOfDice, Is.GreaterThan(0) & Is.LessThan(3));
-                    Assert.That(cmbt.typeOfDie, Is.GreaterThan(0) & Is.LessThan(7));
+                    Assert.That(cmbt.numberOfAttackDice, Is.GreaterThan(0) & Is.LessThan(3));
+                    Assert.That(cmbt.typeOfAttackDie, Is.GreaterThan(0) & Is.LessThan(7));
                     Assert.That(cmbt.dmgModifier, Is.GreaterThan(-1) & Is.LessThan(3));
                 }
             });

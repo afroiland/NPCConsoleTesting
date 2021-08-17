@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace NPCConsoleTesting
 {
     public interface ICombatMethods
     {
-        int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int dmgModifier);
-        int CalcDmg(int numberOfDice, int typeOfDie, int dmgModifier);
+        int Attack(int thac0, int ac, int numberOfAttackDice, int typeOfAttackDie, int dmgModifier);
+        int CalcDmg(int numberOfAttackDice, int typeOfAttackDie, int dmgModifier);
         List<Combatant> DetermineInit(List<Combatant> chars);
         List<Combatant> DetermineTargets(List<Combatant> chars);
     }

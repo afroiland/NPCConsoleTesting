@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace NPCConsoleTesting
 {
@@ -39,8 +35,8 @@ namespace NPCConsoleTesting
 
         //The following not needed? Determined during combat?
         public int thac0;
-        public int numberOfDice;
-        public int typeOfDie;
+        public int numberOfAttackDice;
+        public int typeOfAttackDie;
         public int dmgModifier;
 
         public Character()

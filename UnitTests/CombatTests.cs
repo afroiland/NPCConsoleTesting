@@ -23,8 +23,8 @@ namespace UnitTests
             int thac0 = 11;
             int poorAC = 10;
             int goodAC = -10;
-            int numOfDice = 1;
-            int typeOfDie = 6;
+            int numOfAttackDice = 1;
+            int typeOfAttackDie = 6;
             int dmgModifier = 2;
             List<int> resultsListPoorAC = new();
             List<int> resultsListGoodAC = new();
@@ -32,8 +32,8 @@ namespace UnitTests
             //Act
             for (int i = 0; i < 50; i++)
             {
-                resultsListPoorAC.Add(combatMethods.Attack(thac0, poorAC, numOfDice, typeOfDie, dmgModifier));
-                resultsListGoodAC.Add(combatMethods.Attack(thac0, goodAC, numOfDice, typeOfDie, dmgModifier));
+                resultsListPoorAC.Add(combatMethods.Attack(thac0, poorAC, numOfAttackDice, typeOfAttackDie, dmgModifier));
+                resultsListGoodAC.Add(combatMethods.Attack(thac0, goodAC, numOfAttackDice, typeOfAttackDie, dmgModifier));
             }
 
             //Assert
@@ -48,15 +48,15 @@ namespace UnitTests
         public void CalcDmg_falls_within_range()
         {
             //Arrange
-            int numOfDice = 1;
-            int typeOfDie = 6;
+            int numOfAttackDice = 1;
+            int typeOfAttackDie = 6;
             int dmgModifier = 2;
             List<int> resultsList = new();
 
             //Act
             for (int i = 0; i < 50; i++)
             {
-                resultsList.Add(combatMethods.CalcDmg(numOfDice, typeOfDie, dmgModifier));
+                resultsList.Add(combatMethods.CalcDmg(numOfAttackDice, typeOfAttackDie, dmgModifier));
             }
 
             //Assert

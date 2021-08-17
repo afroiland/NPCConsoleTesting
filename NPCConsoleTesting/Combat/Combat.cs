@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
@@ -52,7 +49,8 @@ namespace NPCConsoleTesting
                 //if (doReadLines) { Console.ReadLine(); }
                 
                 //priority combatant does an attack against target
-                int attackResult = combatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac, combatants[priorityIndex].numberOfDice, combatants[priorityIndex].typeOfDie, combatants[priorityIndex].dmgModifier);
+                int attackResult = combatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac,
+                    combatants[priorityIndex].numberOfAttackDice, combatants[priorityIndex].typeOfAttackDie, combatants[priorityIndex].dmgModifier);
                 //Console.WriteLine($"attackResult: {attackResult}");
                 //if (doReadLines) { Console.ReadLine(); }
 

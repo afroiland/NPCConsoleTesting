@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
@@ -16,10 +13,10 @@ namespace NPCConsoleTesting
         private int _MaxAC;
         private int _MinThac0;
         private int _MaxThac0;
-        private int _MinNumberOfDice;
-        private int _MaxNumberOfDice;
-        private int _MinTypeOfDie;
-        private int _MaxTypeOfDie;
+        private int _MinNumberOfAttackDice;
+        private int _MaxNumberOfAttackDice;
+        private int _MinTypeOfAttackDie;
+        private int _MaxTypeOfAttackDie;
         private int _MinDmgModifier;
         private int _MaxDmgModifier;
 
@@ -31,10 +28,10 @@ namespace NPCConsoleTesting
         public int MaxAC { get => _MaxAC; set => _MaxAC = value; }
         public int MinThac0 { get => _MinThac0; set => _MinThac0 = value; }
         public int MaxThac0 { get => _MaxThac0; set => _MaxThac0 = value; }
-        public int MinNumberOfDice { get => _MinNumberOfDice; set => _MinNumberOfDice = value; }
-        public int MaxNumberOfDice { get => _MaxNumberOfDice; set => _MaxNumberOfDice = value; }
-        public int MinTypeOfDie { get => _MinTypeOfDie; set => _MinTypeOfDie = value; }
-        public int MaxTypeOfDie { get => _MaxTypeOfDie; set => _MaxTypeOfDie = value; }
+        public int MinNumberOfAttackDice { get => _MinNumberOfAttackDice; set => _MinNumberOfAttackDice = value; }
+        public int MaxNumberOfAttackDice { get => _MaxNumberOfAttackDice; set => _MaxNumberOfAttackDice = value; }
+        public int MinTypeOfAttackDie { get => _MinTypeOfAttackDie; set => _MinTypeOfAttackDie = value; }
+        public int MaxTypeOfAttackDie { get => _MaxTypeOfAttackDie; set => _MaxTypeOfAttackDie = value; }
         public int MinDmgModifier { get => _MinDmgModifier; set => _MinDmgModifier = value; }
         public int MaxDmgModifier { get => _MaxDmgModifier; set => _MaxDmgModifier = value; }
 
@@ -48,10 +45,10 @@ namespace NPCConsoleTesting
             MaxAC = 10;
             MinThac0 = 1;
             MaxThac0 = 20;
-            MinNumberOfDice = 1;
-            MaxNumberOfDice = 2;
-            MinTypeOfDie = 1;
-            MaxTypeOfDie = 6;
+            MinNumberOfAttackDice = 1;
+            MaxNumberOfAttackDice = 2;
+            MinTypeOfAttackDie = 1;
+            MaxTypeOfAttackDie = 6;
             MinDmgModifier = 0;
             MaxDmgModifier = 2;
         }
@@ -68,11 +65,11 @@ namespace NPCConsoleTesting
             int initMod = _random.Next(_MinInitMod, _MaxInitMod + 1);
             int AC = _random.Next(_MinAC, _MaxAC + 1);
             int thac0 = _random.Next(_MinThac0, _MaxThac0 + 1);
-            int numberOfDice = _random.Next(_MinNumberOfDice, _MaxNumberOfDice + 1);
-            int typeOfDie = _random.Next(_MinTypeOfDie, _MaxTypeOfDie + 1);
+            int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
+            int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
 
-            return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, dmgModifier);
+            return new(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -92,16 +89,16 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter thac0 for character");
             int thac0 = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter numberOfDice for character");
-            int numberOfDice = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter numberOfAttackDice for character");
+            int numberOfAttackDice = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter typeOfDie for character");
-            int typeOfDie = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter typeOfAttackDie for character");
+            int typeOfAttackDie = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Enter dmgModifier for character");
             int dmgModifier = int.Parse(Console.ReadLine());
 
-            return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, dmgModifier);
+            return new(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
         public static string GenerateRandomName()

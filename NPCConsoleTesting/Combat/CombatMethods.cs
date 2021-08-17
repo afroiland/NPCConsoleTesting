@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
@@ -12,18 +10,18 @@ namespace NPCConsoleTesting
         private static readonly bool doReadLines = false;
         //private static readonly bool doReadLines = true;
 
-        public int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int dmgModifier)
+        public int Attack(int thac0, int ac, int numberOfAttackDice, int typeOfAttackDie, int dmgModifier)
         {
-            return thac0 > ac + _random.Next(1, 21) ? 0 : CalcDmg(numberOfDice, typeOfDie, dmgModifier);
+            return thac0 > ac + _random.Next(1, 21) ? 0 : CalcDmg(numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
-        public int CalcDmg(int numberOfDice, int typeOfDie, int dmgModifier)
+        public int CalcDmg(int numberOfAttackDice, int typeOfAttackDie, int dmgModifier)
         {
             int result = 0;
 
-            for (int i = 0; i < numberOfDice; i++)
+            for (int i = 0; i < numberOfAttackDice; i++)
             {
-                result += _random.Next(1, typeOfDie + 1);
+                result += _random.Next(1, typeOfAttackDie + 1);
             }
 
             return result + dmgModifier;
