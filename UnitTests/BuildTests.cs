@@ -13,19 +13,46 @@ namespace UnitTests
         [Test]
         public void BuildCombatantRandomly_returns_combatant_within_ranges()
         {
-            //TODO: create multiple combatants and check ranges
-            Combatant result = Build.BuildCombatantRandomly();
+            //Arrange
+            List<Combatant> resultsList = new();
 
-            Assert.That(result, Is.Not.Null);
+            //Act
+            for (int i = 0; i < 20; i++)
+            {
+                resultsList.Add(Build.BuildCombatantRandomly());
+            }
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                foreach (Combatant cmbt in resultsList)
+                {
+                    Assert.That(cmbt.name, Is.Not.Null);
+                    Assert.That(cmbt.hp, Is.GreaterThan(0) & Is.LessThan(11));
+                    Assert.That(cmbt.initMod, Is.GreaterThan(0) & Is.LessThan(6));
+                    Assert.That(cmbt.ac, Is.GreaterThan(-11) & Is.LessThan(11));
+                    Assert.That(cmbt.thac0, Is.GreaterThan(0) & Is.LessThan(21));
+                    Assert.That(cmbt.numberOfDice, Is.GreaterThan(0) & Is.LessThan(3));
+                    Assert.That(cmbt.typeOfDie, Is.GreaterThan(0) & Is.LessThan(7));
+                    Assert.That(cmbt.modifier, Is.GreaterThan(0) & Is.LessThan(3));
+                }
+            });
         }
 
         [Test]
         public void GenerateRandomName_returns_name_within_ranges()
         {
-            //TODO: create multiplt names and check ranges
-            string result = Build.GenerateRandomName();
+            //Arrange
+            List<string> resultsList = new();
 
-            Assert.That(result, Is.Not.Null);
+            //Act
+            for (int i = 0; i < 50; i++)
+            {
+                resultsList.Add(Build.GenerateRandomName());
+            }
+
+            //Assert
+            Assert.That(resultsList, Is.All.Length.GreaterThan(2) & Is.All.Length.LessThan(16));
         }
     }
 }
