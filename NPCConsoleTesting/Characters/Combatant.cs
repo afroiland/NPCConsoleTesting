@@ -15,11 +15,11 @@ namespace NPCConsoleTesting
         public int thac0 { get; set; }
         public int numberOfDice { get; set; }
         public int typeOfDie { get; set; }
-        public int modifier { get; set; }
+        public int dmgModifier { get; set; }
         public int init { get; set; }
         public string target { get; set; }
 
-        public Combatant(string charName, int charHp, int charInitMod, int charAc, int charThac0, int charNumOfDice, int charTypeOfDie, int charModifier)
+        public Combatant(string charName, int charHp, int charInitMod, int charAc, int charThac0, int charNumOfDice, int charTypeOfDie, int charDmgModifier)
         {
             name = charName;
             hp = charHp;
@@ -28,7 +28,7 @@ namespace NPCConsoleTesting
             thac0 = charThac0;
             numberOfDice = charNumOfDice;
             typeOfDie = charTypeOfDie;
-            modifier = charModifier;
+            dmgModifier = charDmgModifier;
             init = 0;
             target = "";
         }

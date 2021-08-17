@@ -25,15 +25,15 @@ namespace UnitTests
             int goodAC = -10;
             int numOfDice = 1;
             int typeOfDie = 6;
-            int modifier = 2;
+            int dmgModifier = 2;
             List<int> resultsListPoorAC = new();
             List<int> resultsListGoodAC = new();
 
             //Act
             for (int i = 0; i < 50; i++)
             {
-                resultsListPoorAC.Add(combatMethods.Attack(thac0, poorAC, numOfDice, typeOfDie, modifier));
-                resultsListGoodAC.Add(combatMethods.Attack(thac0, goodAC, numOfDice, typeOfDie, modifier));
+                resultsListPoorAC.Add(combatMethods.Attack(thac0, poorAC, numOfDice, typeOfDie, dmgModifier));
+                resultsListGoodAC.Add(combatMethods.Attack(thac0, goodAC, numOfDice, typeOfDie, dmgModifier));
             }
 
             //Assert
@@ -50,13 +50,13 @@ namespace UnitTests
             //Arrange
             int numOfDice = 1;
             int typeOfDie = 6;
-            int modifier = 2;
+            int dmgModifier = 2;
             List<int> resultsList = new();
 
             //Act
             for (int i = 0; i < 50; i++)
             {
-                resultsList.Add(combatMethods.CalcDmg(numOfDice, typeOfDie, modifier));
+                resultsList.Add(combatMethods.CalcDmg(numOfDice, typeOfDie, dmgModifier));
             }
 
             //Assert

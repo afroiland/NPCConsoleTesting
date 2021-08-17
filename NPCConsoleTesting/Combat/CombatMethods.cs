@@ -12,12 +12,12 @@ namespace NPCConsoleTesting
         private static readonly bool doReadLines = false;
         //private static readonly bool doReadLines = true;
 
-        public int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int modifier)
+        public int Attack(int thac0, int ac, int numberOfDice, int typeOfDie, int dmgModifier)
         {
-            return thac0 > ac + _random.Next(1, 21) ? 0 : CalcDmg(numberOfDice, typeOfDie, modifier);
+            return thac0 > ac + _random.Next(1, 21) ? 0 : CalcDmg(numberOfDice, typeOfDie, dmgModifier);
         }
 
-        public int CalcDmg(int numberOfDice, int typeOfDie, int modifier)
+        public int CalcDmg(int numberOfDice, int typeOfDie, int dmgModifier)
         {
             int result = 0;
 
@@ -26,7 +26,7 @@ namespace NPCConsoleTesting
                 result += _random.Next(1, typeOfDie + 1);
             }
 
-            return result + modifier;
+            return result + dmgModifier;
         }
 
         public List<Combatant> DetermineInit(List<Combatant> chars)

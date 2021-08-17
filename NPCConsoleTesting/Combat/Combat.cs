@@ -52,7 +52,7 @@ namespace NPCConsoleTesting
                 //if (doReadLines) { Console.ReadLine(); }
                 
                 //priority combatant does an attack against target
-                int attackResult = combatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac, combatants[priorityIndex].numberOfDice, combatants[priorityIndex].typeOfDie, combatants[priorityIndex].modifier);
+                int attackResult = combatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac, combatants[priorityIndex].numberOfDice, combatants[priorityIndex].typeOfDie, combatants[priorityIndex].dmgModifier);
                 //Console.WriteLine($"attackResult: {attackResult}");
                 //if (doReadLines) { Console.ReadLine(); }
 

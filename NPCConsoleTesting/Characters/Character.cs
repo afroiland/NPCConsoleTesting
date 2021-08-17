@@ -41,7 +41,7 @@ namespace NPCConsoleTesting
         public int thac0;
         public int numberOfDice;
         public int typeOfDie;
-        public int modifier;
+        public int dmgModifier;
 
         public Character()
         {

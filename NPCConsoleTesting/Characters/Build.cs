@@ -6,22 +6,73 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting
 {
-    public static class Build
+    public class Build
     {
+        private int _MinHP;
+        private int _MaxHP;
+        private int _MinInitMod;
+        private int _MaxInitMod;
+        private int _MinAC;
+        private int _MaxAC;
+        private int _MinThac0;
+        private int _MaxThac0;
+        private int _MinNumberOfDice;
+        private int _MaxNumberOfDice;
+        private int _MinTypeOfDie;
+        private int _MaxTypeOfDie;
+        private int _MinDmgModifier;
+        private int _MaxDmgModifier;
+
+        public int MinHP { get => _MinHP; set => _MinHP = value; }
+        public int MaxHP { get => _MaxHP; set => _MaxHP = value; }
+        public int MinInitMod { get => _MinInitMod; set => _MinInitMod = value; }
+        public int MaxInitMod { get => _MaxInitMod; set => _MaxInitMod = value; }
+        public int MinAC { get => _MinAC; set => _MinAC = value; }
+        public int MaxAC { get => _MaxAC; set => _MaxAC = value; }
+        public int MinThac0 { get => _MinThac0; set => _MinThac0 = value; }
+        public int MaxThac0 { get => _MaxThac0; set => _MaxThac0 = value; }
+        public int MinNumberOfDice { get => _MinNumberOfDice; set => _MinNumberOfDice = value; }
+        public int MaxNumberOfDice { get => _MaxNumberOfDice; set => _MaxNumberOfDice = value; }
+        public int MinTypeOfDie { get => _MinTypeOfDie; set => _MinTypeOfDie = value; }
+        public int MaxTypeOfDie { get => _MaxTypeOfDie; set => _MaxTypeOfDie = value; }
+        public int MinDmgModifier { get => _MinDmgModifier; set => _MinDmgModifier = value; }
+        public int MaxDmgModifier { get => _MaxDmgModifier; set => _MaxDmgModifier = value; }
+
+        public Build()
+        {
+            MinHP = 1;
+            MaxHP = 10;
+            MinInitMod = 1;
+            MaxInitMod = 5;
+            MinAC = -10;
+            MaxAC = 10;
+            MinThac0 = 1;
+            MaxThac0 = 20;
+            MinNumberOfDice = 1;
+            MaxNumberOfDice = 2;
+            MinTypeOfDie = 1;
+            MaxTypeOfDie = 6;
+            MinDmgModifier = 0;
+            MaxDmgModifier = 2;
+        }
+
+        const int MIN_NAME_PATTERN_LENGTH = 3;
+        const int MAX_NAME_PATTERN_LENGTH = 7;
+
         static Random _random = new();
 
-        public static Combatant BuildCombatantRandomly()
+        public Combatant BuildCombatantRandomly()
         {
             string name = GenerateRandomName();
-            int HP = _random.Next(1, 11);
-            int initMod = _random.Next(1, 6);
-            int AC = _random.Next(-10, 11);
-            int thac0 = _random.Next(1, 21);
-            int numberOfDice = _random.Next(1, 3);
-            int typeOfDie = _random.Next(1, 7);
-            int modifier = _random.Next(1, 3);
+            int HP = _random.Next(_MinHP, _MaxHP + 1);
+            int initMod = _random.Next(_MinInitMod, _MaxInitMod + 1);
+            int AC = _random.Next(_MinAC, _MaxAC + 1);
+            int thac0 = _random.Next(_MinThac0, _MaxThac0 + 1);
+            int numberOfDice = _random.Next(_MinNumberOfDice, _MaxNumberOfDice + 1);
+            int typeOfDie = _random.Next(_MinTypeOfDie, _MaxTypeOfDie + 1);
+            int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
 
-            return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
+            return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, dmgModifier);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -47,10 +98,10 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter typeOfDie for character");
             int typeOfDie = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter modifier for character");
-            int modifier = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter dmgModifier for character");
+            int dmgModifier = int.Parse(Console.ReadLine());
 
-            return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, modifier);
+            return new(name, HP, initMod, AC, thac0, numberOfDice, typeOfDie, dmgModifier);
         }
 
         public static string GenerateRandomName()
@@ -63,8 +114,8 @@ namespace NPCConsoleTesting
             string[] doubleVowels = {"aa", "ae", "ai", "ao", "au", "ea", "ee", "ei", "eo", "eu", "ia", "ie",
                 "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo"};
 
-            int patternLength = _random.Next(3, 7);
-            //the pattern will be a list of 3 to 6 ints with values between 0 and 3, each int corresponding to a LetterGroup (consonants, etc.)
+            int patternLength = _random.Next(MIN_NAME_PATTERN_LENGTH, MAX_NAME_PATTERN_LENGTH);
+            //the pattern will be a list of ints with values between 0 and 3, each int corresponding to a LetterGroup (consonants, etc.)
 
             //initialize the pattern with a random int between 0 and 3
             List<int> pattern = new() {_random.Next(0, 4)};

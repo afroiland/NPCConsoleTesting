@@ -14,12 +14,13 @@ namespace UnitTests
         public void BuildCombatantRandomly_returns_combatant_within_ranges()
         {
             //Arrange
+            Build build = new();
             List<Combatant> resultsList = new();
 
             //Act
             for (int i = 0; i < 20; i++)
             {
-                resultsList.Add(Build.BuildCombatantRandomly());
+                resultsList.Add(build.BuildCombatantRandomly());
             }
 
             //Assert
@@ -34,7 +35,7 @@ namespace UnitTests
                     Assert.That(cmbt.thac0, Is.GreaterThan(0) & Is.LessThan(21));
                     Assert.That(cmbt.numberOfDice, Is.GreaterThan(0) & Is.LessThan(3));
                     Assert.That(cmbt.typeOfDie, Is.GreaterThan(0) & Is.LessThan(7));
-                    Assert.That(cmbt.modifier, Is.GreaterThan(0) & Is.LessThan(3));
+                    Assert.That(cmbt.dmgModifier, Is.GreaterThan(-1) & Is.LessThan(3));
                 }
             });
         }
