@@ -1,17 +1,17 @@
 ﻿
 namespace NPCConsoleTesting
 {
-    interface ICombatant
+    public interface ICombatant
     {
-        string name { get; set; }
-        int hp { get; set; }
-        int initMod { get; set; }
-        int ac { get; set; }
-        int thac0 { get; set; }
-        int numberOfAttackDice { get; set; }
-        int typeOfAttackDie { get; set; }
-        int dmgModifier { get; set; }
-        int init { get; set; }
-        string target { get; set; }
+        string Name { get; set; }
+        int HP { get; set; }
+        int InitMod { get; set; }
+        int AC { get; set; }
+        int Thac0 { get; set; }
+        int NumberOfAttackDice { get; set; }
+        int TypeOfAttackDie { get; set; }
+        int DmgModifier { get; set; }
+        int Init { get; set; }
+        string Target { get; set; }
     }
 }

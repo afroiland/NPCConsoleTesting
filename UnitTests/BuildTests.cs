@@ -11,7 +11,7 @@ namespace UnitTests
         {
             //Arrange
             Build build = new();
-            List<Combatant> resultsList = new();
+            List<ICombatant> resultsList = new();
 
             //Act
             for (int i = 0; i < 20; i++)
@@ -22,16 +22,16 @@ namespace UnitTests
             //Assert
             Assert.Multiple(() =>
             {
-                foreach (Combatant cmbt in resultsList)
+                foreach (ICombatant cmbt in resultsList)
                 {
-                    Assert.That(cmbt.name, Is.Not.Null);
-                    Assert.That(cmbt.hp, Is.GreaterThan(0) & Is.LessThan(11));
-                    Assert.That(cmbt.initMod, Is.GreaterThan(0) & Is.LessThan(6));
-                    Assert.That(cmbt.ac, Is.GreaterThan(-11) & Is.LessThan(11));
-                    Assert.That(cmbt.thac0, Is.GreaterThan(0) & Is.LessThan(21));
-                    Assert.That(cmbt.numberOfAttackDice, Is.GreaterThan(0) & Is.LessThan(3));
-                    Assert.That(cmbt.typeOfAttackDie, Is.GreaterThan(0) & Is.LessThan(7));
-                    Assert.That(cmbt.dmgModifier, Is.GreaterThan(-1) & Is.LessThan(3));
+                    Assert.That(cmbt.Name, Is.Not.Null);
+                    Assert.That(cmbt.HP, Is.GreaterThan(0) & Is.LessThan(11));
+                    Assert.That(cmbt.InitMod, Is.GreaterThan(0) & Is.LessThan(6));
+                    Assert.That(cmbt.AC, Is.GreaterThan(-11) & Is.LessThan(11));
+                    Assert.That(cmbt.Thac0, Is.GreaterThan(0) & Is.LessThan(21));
+                    Assert.That(cmbt.NumberOfAttackDice, Is.GreaterThan(0) & Is.LessThan(3));
+                    Assert.That(cmbt.TypeOfAttackDie, Is.GreaterThan(0) & Is.LessThan(7));
+                    Assert.That(cmbt.DmgModifier, Is.GreaterThan(-1) & Is.LessThan(3));
                 }
             });
         }

@@ -9,11 +9,11 @@ namespace UnitTests
     {
         //Arrange
         ICombatMethods combatMethods = new CombatMethods();
-        List<Combatant> testList = new()
+        List<ICombatant> testList = new()
         {
-            new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1),
-            new Combatant("testChar2", 10, 0, 10, 1, 1, 4, 1),
-            new Combatant("testChar3", 10, 0, 10, 1, 1, 4, 1)
+            new Fighter("testChar1", 10, 0, 10, 1, 1, 4, 1),
+            new Fighter("testChar2", 10, 0, 10, 1, 1, 4, 1),
+            new Fighter("testChar3", 10, 0, 10, 1, 1, 4, 1)
         };
 
         [Test]
@@ -84,7 +84,7 @@ namespace UnitTests
             var result = combatMethods.DetermineInit(testList);
 
             //Assert
-            Assert.That(result, Is.Ordered.By("init"));
+            Assert.That(result, Is.Ordered.By("Init"));
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace UnitTests
             var result = combatMethods.DetermineTargets(testList);
 
             //Assert
-            CollectionAssert.DoesNotContain(result.Select(x => x.target), "");
+            CollectionAssert.DoesNotContain(result.Select(x => x.Target), "");
         }
     }
 }

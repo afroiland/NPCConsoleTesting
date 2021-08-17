@@ -8,18 +8,18 @@ namespace NPCConsoleTesting
         private static readonly bool doReadLines = false;
         //private static readonly bool doReadLines = true;
 
-        public static RoundResults CombatRound(List<Combatant> combatants)
+        public static RoundResults CombatRound(List<ICombatant> combatants)
         {
             ICombatMethods combatMethods = new CombatMethods();
-            List<Combatant> charResults = new();
+            List<ICombatant> charResults = new();
             List<String> logResults = new();
             
             combatants = combatMethods.DetermineTargets(combatants);
             combatants = combatMethods.DetermineInit(combatants);
 
-            foreach (Combatant x in combatants)
+            foreach (ICombatant x in combatants)
             {
-                Console.WriteLine($"{x.name} hp: {x.hp}");
+                Console.WriteLine($"{x.Name} hp: {x.HP}");
             }
                 
             int segment = 0;
@@ -29,17 +29,17 @@ namespace NPCConsoleTesting
 
             while (priorityIndex <= combatants.Count - 1)
             {
-                while (segment < combatants[priorityIndex].init)
+                while (segment < combatants[priorityIndex].Init)
                 {
                     segment++;
                     opportunityForSimulAttack = false;
                 }
 
                 //set targetIndex based on priority combatant's target
-                targetIndex = combatants.FindIndex(x => x.name == combatants[priorityIndex].target);
+                targetIndex = combatants.FindIndex(x => x.Name == combatants[priorityIndex].Target);
 
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
-                if ((combatants[priorityIndex].hp <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].hp <= 0)
+                if ((combatants[priorityIndex].HP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].HP <= 0)
                 {
                     priorityIndex++;
                     break;
@@ -49,41 +49,41 @@ namespace NPCConsoleTesting
                 //if (doReadLines) { Console.ReadLine(); }
                 
                 //priority combatant does an attack against target
-                int attackResult = combatMethods.Attack(combatants[priorityIndex].thac0, combatants[targetIndex].ac,
-                    combatants[priorityIndex].numberOfAttackDice, combatants[priorityIndex].typeOfAttackDie, combatants[priorityIndex].dmgModifier);
+                int attackResult = combatMethods.Attack(combatants[priorityIndex].Thac0, combatants[targetIndex].AC,
+                    combatants[priorityIndex].NumberOfAttackDice, combatants[priorityIndex].TypeOfAttackDie, combatants[priorityIndex].DmgModifier);
                 //Console.WriteLine($"attackResult: {attackResult}");
                 //if (doReadLines) { Console.ReadLine(); }
 
                 if (attackResult > 0)
                 {
-                    logResults.Add($"{combatants[priorityIndex].name} struck {combatants[targetIndex].name} for {attackResult} damage.");
+                    logResults.Add($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
 
                     //adjust target hp
-                    combatants[targetIndex].hp -= attackResult;
+                    combatants[targetIndex].HP -= attackResult;
 
-                    if (combatants[targetIndex].hp <= 0)
+                    if (combatants[targetIndex].HP <= 0)
                     {
-                        logResults.Add($"{combatants[targetIndex].name} fell.");
+                        logResults.Add($"{combatants[targetIndex].Name} fell.");
 
-                        if (combatants[targetIndex].init == segment)
+                        if (combatants[targetIndex].Init == segment)
                         {
                             opportunityForSimulAttack = true;
                         }
                     }
 
-                    Console.WriteLine($"{combatants[priorityIndex].name} struck {combatants[targetIndex].name} for {attackResult} damage.");
-                    Console.WriteLine($"{combatants[targetIndex].name} is at {combatants[targetIndex].hp}hp.");
+                    Console.WriteLine($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
+                    Console.WriteLine($"{combatants[targetIndex].Name} is at {combatants[targetIndex].HP}hp.");
                 }
                 else
                 {
-                    logResults.Add($"{combatants[priorityIndex].name} missed {combatants[targetIndex].name}.");
+                    logResults.Add($"{combatants[priorityIndex].Name} missed {combatants[targetIndex].Name}.");
                 }
 
                 priorityIndex++;
             }
 
             //add combatants to charResults
-            foreach (Combatant ch in combatants)
+            foreach (ICombatant ch in combatants)
             {
                 charResults.Add(ch);
             }

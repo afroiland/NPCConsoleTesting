@@ -27,18 +27,18 @@ namespace NPCConsoleTesting
             return result + dmgModifier;
         }
 
-        public List<Combatant> DetermineInit(List<Combatant> chars)
+        public List<ICombatant> DetermineInit(List<ICombatant> chars)
         {
             //set inits
-            foreach (Combatant ch in chars)
+            foreach (ICombatant ch in chars)
             {
-                ch.init = _random.Next(1, 11) + ch.initMod;
+                ch.Init = _random.Next(1, 11) + ch.InitMod;
                 //ch.init = 5;
             }
 
             //order chars by init
             //chars = chars.OrderBy(x => x.init).ToList();
-            chars = chars.Where(x => x.hp > 0).OrderBy(x => x.init).ToList();
+            chars = chars.Where(x => x.HP > 0).OrderBy(x => x.Init).ToList();
 
             //show init order
             //for (int i = 0; i < chars.Count; i++)
@@ -50,15 +50,15 @@ namespace NPCConsoleTesting
             return chars;
         }
 
-        public List<Combatant> DetermineTargets(List<Combatant> chars)
+        public List<ICombatant> DetermineTargets(List<ICombatant> chars)
         {
             //set targets if needed
-            foreach (Combatant ch in chars)
+            foreach (ICombatant ch in chars)
             {
-                if (ch.target == "" || chars.Where(x => x.name == ch.target).Select(x => x.hp).ToList()[0] <= 0)
+                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Select(x => x.HP).ToList()[0] <= 0)
                 {
-                    List<string> potentialTargets = chars.Where(x => ch.name != x.name && x.hp > 0).Select(x => x.name).ToList();
-                    ch.target = potentialTargets[_random.Next(0, potentialTargets.Count)];
+                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name && x.HP > 0).Select(x => x.Name).ToList();
+                    ch.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
                 }
             }
             //show targets

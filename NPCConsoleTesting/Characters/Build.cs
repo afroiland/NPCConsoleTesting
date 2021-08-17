@@ -58,7 +58,7 @@ namespace NPCConsoleTesting
 
         static Random _random = new();
 
-        public Combatant BuildCombatantRandomly()
+        public ICombatant BuildCombatantRandomly()
         {
             string name = GenerateRandomName();
             int HP = _random.Next(_MinHP, _MaxHP + 1);
@@ -69,10 +69,10 @@ namespace NPCConsoleTesting
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
 
-            return new(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            return new Fighter(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
-        public static Combatant BuildCombatantViaConsole()
+        public static ICombatant BuildCombatantViaConsole()
         {
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
@@ -98,7 +98,7 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter dmgModifier for character");
             int dmgModifier = int.Parse(Console.ReadLine());
 
-            return new(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            return new Fighter(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
         public static string GenerateRandomName()
