@@ -17,10 +17,10 @@ namespace NPCConsoleTesting
             combatants = combatMethods.DetermineTargets(combatants);
             combatants = combatMethods.DetermineInit(combatants);
 
-            foreach (ICombatant x in combatants)
-            {
-                Console.WriteLine($"{x.Name} hp: {x.HP}");
-            }
+            //foreach (ICombatant x in combatants)
+            //{
+            //    Console.WriteLine($"{x.Name} hp: {x.HP}");
+            //}
                 
             int segment = 0;
             int priorityIndex = 0;
@@ -71,13 +71,13 @@ namespace NPCConsoleTesting
                         }
                     }
 
-                    Console.WriteLine($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
-                    Console.WriteLine($"{combatants[targetIndex].Name} is at {combatants[targetIndex].HP}hp.");
+                    //Console.WriteLine($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
+                    //Console.WriteLine($"{combatants[targetIndex].Name} is at {combatants[targetIndex].HP}hp.");
                 }
-                else
-                {
-                    logResults.Add($"{combatants[priorityIndex].Name} missed {combatants[targetIndex].Name}.");
-                }
+                //else
+                //{
+                //    logResults.Add($"{combatants[priorityIndex].Name} missed {combatants[targetIndex].Name}.");
+                //}
 
                 priorityIndex++;
             }

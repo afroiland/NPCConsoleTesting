@@ -12,7 +12,17 @@ namespace NPCConsoleTesting
 
         public int Attack(int thac0, int ac, int numberOfAttackDice, int typeOfAttackDie, int dmgModifier)
         {
-            return thac0 > ac + _random.Next(1, 21) ? 0 : CalcDmg(numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            int result = 0;
+            int attackRoll = _random.Next(1, 21);
+
+            //An attack roll of 20 always suceeds and a roll of 1 always fails
+            if (attackRoll == 20 || (thac0 - ac <= attackRoll && attackRoll != 1))
+            {
+                result = CalcDmg(numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            }
+
+            return result;
+            //return thac0 > ac + _random.Next(1, 21) ? 0 : CalcDmg(numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
         public int CalcDmg(int numberOfAttackDice, int typeOfAttackDie, int dmgModifier)
@@ -36,8 +46,7 @@ namespace NPCConsoleTesting
                 //ch.init = 5;
             }
 
-            //order chars by init
-            //chars = chars.OrderBy(x => x.init).ToList();
+            //order chars with hp > 0 by init
             chars = chars.Where(x => x.HP > 0).OrderBy(x => x.Init).ToList();
 
             //show init order

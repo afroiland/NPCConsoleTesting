@@ -37,6 +37,7 @@ namespace UnitTests
             }
 
             //Assert
+            //TODO: update this test to account for nat 1s and nat 20s
             Assert.Multiple(() =>
             {
                 Assert.That(resultsListPoorAC, Is.All.GreaterThan(0));
