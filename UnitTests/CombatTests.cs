@@ -16,6 +16,9 @@ namespace UnitTests
             new Fighter("testChar3", 10, 0, 10, 1, 1, 4, 1)
         };
 
+        const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
+        const float ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE = .17F;
+
         [Test]
         public void Attack_succeeds_and_fails_as_expected()
         {
@@ -26,22 +29,21 @@ namespace UnitTests
             int numOfAttackDice = 1;
             int typeOfAttackDie = 6;
             int dmgModifier = 2;
-            List<int> resultsListPoorAC = new();
-            List<int> resultsListGoodAC = new();
+            int missesAgainstPoorAC = 0;
+            int hitsAgainstGoodAC = 0;
 
             //Act
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                resultsListPoorAC.Add(combatMethods.Attack(thac0, poorAC, numOfAttackDice, typeOfAttackDie, dmgModifier));
-                resultsListGoodAC.Add(combatMethods.Attack(thac0, goodAC, numOfAttackDice, typeOfAttackDie, dmgModifier));
+                if (combatMethods.Attack(thac0, poorAC, numOfAttackDice, typeOfAttackDie, dmgModifier) == 0) { missesAgainstPoorAC++; }
+                if (combatMethods.Attack(thac0, goodAC, numOfAttackDice, typeOfAttackDie, dmgModifier) != 0) { hitsAgainstGoodAC++; }
             }
 
             //Assert
-            //TODO: update this test to account for nat 1s and nat 20s
             Assert.Multiple(() =>
             {
-                Assert.That(resultsListPoorAC, Is.All.GreaterThan(0));
-                Assert.That(resultsListGoodAC, Is.All.LessThan(1));
+                Assert.That((float)missesAgainstPoorAC / (float)TIMES_TO_LOOP_FOR_RANDOM_TESTS, Is.LessThan(ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE));
+                Assert.That((float)hitsAgainstGoodAC / (float)TIMES_TO_LOOP_FOR_RANDOM_TESTS, Is.LessThan(ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE));
             });
         }
 
@@ -55,7 +57,7 @@ namespace UnitTests
             List<int> resultsList = new();
 
             //Act
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
                 resultsList.Add(combatMethods.CalcDmg(numOfAttackDice, typeOfAttackDie, dmgModifier));
             }

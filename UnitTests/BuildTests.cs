@@ -6,6 +6,8 @@ namespace UnitTests
 {
     class BuildTests
     {
+        const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 50;
+
         [Test]
         public void BuildCombatantRandomly_returns_combatant_within_ranges()
         {
@@ -14,7 +16,7 @@ namespace UnitTests
             List<ICombatant> resultsList = new();
 
             //Act
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
                 resultsList.Add(build.BuildCombatantRandomly());
             }
@@ -43,7 +45,7 @@ namespace UnitTests
             List<string> resultsList = new();
 
             //Act
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
                 resultsList.Add(Build.GenerateRandomName());
             }
