@@ -67,7 +67,7 @@ namespace UnitTests
         }
 
         [Test]
-        public void CombatRound_returns_RoundResults()
+        public void DoACombatRound_returns_RoundResults()
         {
             //Act
             var result = CombatRound.DoACombatRound(testList);
@@ -88,6 +88,41 @@ namespace UnitTests
 
             //Assert
             Assert.That(result, Is.Ordered.By("Init"));
+        }
+
+        [Test]
+        //TODO: Improve this super-janky test
+        public void Simultaneous_init_allows_attack_from_dead_combatant()
+        {
+            //Assert
+            List<ICombatant> twoCombatantTestList = new()
+            {
+                new Fighter("testChar1", 1, 0, 10, 1, 1, 4, 1),
+                new Fighter("testChar2", 1, 0, 10, 1, 1, 4, 1)
+            };
+
+            RoundResults results = new(twoCombatantTestList, new List<string>());
+            bool simultaneousInit = false;
+
+            //Act
+            while (!simultaneousInit)
+            {
+                results = CombatRound.DoACombatRound(twoCombatantTestList);
+                //If the two inits are different, we reset HP and go again
+                if (results.combatants[0].Init != results.combatants[1].Init)
+                {
+                    results.combatants[0].HP = 1;
+                    results.combatants[1].HP = 1;
+                }
+                //This bit accounts for the 5% of the time a combatant gets an attack as expected but rolls a 1
+                else if (results.combatants[0].HP <= 0 && results.combatants[1].HP <= 0)
+                {
+                    simultaneousInit = true;
+                }
+            }
+
+            //Assert
+            Assert.That(results.combatants.Select(x => x.HP), Is.All.LessThanOrEqualTo(0));
         }
 
         [Test]
