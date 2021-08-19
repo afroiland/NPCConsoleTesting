@@ -70,7 +70,7 @@ namespace UnitTests
         public void CombatRound_returns_RoundResults()
         {
             //Act
-            var result = Combat.CombatRound(testList);
+            var result = CombatRound.DoACombatRound(testList);
 
             //Assert
             Assert.Multiple(() =>

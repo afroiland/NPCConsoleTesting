@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace NPCConsoleTesting
 {
-    public class Combat
+    public class CombatRound
     {
         private static readonly bool doReadLines = false;
         //private static readonly bool doReadLines = true;
 
-        public static RoundResults CombatRound(List<ICombatant> combatants)
+        public static RoundResults DoACombatRound(List<ICombatant> combatants)
         {
             ICombatMethods combatMethods = new CombatMethods();
             List<ICombatant> charResults = new();
