@@ -11,23 +11,23 @@ namespace NPCConsoleTesting
     {
         static void Main()
         {
-            DBConnection();
+            //DBConnection();
 
-            static void DBConnection()
-            {
-                var connectionString = "";
+            //static void DBConnection()
+            //{
+            //    var connectionString = "";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
+            //    using (SqlConnection connection = new SqlConnection(connectionString))
+            //    {
+            //        connection.Open();
 
-                    string sql = @"SELECT * FROM npcs WHERE id = 58";
+            //        string sql = @"SELECT * FROM npcs WHERE id = 58";
 
-                    var query = connection.Query<CharacterModel>(sql);
-                    Console.WriteLine("test");
-                    Console.ReadLine();
-                }
-            }
+            //        var query = connection.Query<CharacterModel>(sql);
+            //        Console.WriteLine("test");
+            //        Console.ReadLine();
+            //    }
+            //}
 
 
 
