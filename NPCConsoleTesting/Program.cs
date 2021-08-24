@@ -31,10 +31,6 @@ namespace NPCConsoleTesting
 
 
 
-            var test = "test";
-
-
-
 
 
 
