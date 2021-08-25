@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Dapper;
 using NPCConsoleTesting.Models;
+using Microsoft.Extensions.Configuration;
+using NPCConsoleTesting.DB_Connection;
 
 namespace NPCConsoleTesting
 {
@@ -11,7 +13,8 @@ namespace NPCConsoleTesting
     {
         static void Main()
         {
-            //DBConnection();
+            //Helper helper = new();
+            Helper.DBConnection();
 
             //static void DBConnection()
             //{
