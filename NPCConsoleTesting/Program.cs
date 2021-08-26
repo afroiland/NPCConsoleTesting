@@ -9,6 +9,7 @@ using NPCConsoleTesting.DB_Connection;
 using System.IO;
 using Serilog;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NPCConsoleTesting
 {
@@ -30,12 +31,13 @@ namespace NPCConsoleTesting
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-
+                    services.AddTransient<IGreetingService, GreetingService>();
                 })
                 .UseSerilog()
                 .Build();
 
-
+            var svc = ActivatorUtilities.CreateInstance<GreetingService>(host.Services);
+            svc.Run();
 
             //Helper helper = new();
             //Helper.DBConnection();
