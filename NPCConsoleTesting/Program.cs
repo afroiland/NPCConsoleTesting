@@ -29,34 +29,39 @@ namespace NPCConsoleTesting
             Log.Logger.Information("App Starting");
 
             var host = Host.CreateDefaultBuilder()
+                //.ConfigureAppConfiguration(app =>
+                //{
+                //    app.AddJsonFile("appsettings.json");
+                //})
                 .ConfigureServices((context, services) =>
                 {
                     services.AddTransient<IGreetingService, GreetingService>();
+                    services.AddTransient<Helper>();
                 })
                 .UseSerilog()
                 .Build();
 
-            var svc = ActivatorUtilities.CreateInstance<GreetingService>(host.Services);
-            svc.Run();
+            //var svc = ActivatorUtilities.CreateInstance<GreetingService>(host.Services);
+            //svc.Run();
 
-            //Helper helper = new();
-            //Helper.DBConnection();
+            var svc2 = ActivatorUtilities.CreateInstance<Helper>(host.Services);
+            string test = svc2.GetConnectionString();
+            
+            DBConnection();
 
-            //static void DBConnection()
-            //{
-            //    var connectionString = "";
+            void DBConnection()
+            {
+                using (SqlConnection connection = new SqlConnection(test))
+                {
+                    connection.Open();
 
-            //    using (SqlConnection connection = new SqlConnection(connectionString))
-            //    {
-            //        connection.Open();
+                    string sql = @"SELECT * FROM npcs WHERE id = 58";
 
-            //        string sql = @"SELECT * FROM npcs WHERE id = 58";
-
-            //        var query = connection.Query<CharacterModel>(sql);
-            //        Console.WriteLine("test");
-            //        Console.ReadLine();
-            //    }
-            //}
+                    var query = connection.Query<CharacterModel>(sql);
+                    Console.WriteLine("test");
+                    Console.ReadLine();
+                }
+            }
 
 
 

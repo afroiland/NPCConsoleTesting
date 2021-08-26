@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Configuration;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Data.SqlClient;
-using Dapper;
-using NPCConsoleTesting.Models;
+﻿using Microsoft.Extensions.Configuration;
 
 namespace NPCConsoleTesting.DB_Connection
 {
@@ -19,23 +10,9 @@ namespace NPCConsoleTesting.DB_Connection
             _config = config;
         }
 
-        //DBConnection();
-
-        public static void DBConnection()
+        public string GetConnectionString()
         {
-            
-            //var connectionString = _config.GetValue;
-
-            //using (SqlConnection connection = new SqlConnection(connectionString))
-            //{
-            //    connection.Open();
-
-            //    string sql = @"SELECT * FROM npcs WHERE id = 58";
-
-            //    var query = connection.Query<CharacterModel>(sql);
-            //    Console.WriteLine("test");
-            //    Console.ReadLine();
-            //}
+            return _config.GetSection("ConnectionStrings").GetSection("Default").Value;
         }
     }
 }
