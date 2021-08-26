@@ -24,24 +24,18 @@ namespace NPCConsoleTesting.DB_Connection
         public static void DBConnection()
         {
             
-            var connectionString = _config.GetValue;
+            //var connectionString = _config.GetValue;
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
+            //using (SqlConnection connection = new SqlConnection(connectionString))
+            //{
+            //    connection.Open();
 
-                string sql = @"SELECT * FROM npcs WHERE id = 58";
+            //    string sql = @"SELECT * FROM npcs WHERE id = 58";
 
-                var query = connection.Query<CharacterModel>(sql);
-                Console.WriteLine("test");
-                Console.ReadLine();
-            }
+            //    var query = connection.Query<CharacterModel>(sql);
+            //    Console.WriteLine("test");
+            //    Console.ReadLine();
+            //}
         }
-
-
-        //public static string CnnVal(string name)
-        //{
-        //    return ConfigurationManager.ConnectionStrings[name].ConnectionString;
-        //}
     }
 }
