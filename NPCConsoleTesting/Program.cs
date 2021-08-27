@@ -7,10 +7,11 @@ using System.IO;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using NPCConsoleTesting.Models;
 
 namespace NPCConsoleTesting
 {
-    class Program
+    class Program : CombatantRetriever
     {
         static void Main()
         {
@@ -34,32 +35,40 @@ namespace NPCConsoleTesting
                 .UseSerilog()
                 .Build();
 
-            var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
-            string connectionString = connectionStringSvc.GetConnectionString();
-            string query = "SELECT * FROM npcs WHERE id = 58";
-
-            var temp = DBConnection.QueryDB(connectionString, query);
-
-
             Console.WriteLine($"How many are battling?");
             int numberBattling = int.Parse(Console.ReadLine());
-            Console.WriteLine($"1 = Random, 2 = Custom");
-            int randomOrCustom = int.Parse(Console.ReadLine());
+            Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
+            int charOrigin = int.Parse(Console.ReadLine());
 
             CombatantBuilder cBuilder = new();
+            CombatantRetriever cRetriever = new();
             List<ICombatant> combatants = new();
+            string connectionString = "";
+
+            if (charOrigin == 3)
+            {
+                var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
+                connectionString = connectionStringSvc.GetConnectionString();
+            }
 
             for (int i = 0; i < numberBattling; i++)
             {
-                combatants.Add(randomOrCustom == 2 ? CombatantBuilder.BuildCombatantViaConsole() : cBuilder.BuildCombatantRandomly());
+                if (charOrigin == 2)
+                {
+                    combatants.Add(CombatantBuilder.BuildCombatantViaConsole());
+                }
+                else if (charOrigin == 3)
+                {
+                    string name = cRetriever.GetNameFromUserInput();
+                    combatants.Add(cRetriever.GetCombatantByName(connectionString, name));
+                }
+                else
+                {
+                    combatants.Add(cBuilder.BuildCombatantRandomly());
+                }
             }
 
-            //do a round
-            //RoundResults roundResults = Combat.CombatRound(combatants);
-            //roundResults.roundLog.ForEach(i => Console.WriteLine(i));
-            //Console.ReadLine();
-
-            //do a whole fight
+            //combatants fight until only one* remains.  (*in rare cases, zero)
             List<string> wholeFightLog = new() {" ", "Here's what happened:"};
             bool downToOne = false;
             int roundNumber = 0;

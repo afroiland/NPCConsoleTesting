@@ -11,7 +11,6 @@ namespace NPCConsoleTesting
         public static List<string> DoACombatRound(List<ICombatant> combatants)
         {
             ICombatMethods combatMethods = new CombatMethods();
-            List<ICombatant> charResults = new();
             List<String> logResults = new();
             
             combatants = combatMethods.DetermineTargets(combatants);
@@ -82,13 +81,6 @@ namespace NPCConsoleTesting
                 priorityIndex++;
             }
 
-            //add combatants to charResults
-            //foreach (ICombatant ch in combatants)
-            //{
-            //    charResults.Add(ch);
-            //}
-
-            //return new RoundResults(charResults, logResults);
             return logResults;
         }
     }
