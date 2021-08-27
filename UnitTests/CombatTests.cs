@@ -67,17 +67,13 @@ namespace UnitTests
         }
 
         [Test]
-        public void DoACombatRound_returns_RoundResults()
+        public void DoACombatRound_returns_logResults()
         {
             //Act
-            var result = CombatRound.DoACombatRound(testList);
+            List<string> logResults = CombatRound.DoACombatRound(testList);
 
             //Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.combatants, Is.Not.Null);
-                Assert.That(result.roundLog, Is.Not.Null);
-            });
+            Assert.That(logResults, Is.Not.Null);
         }
 
         [Test]
@@ -101,28 +97,27 @@ namespace UnitTests
                 new Fighter("testChar2", 1, 0, 10, 1, 1, 4, 1)
             };
 
-            RoundResults results = new(twoCombatantTestList, new List<string>());
             bool simultaneousInit = false;
 
             //Act
             while (!simultaneousInit)
             {
-                results = CombatRound.DoACombatRound(twoCombatantTestList);
+                CombatRound.DoACombatRound(twoCombatantTestList);
                 //If the two inits are different, we reset HP and go again
-                if (results.combatants[0].Init != results.combatants[1].Init)
+                if (twoCombatantTestList[0].Init != twoCombatantTestList[1].Init)
                 {
-                    results.combatants[0].HP = 1;
-                    results.combatants[1].HP = 1;
+                    twoCombatantTestList[0].HP = 1;
+                    twoCombatantTestList[1].HP = 1;
                 }
                 //This bit accounts for the 5% of the time a combatant gets an attack as expected but rolls a 1
-                else if (results.combatants[0].HP <= 0 && results.combatants[1].HP <= 0)
+                else if (twoCombatantTestList[0].HP <= 0 && twoCombatantTestList[1].HP <= 0)
                 {
                     simultaneousInit = true;
                 }
             }
 
             //Assert
-            Assert.That(results.combatants.Select(x => x.HP), Is.All.LessThanOrEqualTo(0));
+            Assert.That(twoCombatantTestList.Select(x => x.HP), Is.All.LessThanOrEqualTo(0));
         }
 
         [Test]

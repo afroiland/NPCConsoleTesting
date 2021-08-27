@@ -66,22 +66,22 @@ namespace NPCConsoleTesting
 
             while (!downToOne)
             {
-                RoundResults roundResults = CombatRound.DoACombatRound(combatants);
+                List<string> logResults = CombatRound.DoACombatRound(combatants);
 
                 roundNumber++;
                 wholeFightLog.Add($"------Round {roundNumber}------");
 
                 //TODO: ensure there is not a shorter way to do this. No luck briefly with Join, Concat
                 //add roundLog to wholeFightLog
-                foreach (string log in roundResults.roundLog)
+                foreach (string logEntry in logResults)
                 {
-                    wholeFightLog.Add(log);
+                    wholeFightLog.Add(logEntry);
                 }
 
                 //TODO: clean this up, likely using LINQ
                 //check if we're down to one
                 int numberOfSurvivors = 0;
-                foreach (ICombatant ch in roundResults.combatants)
+                foreach (ICombatant ch in combatants)
                 {
                     if (ch.HP > 0)
                     {

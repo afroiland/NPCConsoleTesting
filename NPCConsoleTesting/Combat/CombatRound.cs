@@ -8,7 +8,7 @@ namespace NPCConsoleTesting
         private static readonly bool doReadLines = false;
         //private static readonly bool doReadLines = true;
 
-        public static RoundResults DoACombatRound(List<ICombatant> combatants)
+        public static List<string> DoACombatRound(List<ICombatant> combatants)
         {
             ICombatMethods combatMethods = new CombatMethods();
             List<ICombatant> charResults = new();
@@ -83,12 +83,13 @@ namespace NPCConsoleTesting
             }
 
             //add combatants to charResults
-            foreach (ICombatant ch in combatants)
-            {
-                charResults.Add(ch);
-            }
+            //foreach (ICombatant ch in combatants)
+            //{
+            //    charResults.Add(ch);
+            //}
 
-            return new RoundResults(charResults, logResults);
+            //return new RoundResults(charResults, logResults);
+            return logResults;
         }
     }
 }
