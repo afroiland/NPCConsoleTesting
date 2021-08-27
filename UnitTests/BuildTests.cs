@@ -12,13 +12,13 @@ namespace UnitTests
         public void BuildCombatantRandomly_returns_combatant_within_ranges()
         {
             //Arrange
-            Build build = new();
+            CombatantBuilder cBuilder = new();
             List<ICombatant> resultsList = new();
 
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                resultsList.Add(build.BuildCombatantRandomly());
+                resultsList.Add(cBuilder.BuildCombatantRandomly());
             }
 
             //Assert
@@ -47,7 +47,7 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                resultsList.Add(Build.GenerateRandomName());
+                resultsList.Add(CombatantBuilder.GenerateRandomName());
             }
 
             //Assert

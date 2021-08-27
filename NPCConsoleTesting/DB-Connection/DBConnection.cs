@@ -18,9 +18,6 @@ namespace NPCConsoleTesting.DB_Connection
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-
-                //string sql = @"SELECT * FROM npcs WHERE id = 58";
-
                 result = connection.Query<CharacterModel>(query);
             }
 

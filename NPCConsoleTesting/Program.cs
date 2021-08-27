@@ -46,12 +46,12 @@ namespace NPCConsoleTesting
             Console.WriteLine($"1 = Random, 2 = Custom");
             int randomOrCustom = int.Parse(Console.ReadLine());
 
-            Build build = new();
+            CombatantBuilder cBuilder = new();
             List<ICombatant> combatants = new();
 
             for (int i = 0; i < numberBattling; i++)
             {
-                combatants.Add(randomOrCustom == 2 ? Build.BuildCombatantViaConsole() : build.BuildCombatantRandomly());
+                combatants.Add(randomOrCustom == 2 ? CombatantBuilder.BuildCombatantViaConsole() : cBuilder.BuildCombatantRandomly());
             }
 
             //do a round
@@ -108,7 +108,7 @@ namespace NPCConsoleTesting
                 }
 
                 //update combatants list with returned
-                combatants = roundResults.combatants;
+                //combatants = roundResults.combatants;
             }
         }
 

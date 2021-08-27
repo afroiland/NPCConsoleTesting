@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NPCConsoleTesting
 {
-    public class Build
+    public class CombatantBuilder
     {
         private int _MinHP;
         private int _MaxHP;
@@ -35,7 +35,7 @@ namespace NPCConsoleTesting
         public int MinDmgModifier { get => _MinDmgModifier; set => _MinDmgModifier = value; }
         public int MaxDmgModifier { get => _MaxDmgModifier; set => _MaxDmgModifier = value; }
 
-        public Build()
+        public CombatantBuilder()
         {
             MinHP = 1;
             MaxHP = 10;
