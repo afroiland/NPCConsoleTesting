@@ -87,7 +87,6 @@ namespace UnitTests
         }
 
         [Test]
-        //TODO: Improve this super-janky test
         public void Simultaneous_init_allows_attack_from_dead_combatant()
         {
             //Assert
@@ -97,27 +96,34 @@ namespace UnitTests
                 new Fighter("testChar2", 1, 0, 10, 1, 1, 4, 1)
             };
 
+            int init1 = 0;
+            int init2 = 0;
             bool simultaneousInit = false;
 
             //Act
             while (!simultaneousInit)
             {
                 CombatRound.DoACombatRound(twoCombatantTestList);
-                //If the two inits are different, we reset HP and go again
-                if (twoCombatantTestList[0].Init != twoCombatantTestList[1].Init)
+                
+                if (twoCombatantTestList[0].HP <= 0 && twoCombatantTestList[1].HP <= 0)
+                {
+                    init1 = twoCombatantTestList[0].Init;
+                    init2 = twoCombatantTestList[1].Init;
+                    simultaneousInit = true;
+                }
+                else
                 {
                     twoCombatantTestList[0].HP = 1;
                     twoCombatantTestList[1].HP = 1;
                 }
-                //This bit accounts for the 5% of the time a combatant gets an attack as expected but rolls a 1
-                else if (twoCombatantTestList[0].HP <= 0 && twoCombatantTestList[1].HP <= 0)
-                {
-                    simultaneousInit = true;
-                }
             }
 
             //Assert
-            Assert.That(twoCombatantTestList.Select(x => x.HP), Is.All.LessThanOrEqualTo(0));
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(init1, init2);
+                Assert.That(twoCombatantTestList.Select(x => x.HP), Is.All.LessThanOrEqualTo(0));
+            });
         }
 
         [Test]
