@@ -1,9 +1,6 @@
-﻿using Microsoft.Data.SqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dapper;
-using NPCConsoleTesting.Models;
 using Microsoft.Extensions.Configuration;
 using NPCConsoleTesting.DB_Connection;
 using System.IO;
