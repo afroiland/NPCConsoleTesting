@@ -2,10 +2,10 @@
 
 namespace NPCConsoleTesting.DB_Connection
 {
-    public class Helper
+    public class ConnectionStringService
     {
         private readonly IConfiguration _config;
-        public Helper(IConfiguration config)
+        public ConnectionStringService(IConfiguration config)
         {
             _config = config;
         }

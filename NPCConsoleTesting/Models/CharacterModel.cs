@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting.Models
 {
-    class CharacterModel
+    public class CharacterModel
     {
         public string Name { get; set; }
         public string title { get; set; }
