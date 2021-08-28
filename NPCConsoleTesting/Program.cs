@@ -1,84 +1,96 @@
-﻿using Microsoft.Data.SqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dapper;
+using Microsoft.Extensions.Configuration;
+using NPCConsoleTesting.DB_Connection;
+using System.IO;
+using Serilog;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using NPCConsoleTesting.Models;
 
 namespace NPCConsoleTesting
 {
-    class Program
+    class Program : CombatantRetriever
     {
         static void Main()
         {
-            //DBConnection();
+            var builder = new ConfigurationBuilder();
+            BuildConfig(builder);
 
-            //static void DBConnection()
-            //{
-            //    var connectionString = "";
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Build())
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
 
-            //    using (SqlConnection connection = new SqlConnection(connectionString))
-            //    {
-            //        connection.Open();
+            Log.Logger.Information("App Starting");
 
-            //        string sql = @"SELECT * FROM npcs WHERE id = 58";
-
-            //        var query = connection.Query<CharacterModel>(sql);
-            //        Console.WriteLine("test");
-            //        Console.ReadLine();
-            //    }
-            //}
-
-
-
-
-
-
-
-
-
+            var host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    //services.AddTransient<IGreetingService, GreetingService>();
+                    services.AddTransient<ConnectionStringService>();
+                })
+                .UseSerilog()
+                .Build();
 
             Console.WriteLine($"How many are battling?");
             int numberBattling = int.Parse(Console.ReadLine());
-            Console.WriteLine($"1 = Random, 2 = Custom");
-            int randomOrCustom = int.Parse(Console.ReadLine());
+            Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
+            int charOrigin = int.Parse(Console.ReadLine());
 
-            Build build = new();
+            CombatantBuilder cBuilder = new();
+            CombatantRetriever cRetriever = new();
             List<ICombatant> combatants = new();
+            string connectionString = "";
+
+            if (charOrigin == 3)
+            {
+                var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
+                connectionString = connectionStringSvc.GetConnectionString();
+            }
 
             for (int i = 0; i < numberBattling; i++)
             {
-                combatants.Add(randomOrCustom == 2 ? Build.BuildCombatantViaConsole() : build.BuildCombatantRandomly());
+                if (charOrigin == 2)
+                {
+                    combatants.Add(CombatantBuilder.BuildCombatantViaConsole());
+                }
+                else if (charOrigin == 3)
+                {
+                    string name = cRetriever.GetNameFromUserInput();
+                    combatants.Add(cRetriever.GetCombatantByName(connectionString, name));
+                }
+                else
+                {
+                    combatants.Add(cBuilder.BuildCombatantRandomly());
+                }
             }
 
-            //do a round
-            //RoundResults roundResults = Combat.CombatRound(combatants);
-            //roundResults.roundLog.ForEach(i => Console.WriteLine(i));
-            //Console.ReadLine();
-
-            //do a whole fight
+            //combatants fight until only one* remains.  (*in rare cases, zero)
             List<string> wholeFightLog = new() {" ", "Here's what happened:"};
             bool downToOne = false;
             int roundNumber = 0;
 
             while (!downToOne)
             {
-                RoundResults roundResults = CombatRound.DoACombatRound(combatants);
+                List<string> logResults = CombatRound.DoACombatRound(combatants);
 
                 roundNumber++;
                 wholeFightLog.Add($"------Round {roundNumber}------");
 
                 //TODO: ensure there is not a shorter way to do this. No luck briefly with Join, Concat
                 //add roundLog to wholeFightLog
-                foreach (string log in roundResults.roundLog)
+                foreach (string logEntry in logResults)
                 {
-                    wholeFightLog.Add(log);
+                    wholeFightLog.Add(logEntry);
                 }
 
                 //TODO: clean this up, likely using LINQ
                 //check if we're down to one
                 int numberOfSurvivors = 0;
-                foreach (ICombatant ch in roundResults.combatants)
+                foreach (ICombatant ch in combatants)
                 {
                     if (ch.HP > 0)
                     {
@@ -105,8 +117,16 @@ namespace NPCConsoleTesting
                 }
 
                 //update combatants list with returned
-                combatants = roundResults.combatants;
+                //combatants = roundResults.combatants;
             }
+        }
+
+        static void BuildConfig(IConfigurationBuilder builder)
+        {
+            builder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                //.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("")}")
+                .AddEnvironmentVariables();
         }
     }
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NPCConsoleTesting.Models
+﻿namespace NPCConsoleTesting.Models
 {
-    class CharacterModel
+    public class CharacterModel
     {
         public string Name { get; set; }
         public string title { get; set; }
@@ -21,7 +15,7 @@ namespace NPCConsoleTesting.Models
         public int att_adj { get; set; }
         public string status { get; set; }
         public int str { get; set; }
-        public int ex_str { get; set; }   //unsure if it's worth to make a child class for this one property
+        public int ex_str { get; set; }
         public int intel { get; set; }
         public int dex { get; set; }
         public int con { get; set; }

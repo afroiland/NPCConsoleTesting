@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NPCConsoleTesting
 {
-    public class Build
+    public class CombatantBuilder
     {
         private int _MinHP;
         private int _MaxHP;
@@ -35,7 +35,7 @@ namespace NPCConsoleTesting
         public int MinDmgModifier { get => _MinDmgModifier; set => _MinDmgModifier = value; }
         public int MaxDmgModifier { get => _MaxDmgModifier; set => _MaxDmgModifier = value; }
 
-        public Build()
+        public CombatantBuilder()
         {
             MinHP = 1;
             MaxHP = 10;
@@ -144,23 +144,23 @@ namespace NPCConsoleTesting
                 switch (pattern[i])
                 {
                     case (int)LetterGroups.consonants:
-                        name += consonants[_random.Next(1, consonants.Length - 1)];
+                        name += consonants[_random.Next(1, consonants.Length)];
                         break;
                     case (int)LetterGroups.startingBlends:
-                        name += startingBlends[_random.Next(1, startingBlends.Length - 1)];
+                        name += startingBlends[_random.Next(1, startingBlends.Length)];
                         break;
                     case (int)LetterGroups.endingBlends:
-                        name += endingBlends[_random.Next(1, endingBlends.Length - 1)];
+                        name += endingBlends[_random.Next(1, endingBlends.Length)];
                         break;
                     case (int)LetterGroups.vowels:
                         //use single vowels slightly more often (60% of the time) than double vowels
                         if (_random.Next(1, 11) > 4)
                         {
-                            name += vowels[_random.Next(1, vowels.Length - 1)];
+                            name += vowels[_random.Next(1, vowels.Length)];
                         }
                         else
                         {
-                            name += doubleVowels[_random.Next(1, doubleVowels.Length - 1)];
+                            name += doubleVowels[_random.Next(1, doubleVowels.Length)];
                         }
                         break;
                     default: break;
