@@ -48,7 +48,7 @@ namespace NPCConsoleTesting
                 connectionString = connectionStringSvc.GetConnectionString();
             }
 
-            for (int i = 0; i < numberBattling; i++)
+            while (combatants.Count < numberBattling)
             {
                 if (charOrigin == 2)
                 {
@@ -57,7 +57,16 @@ namespace NPCConsoleTesting
                 else if (charOrigin == 3)
                 {
                     string name = CombatantRetriever.GetNameFromUserInput();
-                    combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                    try
+                    {
+                        combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                    }
+                    catch (Exception)
+                    {
+                        //Console.WriteLine($"Exception: {ex}");
+                        //Console.WriteLine();
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
                 }
                 else
                 {

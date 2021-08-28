@@ -1,7 +1,5 @@
 ﻿using NPCConsoleTesting.DB_Connection;
-using NPCConsoleTesting.Models;
 using System;
-using System.Linq;
 
 namespace NPCConsoleTesting
 {
