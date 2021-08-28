@@ -9,7 +9,6 @@ namespace NPCConsoleTesting.DB_Connection
     {
         public static List<CharacterModel> QueryDB(string connectionString, string query)
         {
-            //IEnumerable<CharacterModel> result;
             List<CharacterModel> listResult = new();
 
             using (SqlConnection connection = new SqlConnection(connectionString))

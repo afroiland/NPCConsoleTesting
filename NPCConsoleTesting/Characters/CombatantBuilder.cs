@@ -101,6 +101,51 @@ namespace NPCConsoleTesting
             return new Fighter(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
+        public List<ICombatant> BuildListOfCombatants(string connectionString)
+        {
+            Console.WriteLine($"How many are battling?");
+            int numberBattling = int.Parse(Console.ReadLine());
+            Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
+            int charOrigin = int.Parse(Console.ReadLine());
+
+            //CombatantBuilder cBuilder = new();
+            List<ICombatant> combatants = new();
+
+            while (combatants.Count < numberBattling)
+            {
+                if (charOrigin == 2)
+                {
+                    try
+                    {
+                        combatants.Add(BuildCombatantViaConsole());
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
+
+                }
+                else if (charOrigin == 3)
+                {
+                    string name = CombatantRetriever.GetNameFromUserInput();
+                    try
+                    {
+                        combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
+                }
+                else
+                {
+                    combatants.Add(BuildCombatantRandomly());
+                }
+            }
+
+            return combatants;
+        }
+
         public static string GenerateRandomName()
         {
             string[] consonants = {"b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "qu", "r", "s", "t", "v", "w", "x", "z"};
