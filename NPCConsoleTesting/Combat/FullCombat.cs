@@ -46,7 +46,6 @@ namespace NPCConsoleTesting.Combat
                     wholeFightLog.Add($"{winner[0]} won.");
 
                     wholeFightLog.ForEach(i => Console.WriteLine(i));
-                    Console.ReadLine();
                 }
 
                 //lol

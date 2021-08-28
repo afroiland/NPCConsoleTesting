@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using NPCConsoleTesting.Combat;
 using System.Collections.Generic;
+using System;
 
 namespace NPCConsoleTesting
 {
@@ -34,12 +35,25 @@ namespace NPCConsoleTesting
 
             var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
 
-            //build combatant list
-            CombatantBuilder cbtBuilder = new();
-            List<ICombatant> combatants = cbtBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
+            bool weAreDone = false;
+            while (!weAreDone)
+            {
+                //build combatant list
+                CombatantBuilder cbtBuilder = new();
+                List<ICombatant> combatants = cbtBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
 
-            //do a full combat
-            FullCombat.DoAFullCombat(combatants);
+                //do a full combat
+                FullCombat.DoAFullCombat(combatants);
+
+                Console.WriteLine();
+                Console.WriteLine($"Go again? Y/N");
+                string response = Console.ReadLine();
+                if (response == "n" || response == "N")
+                {
+                    weAreDone = true;
+                }
+            }
+            
         }
 
         static void BuildConfig(IConfigurationBuilder builder)
