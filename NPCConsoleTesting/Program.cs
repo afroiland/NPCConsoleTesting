@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace NPCConsoleTesting
 {
-    class Program : CombatantRetriever
+    class Program
     {
         static void Main()
         {
@@ -28,7 +28,6 @@ namespace NPCConsoleTesting
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    //services.AddTransient<IGreetingService, GreetingService>();
                     services.AddTransient<IConnectionStringService, ConnectionStringService>();
                 })
                 .UseSerilog()
@@ -40,7 +39,6 @@ namespace NPCConsoleTesting
             int charOrigin = int.Parse(Console.ReadLine());
 
             CombatantBuilder cBuilder = new();
-            CombatantRetriever cRetriever = new();
             List<ICombatant> combatants = new();
             string connectionString = "";
 
@@ -58,8 +56,8 @@ namespace NPCConsoleTesting
                 }
                 else if (charOrigin == 3)
                 {
-                    string name = cRetriever.GetNameFromUserInput();
-                    combatants.Add(cRetriever.GetCombatantByName(connectionString, name));
+                    string name = CombatantRetriever.GetNameFromUserInput();
+                    combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
                 }
                 else
                 {
@@ -114,9 +112,6 @@ namespace NPCConsoleTesting
                     Console.WriteLine("lol");
                     break;
                 }
-
-                //update combatants list with returned
-                //combatants = roundResults.combatants;
             }
         }
 
