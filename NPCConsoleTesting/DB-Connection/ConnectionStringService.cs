@@ -2,7 +2,7 @@
 
 namespace NPCConsoleTesting.DB_Connection
 {
-    public class ConnectionStringService
+    public class ConnectionStringService : IConnectionStringService
     {
         private readonly IConfiguration _config;
         public ConnectionStringService(IConfiguration config)

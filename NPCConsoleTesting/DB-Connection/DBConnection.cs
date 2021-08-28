@@ -1,11 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using NPCConsoleTesting.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NPCConsoleTesting.DB_Connection
 {

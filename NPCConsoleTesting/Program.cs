@@ -7,7 +7,6 @@ using System.IO;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using NPCConsoleTesting.Models;
 
 namespace NPCConsoleTesting
 {
@@ -30,7 +29,7 @@ namespace NPCConsoleTesting
                 .ConfigureServices((context, services) =>
                 {
                     //services.AddTransient<IGreetingService, GreetingService>();
-                    services.AddTransient<ConnectionStringService>();
+                    services.AddTransient<IConnectionStringService, ConnectionStringService>();
                 })
                 .UseSerilog()
                 .Build();

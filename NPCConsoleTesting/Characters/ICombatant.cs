@@ -1,5 +1,4 @@
-﻿
-namespace NPCConsoleTesting
+﻿namespace NPCConsoleTesting
 {
     public interface ICombatant
     {
