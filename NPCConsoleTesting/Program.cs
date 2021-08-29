@@ -48,7 +48,7 @@ namespace NPCConsoleTesting
                 Console.WriteLine();
                 Console.WriteLine($"Go again? Y/N");
                 string response = Console.ReadLine();
-                if (response == "n" || response == "N")
+                if (response != "y" && response != "Y")
                 {
                     weAreDone = true;
                 }

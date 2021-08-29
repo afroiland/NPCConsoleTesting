@@ -11,9 +11,9 @@ namespace UnitTests
         ICombatMethods combatMethods = new CombatMethods();
         List<ICombatant> testList = new()
         {
-            new Fighter("testChar1", 10, 0, 10, 1, 1, 4, 1),
-            new Fighter("testChar2", 10, 0, 10, 1, 1, 4, 1),
-            new Fighter("testChar3", 10, 0, 10, 1, 1, 4, 1)
+            new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1),
+            new Combatant("testChar2", 10, 0, 10, 1, 1, 4, 1),
+            new Combatant("testChar3", 10, 0, 10, 1, 1, 4, 1)
         };
 
         const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
@@ -92,8 +92,8 @@ namespace UnitTests
             //Assert
             List<ICombatant> twoCombatantTestList = new()
             {
-                new Fighter("testChar1", 1, 0, 10, 1, 1, 4, 1),
-                new Fighter("testChar2", 1, 0, 10, 1, 1, 4, 1)
+                new Combatant("testChar1", 1, 0, 10, 1, 1, 4, 1),
+                new Combatant("testChar2", 1, 0, 10, 1, 1, 4, 1)
             };
 
             int init1 = 0;

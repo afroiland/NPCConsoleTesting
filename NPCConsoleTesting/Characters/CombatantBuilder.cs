@@ -69,7 +69,7 @@ namespace NPCConsoleTesting
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
 
-            return new Fighter(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
         public static ICombatant BuildCombatantViaConsole()
@@ -98,7 +98,7 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter dmgModifier for character");
             int dmgModifier = int.Parse(Console.ReadLine());
 
-            return new Fighter(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
         public List<ICombatant> BuildListOfCombatants(string connectionString)
