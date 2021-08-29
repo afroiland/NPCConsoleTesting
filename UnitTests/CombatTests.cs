@@ -1,4 +1,5 @@
 using NPCConsoleTesting;
+using NPCConsoleTesting.Combat;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -87,9 +88,27 @@ namespace UnitTests
         }
 
         [Test]
+        public void DoAFullCombat_leaves_one_or_zero_remaining()
+        {
+            //Arrange
+            List<ICombatant> fullCombatTestList = new()
+            {
+                new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1),
+                new Combatant("testChar2", 10, 0, 10, 1, 1, 4, 1),
+                new Combatant("testChar3", 10, 0, 10, 1, 1, 4, 1)
+            };
+
+            //Act
+            FullCombat.DoAFullCombat(fullCombatTestList);
+
+            //Assert
+            Assert.Less(fullCombatTestList.Where(x => x.HP > 0).Count(), 2);
+        }
+
+        [Test]
         public void Simultaneous_init_allows_attack_from_dead_combatant()
         {
-            //Assert
+            //Arrange
             List<ICombatant> twoCombatantTestList = new()
             {
                 new Combatant("testChar1", 1, 0, 10, 1, 1, 4, 1),

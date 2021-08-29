@@ -23,7 +23,7 @@ namespace NPCConsoleTesting
                 .WriteTo.Console()
                 .CreateLogger();
 
-            Log.Logger.Information("App Starting");
+            //Log.Logger.Information("App Starting");
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
@@ -53,7 +53,6 @@ namespace NPCConsoleTesting
                     weAreDone = true;
                 }
             }
-            
         }
 
         static void BuildConfig(IConfigurationBuilder builder)
