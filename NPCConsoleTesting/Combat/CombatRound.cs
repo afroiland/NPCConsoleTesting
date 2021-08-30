@@ -48,8 +48,7 @@ namespace NPCConsoleTesting
                 //if (doReadLines) { Console.ReadLine(); }
 
                 //check for spells
-                //TODO: make sure the following check works both for null and for an empty list
-                if (combatants[priorityIndex].Spells.Count != 0)
+                if (combatants[priorityIndex].Spells != null && combatants[priorityIndex].Spells.Count != 0)
                 {
                     //do the spell affect
 
