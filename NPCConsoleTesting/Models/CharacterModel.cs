@@ -2,7 +2,7 @@
 {
     public class CharacterModel
     {
-        public string Name { get; set; }
+        public string name { get; set; }
         public string title { get; set; }
         public int level { get; set; }
         public string characterClass { get; set; }
@@ -28,5 +28,6 @@
         public int probity { get; set; }
         public string affiliation { get; set; }
         public string notes { get; set; }
+        public string memorized { get; set; }
     }
 }
