@@ -36,9 +36,18 @@ namespace NPCConsoleTesting
                     break;
                 }
 
+                //set targetIndex based on priority combatant's target
+                targetIndex = combatants.FindIndex(x => x.Name == combatants[priorityIndex].Target);
+
+                //no attacks by or against dead combatants, unless there is a simultaneous attack
+                if ((combatants[priorityIndex].HP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].HP <= 0)
+                {
+                    priorityIndex++;
+                    break;
+                }
+
                 //check for spells
-                //TODO: make sure the following check works both for null and for an empty list
-                if (combatants[priorityIndex].Spells.Count != 0)
+                if (combatants[priorityIndex].Spells != null && combatants[priorityIndex].Spells.Count != 0)
                 {
                     //do the spell affect
 

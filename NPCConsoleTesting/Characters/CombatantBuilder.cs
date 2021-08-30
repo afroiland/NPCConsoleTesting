@@ -105,8 +105,18 @@ namespace NPCConsoleTesting
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
         {
-            Console.WriteLine($"How many are battling?");
-            int numberBattling = int.Parse(Console.ReadLine());
+            int numberBattling = 0;
+            while (numberBattling < 2)
+            {
+                Console.WriteLine($"How many are battling?");
+                numberBattling = int.Parse(Console.ReadLine());
+                if (numberBattling < 2)
+                {
+                    Console.WriteLine($"Must be at least two");
+                }
+            }
+            
+            
             Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
             int charOrigin = int.Parse(Console.ReadLine());
 
