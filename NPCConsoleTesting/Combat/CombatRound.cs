@@ -47,15 +47,8 @@ namespace NPCConsoleTesting
                 }
 
                 //check for spells
-                if (combatants[priorityIndex].Spells != null && combatants[priorityIndex].Spells.Count != 0)
-                {
-                    //do the spell affect
-
-
-                    //remove that spell from list
-                    combatants[priorityIndex].Spells.RemoveAt(0);
-                }
-                else
+                //TODO: Check not only for the existence of spells, but that extant spells are for combat
+                if (combatants[priorityIndex].Spells == null || combatants[priorityIndex].Spells.Count < 1)
                 {
                     //priority combatant does an attack against target
                     int attackResult = combatMethods.Attack(combatants[priorityIndex].Thac0, combatants[targetIndex].AC,
@@ -78,6 +71,14 @@ namespace NPCConsoleTesting
                             }
                         }
                     }
+                }
+                else
+                {
+                    //do the spell affect
+
+
+                    //remove that spell from list
+                    combatants[priorityIndex].Spells.RemoveAt(0);
                 }
 
                 priorityIndex++;

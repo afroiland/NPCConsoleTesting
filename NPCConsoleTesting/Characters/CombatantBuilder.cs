@@ -119,6 +119,7 @@ namespace NPCConsoleTesting
             
             
             Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
+            //TODO: fix this; currently throws if a non-int is entered
             int charOrigin = int.Parse(Console.ReadLine());
 
             //CombatantBuilder cBuilder = new();
@@ -145,7 +146,7 @@ namespace NPCConsoleTesting
                     {
                         combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         Console.WriteLine("That didn't work. Try again.");
                     }
