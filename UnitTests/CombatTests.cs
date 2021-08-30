@@ -10,7 +10,7 @@ namespace UnitTests
     {
         //Arrange
         ICombatMethods combatMethods = new CombatMethods();
-        List<ICombatant> testList = new()
+        List<Combatant> testList = new()
         {
             new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1),
             new Combatant("testChar2", 10, 0, 10, 1, 1, 4, 1),
@@ -91,7 +91,7 @@ namespace UnitTests
         public void DoAFullCombat_leaves_one_or_zero_remaining()
         {
             //Arrange
-            List<ICombatant> fullCombatTestList = new()
+            List<Combatant> fullCombatTestList = new()
             {
                 new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1),
                 new Combatant("testChar2", 10, 0, 10, 1, 1, 4, 1),
@@ -109,7 +109,7 @@ namespace UnitTests
         public void Simultaneous_init_allows_attack_from_dead_combatant()
         {
             //Arrange
-            List<ICombatant> twoCombatantTestList = new()
+            List<Combatant> twoCombatantTestList = new()
             {
                 new Combatant("testChar1", 1, 0, 10, 1, 1, 4, 1),
                 new Combatant("testChar2", 1, 0, 10, 1, 1, 4, 1)

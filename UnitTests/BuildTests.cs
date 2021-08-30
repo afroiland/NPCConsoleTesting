@@ -13,7 +13,7 @@ namespace UnitTests
         {
             //Arrange
             CombatantBuilder cBuilder = new();
-            List<ICombatant> resultsList = new();
+            List<Combatant> resultsList = new();
 
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
@@ -24,7 +24,7 @@ namespace UnitTests
             //Assert
             Assert.Multiple(() =>
             {
-                foreach (ICombatant cmbt in resultsList)
+                foreach (Combatant cmbt in resultsList)
                 {
                     Assert.That(cmbt.Name, Is.Not.Null);
                     Assert.That(cmbt.HP, Is.GreaterThan(0) & Is.LessThan(11));

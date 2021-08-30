@@ -5,7 +5,7 @@ namespace NPCConsoleTesting
 {
     public class CombatantRetriever
     {
-        public static ICombatant GetCombatantByName(string connectionString, string charName)
+        public static Combatant GetCombatantByName(string connectionString, string charName)
         {
             string query = $"SELECT * FROM npcs WHERE name = '{charName}'";
 
@@ -13,7 +13,7 @@ namespace NPCConsoleTesting
             var queryResult = DBConnection.QueryDB(connectionString, query);
 
             //TODO: Extract from char info: values for initMod, AC, thac0 and attack dice
-            ICombatant combatant = new Combatant(queryResult[0].Name, queryResult[0].currentHP, 0, 5, 15, 1, 4, 1);
+            Combatant combatant = new Combatant(queryResult[0].Name, queryResult[0].currentHP, 0, 5, 15, 1, 4, 1);
 
             return combatant;
             //return new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1);

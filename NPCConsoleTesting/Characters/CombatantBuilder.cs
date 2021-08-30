@@ -58,7 +58,7 @@ namespace NPCConsoleTesting
 
         static Random _random = new();
 
-        public ICombatant BuildCombatantRandomly()
+        public Combatant BuildCombatantRandomly()
         {
             string name = GenerateRandomName();
             int HP = _random.Next(_MinHP, _MaxHP + 1);
@@ -72,7 +72,7 @@ namespace NPCConsoleTesting
             return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
-        public static ICombatant BuildCombatantViaConsole()
+        public static Combatant BuildCombatantViaConsole()
         {
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
@@ -98,10 +98,12 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter dmgModifier for character");
             int dmgModifier = int.Parse(Console.ReadLine());
 
+            //spells?
+
             return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
-        public List<ICombatant> BuildListOfCombatants(string connectionString)
+        public List<Combatant> BuildListOfCombatants(string connectionString)
         {
             Console.WriteLine($"How many are battling?");
             int numberBattling = int.Parse(Console.ReadLine());
@@ -109,7 +111,7 @@ namespace NPCConsoleTesting
             int charOrigin = int.Parse(Console.ReadLine());
 
             //CombatantBuilder cBuilder = new();
-            List<ICombatant> combatants = new();
+            List<Combatant> combatants = new();
 
             while (combatants.Count < numberBattling)
             {

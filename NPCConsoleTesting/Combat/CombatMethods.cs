@@ -37,10 +37,10 @@ namespace NPCConsoleTesting
             return result + dmgModifier;
         }
 
-        public List<ICombatant> DetermineInit(List<ICombatant> chars)
+        public List<Combatant> DetermineInit(List<Combatant> chars)
         {
             //set inits
-            foreach (ICombatant ch in chars)
+            foreach (Combatant ch in chars)
             {
                 ch.Init = _random.Next(1, 11) + ch.InitMod;
                 //ch.init = 5;
@@ -59,10 +59,10 @@ namespace NPCConsoleTesting
             return chars;
         }
 
-        public List<ICombatant> DetermineTargets(List<ICombatant> chars)
+        public List<Combatant> DetermineTargets(List<Combatant> chars)
         {
             //set targets if needed
-            foreach (ICombatant ch in chars)
+            foreach (Combatant ch in chars)
             {
                 if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Select(x => x.HP).ToList()[0] <= 0)
                 {

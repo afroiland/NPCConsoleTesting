@@ -6,7 +6,7 @@ namespace NPCConsoleTesting.Combat
 {
     public class FullCombat
     {
-        public static void DoAFullCombat(List<ICombatant> combatants)
+        public static void DoAFullCombat(List<Combatant> combatants)
         {
             //combatants fight until only one* remains.  (*in rare cases, zero)
             List<string> wholeFightLog = new() { " ", "Here's what happened:" };
@@ -30,7 +30,7 @@ namespace NPCConsoleTesting.Combat
                 //TODO: clean this up, likely using LINQ
                 //check if we're down to one
                 int numberOfSurvivors = 0;
-                foreach (ICombatant ch in combatants)
+                foreach (Combatant ch in combatants)
                 {
                     if (ch.HP > 0)
                     {
