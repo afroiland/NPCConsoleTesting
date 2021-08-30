@@ -68,8 +68,9 @@ namespace NPCConsoleTesting
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
+            List<string> spells = GenerateSpellList();
 
-            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -231,6 +232,11 @@ namespace NPCConsoleTesting
         public enum LetterGroups
         {
             consonants, startingBlends, endingBlends, vowels
+        }
+
+        public List<string> GenerateSpellList()
+        {
+            return new List<string> { ("Magic Missile") };
         }
     }
 }

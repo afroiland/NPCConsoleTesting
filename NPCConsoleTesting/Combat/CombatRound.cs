@@ -51,7 +51,9 @@ namespace NPCConsoleTesting
                 {
                     //do the spell affect
 
+
                     //remove that spell from list
+                    combatants[priorityIndex].Spells.RemoveAt(0);
                 }
                 else
                 {
