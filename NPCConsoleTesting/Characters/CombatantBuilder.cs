@@ -68,8 +68,9 @@ namespace NPCConsoleTesting
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
+            List<string> spells = GenerateSpellList();
 
-            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -118,6 +119,7 @@ namespace NPCConsoleTesting
             
             
             Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
+            //TODO: fix this; currently throws if a non-int is entered
             int charOrigin = int.Parse(Console.ReadLine());
 
             //CombatantBuilder cBuilder = new();
@@ -144,7 +146,7 @@ namespace NPCConsoleTesting
                     {
                         combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         Console.WriteLine("That didn't work. Try again.");
                     }
@@ -231,6 +233,11 @@ namespace NPCConsoleTesting
         public enum LetterGroups
         {
             consonants, startingBlends, endingBlends, vowels
+        }
+
+        public List<string> GenerateSpellList()
+        {
+            return new List<string> { ("Magic Missile") };
         }
     }
 }

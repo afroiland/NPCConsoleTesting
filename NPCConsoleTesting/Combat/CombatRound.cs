@@ -5,9 +5,6 @@ namespace NPCConsoleTesting
 {
     public class CombatRound
     {
-        private static readonly bool doReadLines = false;
-        //private static readonly bool doReadLines = true;
-
         public static List<string> DoACombatRound(List<Combatant> combatants)
         {
             ICombatMethods combatMethods = new CombatMethods();
@@ -15,11 +12,6 @@ namespace NPCConsoleTesting
             
             combatants = combatMethods.DetermineTargets(combatants);
             combatants = combatMethods.DetermineInit(combatants);
-
-            //foreach (Combatant x in combatants)
-            //{
-            //    Console.WriteLine($"{x.Name} hp: {x.HP}");
-            //}
                 
             int segment = 0;
             int priorityIndex = 0;
@@ -44,23 +36,13 @@ namespace NPCConsoleTesting
                     break;
                 }
 
-                //Console.WriteLine($"It is segment {segment}, {combatants[priorityIndex].name} is about to attack {combatants[priorityIndex].target}");
-                //if (doReadLines) { Console.ReadLine(); }
-
                 //check for spells
-                if (combatants[priorityIndex].Spells != null && combatants[priorityIndex].Spells.Count != 0)
-                {
-                    //do the spell affect
-
-                    //remove that spell from list
-                }
-                else
+                //TODO: Check not only for the existence of spells, but that extant spells are for combat
+                if (combatants[priorityIndex].Spells == null || combatants[priorityIndex].Spells.Count < 1)
                 {
                     //priority combatant does an attack against target
                     int attackResult = combatMethods.Attack(combatants[priorityIndex].Thac0, combatants[targetIndex].AC,
                         combatants[priorityIndex].NumberOfAttackDice, combatants[priorityIndex].TypeOfAttackDie, combatants[priorityIndex].DmgModifier);
-                    //Console.WriteLine($"attackResult: {attackResult}");
-                    //if (doReadLines) { Console.ReadLine(); }
 
                     if (attackResult > 0)
                     {
@@ -78,15 +60,19 @@ namespace NPCConsoleTesting
                                 opportunityForSimulAttack = true;
                             }
                         }
-
-                        //Console.WriteLine($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
-                        //Console.WriteLine($"{combatants[targetIndex].Name} is at {combatants[targetIndex].HP}hp.");
                     }
                 }
-                //else
-                //{
-                //    logResults.Add($"{combatants[priorityIndex].Name} missed {combatants[targetIndex].Name}.");
-                //}
+                else
+                {
+                    //do the spell affect
+                    //spellResults = DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex], combatants[targetIndex])
+
+                    //update combatants with spell results
+
+
+                    //remove that spell from list
+                    combatants[priorityIndex].Spells.RemoveAt(0);
+                }
 
                 priorityIndex++;
             }
