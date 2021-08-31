@@ -75,6 +75,9 @@ namespace NPCConsoleTesting
                 else
                 {
                     //do the spell affect
+                    //spellResults = DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex], combatants[targetIndex])
+
+                    //update combatants with spell results
 
 
                     //remove that spell from list
