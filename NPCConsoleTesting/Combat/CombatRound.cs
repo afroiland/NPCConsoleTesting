@@ -30,14 +30,14 @@ namespace NPCConsoleTesting
                 targetIndex = combatants.FindIndex(x => x.Name == combatants[priorityIndex].Target);
 
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
+                //TODO: If target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
                 if ((combatants[priorityIndex].HP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].HP <= 0)
                 {
                     priorityIndex++;
                     break;
                 }
 
-                //check for spells
-                //TODO: Check not only for the existence of spells, but that extant spells are for combat
+                //check for spells--if none, do an attack
                 if (combatants[priorityIndex].Spells == null || combatants[priorityIndex].Spells.Count < 1)
                 {
                     //priority combatant does an attack against target
@@ -65,10 +65,12 @@ namespace NPCConsoleTesting
                 else
                 {
                     //do the spell affect
-                    //spellResults = DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex], combatants[targetIndex])
+                    SpellResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex].Level);
 
                     //update combatants with spell results
+                    //if spellResults.AffectType == damage, UpdateTargetWithSpellDmg()
 
+                    //if spellResults.AffectType == status, UpdateTargetWithStatusEffect()
 
                     //remove that spell from list
                     combatants[priorityIndex].Spells.RemoveAt(0);

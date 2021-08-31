@@ -19,6 +19,8 @@ namespace NPCConsoleTesting
         private int _MaxTypeOfAttackDie;
         private int _MinDmgModifier;
         private int _MaxDmgModifier;
+        private int _MinLevel;
+        private int _MaxLevel;
 
         public int MinHP { get => _MinHP; set => _MinHP = value; }
         public int MaxHP { get => _MaxHP; set => _MaxHP = value; }
@@ -34,6 +36,8 @@ namespace NPCConsoleTesting
         public int MaxTypeOfAttackDie { get => _MaxTypeOfAttackDie; set => _MaxTypeOfAttackDie = value; }
         public int MinDmgModifier { get => _MinDmgModifier; set => _MinDmgModifier = value; }
         public int MaxDmgModifier { get => _MaxDmgModifier; set => _MaxDmgModifier = value; }
+        public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
+        public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
 
         public CombatantBuilder()
         {
@@ -51,6 +55,8 @@ namespace NPCConsoleTesting
             MaxTypeOfAttackDie = 6;
             MinDmgModifier = 0;
             MaxDmgModifier = 2;
+            MinLevel = 1;
+            MaxLevel = 5;
         }
 
         const int MIN_NAME_PATTERN_LENGTH = 3;
@@ -68,9 +74,10 @@ namespace NPCConsoleTesting
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
+            int level = _random.Next(_MinLevel, _MaxLevel + 1);
             List<string> spells = GenerateSpellList();
 
-            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, spells);
+            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, level, spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -99,9 +106,12 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter dmgModifier for character");
             int dmgModifier = int.Parse(Console.ReadLine());
 
-            //spells?
+            Console.WriteLine("Enter level for character");
+            int level = int.Parse(Console.ReadLine());
 
-            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            //TODO: spells?
+
+            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, level);
         }
 
         public List<Combatant> BuildListOfCombatants(string connectionString)

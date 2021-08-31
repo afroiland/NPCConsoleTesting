@@ -11,11 +11,10 @@ namespace NPCConsoleTesting
         {
             string query = $"SELECT * FROM npcs WHERE name = '{charName}'";
 
-            //TODO: Add logic to handle unusable input / name not in db / multiple results returned
             var queryResult = DBConnection.QueryDB(connectionString, query);
 
             //TODO: Extract from char info: values for initMod, AC, thac0 and attack dice
-            Combatant combatant = new(queryResult[0].name, queryResult[0].currentHP, 0, 5, 15, 1, 4, 1, SelectOnlyCombatSpells(queryResult[0].memorized));
+            Combatant combatant = new(queryResult[0].name, queryResult[0].currentHP, 0, 5, 15, 1, 4, 1, queryResult[0].level, SelectOnlyCombatSpells(queryResult[0].memorized));
 
             return combatant;
             //return new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1);

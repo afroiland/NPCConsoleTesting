@@ -14,10 +14,12 @@ namespace NPCConsoleTesting
         public int DmgModifier { get; set; }
         public int Init { get; set; }
         public string Target { get; set; }
-        public string Status { get; set; }
+        public int Level { get; set; }
+        public List<string> Statuses { get; set; }
         public List<string> Spells { get; set; }
 
-        public Combatant(string charName, int charHp, int charInitMod, int charAc, int charThac0, int charNumOfAttackDice, int charTypeOfAttackDie, int charDmgModifier, List<string> charSpells = null)
+        public Combatant(string charName, int charHp, int charInitMod, int charAc, int charThac0, int charNumOfAttackDice,
+            int charTypeOfAttackDie, int charDmgModifier, int charLevel, List<string> charSpells = null)
         {
             Name = charName;
             HP = charHp;
@@ -29,7 +31,8 @@ namespace NPCConsoleTesting
             DmgModifier = charDmgModifier;
             Init = 0;
             Target = "";
-            Status = "Normal";
+            Level = charLevel;
+            Statuses = new List<string>();
             Spells = charSpells;
         }
     }
