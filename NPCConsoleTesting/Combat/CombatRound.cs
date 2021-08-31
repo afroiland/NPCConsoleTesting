@@ -30,7 +30,8 @@ namespace NPCConsoleTesting
                 targetIndex = combatants.FindIndex(x => x.Name == combatants[priorityIndex].Target);
 
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
-                //TODO: If target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
+                //TODO: if target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
+                //TODO: check status here as well
                 if ((combatants[priorityIndex].HP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].HP <= 0)
                 {
                     priorityIndex++;
@@ -64,13 +65,28 @@ namespace NPCConsoleTesting
                 }
                 else
                 {
-                    //do the spell affect
+                    //do the spell effect
                     SpellResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex].Level);
 
                     //update combatants with spell results
-                    //if spellResults.AffectType == damage, UpdateTargetWithSpellDmg()
+                    if (spellResults.AffectType == "damage")
+                    {
+                        if (spellResults.Damage < 0)   //cure light wounds
+                        {
+                            Console.WriteLine($"Caster's HP before CLW: {combatants[priorityIndex].HP}");
+                            combatants[priorityIndex].HP -= spellResults.Damage;
+                            Console.WriteLine($"Caster's HP after CLW: {combatants[priorityIndex].HP}");
+                        }
+                        else
+                        {
+                            combatants[targetIndex].HP -= spellResults.Damage;
+                        }
+                    }
 
-                    //if spellResults.AffectType == status, UpdateTargetWithStatusEffect()
+                    if(spellResults.AffectType == "status")
+                    {
+                        combatants[targetIndex].Statuses.Add(spellResults.Status);
+                    }
 
                     //remove that spell from list
                     combatants[priorityIndex].Spells.RemoveAt(0);
