@@ -72,7 +72,7 @@ namespace NPCConsoleTesting
             int HP = _random.Next(_MinHP, _MaxHP + 1);
             int initMod = _random.Next(_MinInitMod, _MaxInitMod + 1);
             int AC = _random.Next(_MinAC, _MaxAC + 1);
-            int thac0 = _random.Next(_MinThac0, _MaxThac0 + 1);
+            int thac0 = CalcThac0(charClass, level);
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
@@ -267,16 +267,31 @@ namespace NPCConsoleTesting
             consonants, startingBlends, endingBlends, vowels
         }
 
-        private string SelectRandomClass()
+        private static string SelectRandomClass()
         {
-            //
-
-            return "Fighter";
+            List<string> charClasses = new() {"Fighter", "Paladin", "Ranger", "Magic-User", "Illusionist", "Cleric", "Monk", "Druid", "Thief", "Assassin"};
+            return charClasses[_random.Next(1, charClasses.Count)];
         }
 
         public List<string> GenerateSpellList()
         {
-            return new List<string> { ("Magic Missile") };
+            return new List<string> {"Magic Missile"};
+        }
+
+        public static int CalcThac0(string charClass, int level)
+        {
+            List<int> MUThac0s = new() {20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11};
+            List<int> ThiefThac0s = new() {20, 20, 20, 20, 19, 19, 19, 19, 16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10};
+
+            int result = charClass switch
+            {
+                "Fighter" or "Paladin" or "Ranger" or "Monster" => 21 - level,
+                "Magic-User" or "Illusionist" => MUThac0s[level - 1],
+                "Cleric" or "Monk" or "Druid" => 20 - (int)(Math.Floor((level-1) / 3d) * 2),
+                "Thief" or "Assassin" => ThiefThac0s[level - 1],
+                _ => 20
+            };
+            return result;
         }
     }
 }

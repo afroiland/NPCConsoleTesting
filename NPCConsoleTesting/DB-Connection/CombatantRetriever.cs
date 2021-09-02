@@ -17,7 +17,7 @@ namespace NPCConsoleTesting
             Combatant combatant = new(queryResult[0].name, queryResult[0].characterClass, queryResult[0].level, queryResult[0].currentHP, 0, 5, 15, 1, 4, 1, SelectOnlyCombatSpells(queryResult[0].memorized));
 
             return combatant;
-            //return new Combatant("testChar1", 10, 0, 10, 1, 1, 4, 1);
+            //return new Combatant("testChar1", "Fighter", 1, 10, 0, 10, 1, 1, 4, 1);
         }
 
         public static string GetNameFromUserInput()
