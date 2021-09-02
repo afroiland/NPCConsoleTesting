@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using NPCConsoleTesting.Characters;
+using System.Collections.Generic;
 
 namespace NPCConsoleTesting
 {
-    public class Combatant : ICombatant
+    public class Combatant : BaseCharacter, ICombatant
     {
-        public string Name { get; set; }
-        public int HP { get; set; }
-        public int InitMod { get; set; }
+        //public string Name { get; set; }
+        public int CurrentHP { get; set; }
+        //public int InitMod { get; set; }
         public int AC { get; set; }
         public int Thac0 { get; set; }
         public int NumberOfAttackDice { get; set; }
@@ -14,15 +15,15 @@ namespace NPCConsoleTesting
         public int DmgModifier { get; set; }
         public int Init { get; set; }
         public string Target { get; set; }
-        public int Level { get; set; }
-        public List<string> Statuses { get; set; }
+        //public int Level { get; set; }
+        //public List<string> Statuses { get; set; }
         public List<string> Spells { get; set; }
 
         public Combatant(string charName, int charHp, int charInitMod, int charAc, int charThac0, int charNumOfAttackDice,
             int charTypeOfAttackDie, int charDmgModifier, int charLevel, List<string> charSpells = null)
         {
             Name = charName;
-            HP = charHp;
+            CurrentHP = charHp;
             InitMod = charInitMod;
             AC = charAc;
             Thac0 = charThac0;

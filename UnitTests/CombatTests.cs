@@ -102,7 +102,7 @@ namespace UnitTests
             FullCombat.DoAFullCombat(fullCombatTestList);
 
             //Assert
-            Assert.Less(fullCombatTestList.Where(x => x.HP > 0).Count(), 2);
+            Assert.Less(fullCombatTestList.Where(x => x.CurrentHP > 0).Count(), 2);
         }
 
         [Test]
@@ -124,7 +124,7 @@ namespace UnitTests
             {
                 CombatRound.DoACombatRound(twoCombatantTestList);
                 
-                if (twoCombatantTestList[0].HP <= 0 && twoCombatantTestList[1].HP <= 0)
+                if (twoCombatantTestList[0].CurrentHP <= 0 && twoCombatantTestList[1].CurrentHP <= 0)
                 {
                     init1 = twoCombatantTestList[0].Init;
                     init2 = twoCombatantTestList[1].Init;
@@ -132,8 +132,8 @@ namespace UnitTests
                 }
                 else
                 {
-                    twoCombatantTestList[0].HP = 1;
-                    twoCombatantTestList[1].HP = 1;
+                    twoCombatantTestList[0].CurrentHP = 1;
+                    twoCombatantTestList[1].CurrentHP = 1;
                 }
             }
 
@@ -141,7 +141,7 @@ namespace UnitTests
             Assert.Multiple(() =>
             {
                 Assert.AreEqual(init1, init2);
-                Assert.That(twoCombatantTestList.Select(x => x.HP), Is.All.LessThanOrEqualTo(0));
+                Assert.That(twoCombatantTestList.Select(x => x.CurrentHP), Is.All.LessThanOrEqualTo(0));
             });
         }
 

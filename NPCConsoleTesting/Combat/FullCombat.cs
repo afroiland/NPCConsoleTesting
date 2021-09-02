@@ -32,7 +32,7 @@ namespace NPCConsoleTesting.Combat
                 int numberOfSurvivors = 0;
                 foreach (Combatant ch in combatants)
                 {
-                    if (ch.HP > 0)
+                    if (ch.CurrentHP > 0)
                     {
                         numberOfSurvivors++;
                     }
@@ -42,7 +42,7 @@ namespace NPCConsoleTesting.Combat
                     //the fight has ended
                     downToOne = true;
 
-                    List<string> winner = combatants.Where(x => x.HP > 0).Select(x => x.Name).ToList();
+                    List<string> winner = combatants.Where(x => x.CurrentHP > 0).Select(x => x.Name).ToList();
                     wholeFightLog.Add($"{winner[0]} won.");
 
                     wholeFightLog.ForEach(i => Console.WriteLine(i));

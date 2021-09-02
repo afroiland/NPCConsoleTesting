@@ -120,17 +120,38 @@ namespace NPCConsoleTesting
             while (numberBattling < 2)
             {
                 Console.WriteLine($"How many are battling?");
-                numberBattling = int.Parse(Console.ReadLine());
-                if (numberBattling < 2)
+                try
                 {
-                    Console.WriteLine($"Must be at least two");
+                    numberBattling = int.Parse(Console.ReadLine());
+                    if (numberBattling < 2)
+                    {
+                        Console.WriteLine($"Must be at least two");
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("We're looking for an integer");
                 }
             }
             
-            
             Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
             //TODO: fix this; currently throws if a non-int is entered
-            int charOrigin = int.Parse(Console.ReadLine());
+            int charOrigin = 0;
+            bool intEntered = false;
+            while (!intEntered)
+            {
+                try
+                {
+                    charOrigin = int.Parse(Console.ReadLine());
+                    intEntered = true;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("We're looking for an integer");
+                }
+            }
+            
+            //int charOrigin = int.Parse(Console.ReadLine());
 
             //CombatantBuilder cBuilder = new();
             List<Combatant> combatants = new();

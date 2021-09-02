@@ -45,7 +45,7 @@ namespace NPCConsoleTesting
             }
 
             //order chars with hp > 0 by init
-            chars = chars.Where(x => x.HP > 0).OrderBy(x => x.Init).ToList();
+            chars = chars.Where(x => x.CurrentHP > 0).OrderBy(x => x.Init).ToList();
 
             return chars;
         }
@@ -55,9 +55,9 @@ namespace NPCConsoleTesting
             //set targets if needed
             foreach (Combatant ch in chars)
             {
-                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Select(x => x.HP).ToList()[0] <= 0)
+                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Select(x => x.CurrentHP).ToList()[0] <= 0)
                 {
-                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name && x.HP > 0).Select(x => x.Name).ToList();
+                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name && x.CurrentHP > 0).Select(x => x.Name).ToList();
                     ch.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
                 }
             }

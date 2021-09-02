@@ -3,7 +3,7 @@
     public interface ICombatant
     {
         string Name { get; set; }
-        int HP { get; set; }
+        int CurrentHP { get; set; }
         int InitMod { get; set; }
         int AC { get; set; }
         int Thac0 { get; set; }

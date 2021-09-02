@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using NPCConsoleTesting.Characters;
+using System.Collections.Generic;
 
 namespace NPCConsoleTesting
 {
-    public class Character
+    public class Character : BaseCharacter
     {
         public string name;
         public string title;

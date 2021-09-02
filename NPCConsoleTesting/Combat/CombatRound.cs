@@ -32,7 +32,7 @@ namespace NPCConsoleTesting
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
                 //TODO: if target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
                 //TODO: check status here as well
-                if ((combatants[priorityIndex].HP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].HP <= 0)
+                if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0)
                 {
                     priorityIndex++;
                     break;
@@ -50,9 +50,9 @@ namespace NPCConsoleTesting
                         logResults.Add($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
 
                         //adjust target hp
-                        combatants[targetIndex].HP -= attackResult;
+                        combatants[targetIndex].CurrentHP -= attackResult;
 
-                        if (combatants[targetIndex].HP <= 0)
+                        if (combatants[targetIndex].CurrentHP <= 0)
                         {
                             logResults.Add($"{combatants[targetIndex].Name} fell.");
 
@@ -73,13 +73,16 @@ namespace NPCConsoleTesting
                     {
                         if (spellResults.Damage < 0)   //cure light wounds
                         {
-                            Console.WriteLine($"Caster's HP before CLW: {combatants[priorityIndex].HP}");
-                            combatants[priorityIndex].HP -= spellResults.Damage;
-                            Console.WriteLine($"Caster's HP after CLW: {combatants[priorityIndex].HP}");
+                            combatants[priorityIndex].CurrentHP -= spellResults.Damage;
                         }
                         else
                         {
-                            combatants[targetIndex].HP -= spellResults.Damage;
+                            combatants[targetIndex].CurrentHP -= spellResults.Damage;
+                            logResults.Add($"{combatants[targetIndex].Name} got hit with a {combatants[priorityIndex].Spells[0]} effect for {spellResults.Damage} damage.");
+                            if (combatants[targetIndex].CurrentHP < 1)
+                            {
+                                logResults.Add($"{combatants[targetIndex].Name} fell.");
+                            }
                         }
                     }
 
