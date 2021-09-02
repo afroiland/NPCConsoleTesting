@@ -5,14 +5,14 @@ namespace NPCConsoleTesting
 {
     public class Character : BaseCharacter
     {
-        public string name;
+        //public string name;
         public string title;
-        public int level;
-        public string characterClass;
+        //public string characterClass;
+        //public int level;
         public string race;
         public int age;
         public string gender;
-        public int currentHP;
+        //public int currentHP;
         public List<int> hpByLevel;
         public int ac_adj;
         public int att_adj;

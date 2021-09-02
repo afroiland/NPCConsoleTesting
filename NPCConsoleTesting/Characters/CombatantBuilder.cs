@@ -67,6 +67,8 @@ namespace NPCConsoleTesting
         public Combatant BuildCombatantRandomly()
         {
             string name = GenerateRandomName();
+            string charClass = SelectRandomClass();
+            int level = _random.Next(_MinLevel, _MaxLevel + 1);
             int HP = _random.Next(_MinHP, _MaxHP + 1);
             int initMod = _random.Next(_MinInitMod, _MaxInitMod + 1);
             int AC = _random.Next(_MinAC, _MaxAC + 1);
@@ -74,16 +76,21 @@ namespace NPCConsoleTesting
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
-            int level = _random.Next(_MinLevel, _MaxLevel + 1);
             List<string> spells = GenerateSpellList();
 
-            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, level, spells);
+            return new Combatant(name, charClass, level, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
         {
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
+
+            Console.WriteLine("Enter class for character");
+            string charClass = Console.ReadLine();
+
+            Console.WriteLine("Enter level for character");
+            int level = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Enter HP for character");
             int HP = int.Parse(Console.ReadLine());
@@ -106,12 +113,9 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter dmgModifier for character");
             int dmgModifier = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter level for character");
-            int level = int.Parse(Console.ReadLine());
-
             //TODO: spells?
 
-            return new Combatant(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, level);
+            return new Combatant(name, charClass, level, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
         }
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
@@ -119,13 +123,13 @@ namespace NPCConsoleTesting
             int numberBattling = 0;
             while (numberBattling < 2)
             {
-                Console.WriteLine($"How many are battling?");
+                Console.WriteLine("How many are battling?");
                 try
                 {
                     numberBattling = int.Parse(Console.ReadLine());
                     if (numberBattling < 2)
                     {
-                        Console.WriteLine($"Must be at least two");
+                        Console.WriteLine("Must be at least two");
                     }
                 }
                 catch (Exception)
@@ -134,8 +138,7 @@ namespace NPCConsoleTesting
                 }
             }
             
-            Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
-            //TODO: fix this; currently throws if a non-int is entered
+            Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
             int charOrigin = 0;
             bool intEntered = false;
             while (!intEntered)
@@ -150,8 +153,6 @@ namespace NPCConsoleTesting
                     Console.WriteLine("We're looking for an integer");
                 }
             }
-            
-            //int charOrigin = int.Parse(Console.ReadLine());
 
             //CombatantBuilder cBuilder = new();
             List<Combatant> combatants = new();
@@ -264,6 +265,13 @@ namespace NPCConsoleTesting
         public enum LetterGroups
         {
             consonants, startingBlends, endingBlends, vowels
+        }
+
+        private string SelectRandomClass()
+        {
+            //
+
+            return "Fighter";
         }
 
         public List<string> GenerateSpellList()
