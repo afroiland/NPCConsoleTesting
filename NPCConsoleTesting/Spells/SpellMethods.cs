@@ -61,11 +61,6 @@ namespace NPCConsoleTesting
                     result = -(_random.Next(1, 9));
                     break;
                 case "Fireball":
-                    for (int i = 0; i < casterLevel; i++)
-                    {
-                        result += _random.Next(1, 7);
-                    }
-                    break;
                 case "Lightning Bolt":
                     for (int i = 0; i < casterLevel; i++)
                     {

@@ -41,9 +41,9 @@ namespace NPCConsoleTesting
             foreach (Combatant ch in chars)
             {
                 ch.Init = _random.Next(1, 11);
-                if (ch.Spells.Count > 0)
+                if (ch.Spells != null && ch.Spells.Count > 0)
                 {
-                    //ch.Init += casting time
+                    ch.Init += GetCastingTime(ch.Spells[0]);
                 }
                 else
                 {
@@ -55,6 +55,21 @@ namespace NPCConsoleTesting
             chars = chars.Where(x => x.CurrentHP > 0).OrderBy(x => x.Init).ToList();
 
             return chars;
+        }
+
+        private static int GetCastingTime(string spellName)
+        {
+            int result = spellName switch
+            {
+                "Burning Hands" or "Magic Missile" or "Shocking Grasp" or "Sleep" => 1,
+                "Ray of Enfeeblement" or "Web" => 2,
+                "Fireball" or "Haste" or "Lightning Bolt" or "Slow" => 3,
+                "Cure Light Wounds" or "Hold Person" => 5,
+                "Strength" => 10,
+                _ => 10
+            };
+
+            return result;
         }
 
         public List<Combatant> DetermineTargets(List<Combatant> chars)

@@ -69,16 +69,21 @@ namespace NPCConsoleTesting
             string name = GenerateRandomName();
             string charClass = SelectRandomClass();
             int level = _random.Next(_MinLevel, _MaxLevel + 1);
-            int HP = _random.Next(_MinHP, _MaxHP + 1);
+            int str = GenerateAttributeByCharClass("Strength", charClass);
+            int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
+            int dex = GenerateAttributeByCharClass("Dexterity", charClass);
+            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
+            int HP = ConvertHPByLevelToMaxHP(HPByLevel);
             int initMod = _random.Next(_MinInitMod, _MaxInitMod + 1);
             int AC = CalcAC("", 14);
             int thac0 = CalcThac0(charClass, level);
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
+            string weapon = SelectRandomWeapon(charClass);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, spells);
+            return new Combatant(name, charClass, level, str, dex, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, ex_str, weapon, spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -113,9 +118,12 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter dmgModifier for character");
             int dmgModifier = int.Parse(Console.ReadLine());
 
+            Console.WriteLine("Enter weapon for character");
+            string weapon = Console.ReadLine();
+
             //TODO: spells?
 
-            return new Combatant(name, charClass, level, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            return new Combatant(name, charClass, level, 12, 12, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, null, weapon);
         }
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
@@ -272,6 +280,21 @@ namespace NPCConsoleTesting
             return charClasses[_random.Next(1, charClasses.Count)];
         }
 
+        private static int GenerateAttributeByCharClass(string attribute, string charClass)
+        {
+            return 12;
+        }
+
+        private static List<int> GenerateHPByLevelByCharClass(string charClass)
+        {
+            return new List<int> { 4, 4, 4 };
+        }
+
+        private static int ConvertHPByLevelToMaxHP(List<int> hpByLevel)
+        {
+            return 12;
+        }
+
         public static int CalcThac0(string charClass, int level)
         {
             List<int> MUThac0s = new() { 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11 };
@@ -311,6 +334,11 @@ namespace NPCConsoleTesting
             }
 
             return result;
+        }
+
+        private static string SelectRandomWeapon(string charClass)
+        {
+            return "Dagger";
         }
 
         private List<string> GenerateSpellList(string charClass, int level)

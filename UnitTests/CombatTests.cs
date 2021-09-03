@@ -12,9 +12,9 @@ namespace UnitTests
         ICombatMethods combatMethods = new CombatMethods();
         List<Combatant> testList = new()
         {
-            new Combatant("testChar1", "Fighter", 1, 10, 0, 10, 1, 1, 4, 1),
-            new Combatant("testChar2", "Fighter", 1, 10, 0, 10, 1, 1, 4, 1),
-            new Combatant("testChar3", "Fighter", 1, 10, 0, 10, 1, 1, 4, 1)
+            new Combatant("testChar1", "Fighter", 1, 12, 12, 10, 0, 10, 1, 1, 4, 1),
+            new Combatant("testChar2", "Fighter", 1, 12, 12, 10, 0, 10, 1, 1, 4, 1),
+            new Combatant("testChar3", "Fighter", 1, 12, 12, 10, 0, 10, 1, 1, 4, 1)
         };
 
         const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
@@ -93,9 +93,9 @@ namespace UnitTests
             //Arrange
             List<Combatant> fullCombatTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, 10, 0, 10, 1, 1, 4, 1),
-                new Combatant("testChar2", "Fighter", 1, 10, 0, 10, 1, 1, 4, 1),
-                new Combatant("testChar3", "Fighter", 1, 10, 0, 10, 1, 1, 4, 1)
+                new Combatant("testChar1", "Fighter", 1, 12, 12, 10, 0, 10, 1, 1, 4, 1),
+                new Combatant("testChar2", "Fighter", 1, 12, 12, 10, 0, 10, 1, 1, 4, 1),
+                new Combatant("testChar3", "Fighter", 1, 12, 12, 10, 0, 10, 1, 1, 4, 1)
             };
 
             //Act
@@ -111,8 +111,8 @@ namespace UnitTests
             //Arrange
             List<Combatant> twoCombatantTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, 1, 0, 10, 1, 1, 4, 1),
-                new Combatant("testChar2", "Fighter", 1, 1, 0, 10, 1, 1, 4, 1)
+                new Combatant("testChar1", "Fighter", 1, 12, 12, 1, 0, 10, 1, 1, 4, 1),
+                new Combatant("testChar2", "Fighter", 1, 12, 12, 1, 0, 10, 1, 1, 4, 1)
             };
 
             int init1 = 0;
