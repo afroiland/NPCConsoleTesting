@@ -13,12 +13,20 @@ namespace NPCConsoleTesting
 
             var queryResult = DBConnection.QueryDB(connectionString, query);
 
-            //TODO: Extract from char info: values for initMod, AC, thac0 and attack dice
-            Combatant combatant = new(queryResult[0].name, queryResult[0].characterClass, queryResult[0].level, queryResult[0].currentHP, 0, 5,
-                CombatantBuilder.CalcThac0(queryResult[0].characterClass, queryResult[0].level), 1, 4, 1, SelectOnlyCombatSpells(queryResult[0].memorized));
+            //TODO: Extract from char info: values for initMod and attack dice
+            string name = queryResult[0].name;
+            string charClass = queryResult[0].characterClass;
+            int level = queryResult[0].level;
+            int HP = queryResult[0].currentHP;
+            int initMod = 0;
+            int AC = CombatantBuilder.CalcAC(queryResult[0].armor, queryResult[0].dex);
+            int thac0 = CombatantBuilder.CalcThac0(queryResult[0].characterClass, queryResult[0].level);
+            int numberOfAttackDice = 1;
+            int typeOfAttackDie = 4;
+            int dmgModifier = 1;
+            List<string> spells = SelectOnlyCombatSpells(queryResult[0].memorized);
 
-            return combatant;
-            //return new Combatant("testChar1", "Fighter", 1, 10, 0, 10, 1, 1, 4, 1);
+            return new Combatant(name, charClass, level, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, spells);
         }
 
         public static string GetNameFromUserInput()

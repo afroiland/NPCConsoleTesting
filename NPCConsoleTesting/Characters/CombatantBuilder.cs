@@ -71,7 +71,7 @@ namespace NPCConsoleTesting
             int level = _random.Next(_MinLevel, _MaxLevel + 1);
             int HP = _random.Next(_MinHP, _MaxHP + 1);
             int initMod = _random.Next(_MinInitMod, _MaxInitMod + 1);
-            int AC = _random.Next(_MinAC, _MaxAC + 1);
+            int AC = CalcAC("", 14);
             int thac0 = CalcThac0(charClass, level);
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
@@ -154,7 +154,6 @@ namespace NPCConsoleTesting
                 }
             }
 
-            //CombatantBuilder cBuilder = new();
             List<Combatant> combatants = new();
 
             while (combatants.Count < numberBattling)
@@ -291,7 +290,27 @@ namespace NPCConsoleTesting
 
         public static int CalcAC(string armor, int dex)
         {
-            return 10;
+            int result = armor switch
+            {
+                "None" => 10,
+                "Shield Only" => 9,
+                "Leather" => 8,
+                "Leather + Shield" or "Studded Leather" => 7,
+                "Studded Leather + Shield" or "Scale Mail" => 6,
+                "Scale Mail + Shield" or "Chain Mail" => 5,
+                "Chain Mail + Shield" or "Banded Mail" => 4,
+                "Banded Mail + Shield" or "Plate Mail" => 3,
+                "Plate Mail + Shield" => 2,
+                _ => 10
+            };
+
+            //AC bonus for dex above 14
+            for (int i = 14; i < 18; i++)
+            {
+                if (dex > i) { result--; }
+            }
+
+            return result;
         }
 
         private List<string> GenerateSpellList(string charClass, int level)

@@ -40,8 +40,15 @@ namespace NPCConsoleTesting
             //set inits
             foreach (Combatant ch in chars)
             {
-                ch.Init = _random.Next(1, 11) + ch.InitMod;
-                //ch.init = 5;
+                ch.Init = _random.Next(1, 11);
+                if (ch.Spells.Count > 0)
+                {
+                    //ch.Init += casting time
+                }
+                else
+                {
+                    ch.Init += ch.InitMod; // += weapon speed
+                }
             }
 
             //order chars with hp > 0 by init
