@@ -12,6 +12,12 @@ namespace NPCConsoleTesting
             
             combatants = combatMethods.DetermineTargets(combatants);
             combatants = combatMethods.DetermineInit(combatants);
+
+            //clear GotHitThisRound status for all combatants
+            foreach (var cbt in combatants)
+            {
+                cbt.GotHitThisRound = false;
+            }
                 
             int segment = 0;
             int priorityIndex = 0;
@@ -31,8 +37,7 @@ namespace NPCConsoleTesting
 
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
                 //TODO: if target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
-                //TODO: check status here as well
-                if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0)
+                if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 || combatants[priorityIndex].Statuses.Contains("Held") || combatants[priorityIndex].Statuses.Contains("Asleep"))
                 {
                     priorityIndex++;
                     break;
@@ -49,8 +54,9 @@ namespace NPCConsoleTesting
                     {
                         logResults.Add($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
 
-                        //adjust target hp
+                        //adjust target hp and GotHitThisRound status
                         combatants[targetIndex].CurrentHP -= attackResult;
+                        combatants[targetIndex].GotHitThisRound = true;
 
                         if (combatants[targetIndex].CurrentHP <= 0)
                         {
@@ -65,33 +71,38 @@ namespace NPCConsoleTesting
                 }
                 else
                 {
-                    //do the spell effect
-                    SpellResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex].Level);
-
-                    //update combatants with spell results
-                    if (spellResults.AffectType == "damage")
+                    if (!combatants[priorityIndex].GotHitThisRound)
                     {
-                        if (spellResults.Damage < 0)   //cure light wounds
+                        //do the spell effect
+                        SpellResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex].Level);
+
+                        //update combatants with spell results
+                        if (spellResults.AffectType == "damage")
                         {
-                            combatants[priorityIndex].CurrentHP -= spellResults.Damage;
-                        }
-                        else
-                        {
-                            combatants[targetIndex].CurrentHP -= spellResults.Damage;
-                            logResults.Add($"{combatants[targetIndex].Name} got hit with a {combatants[priorityIndex].Spells[0]} effect for {spellResults.Damage} damage.");
-                            if (combatants[targetIndex].CurrentHP < 1)
+                            if (spellResults.Damage < 0)   //a negative result indicates cure light wounds
                             {
-                                logResults.Add($"{combatants[targetIndex].Name} fell.");
+                                combatants[priorityIndex].CurrentHP -= spellResults.Damage;
+                            }
+                            else
+                            {
+                                combatants[targetIndex].CurrentHP -= spellResults.Damage;
+                                combatants[targetIndex].GotHitThisRound = true;
+                                logResults.Add($"{combatants[targetIndex].Name} got hit with a {combatants[priorityIndex].Spells[0]} effect for {spellResults.Damage} damage.");
+                                if (combatants[targetIndex].CurrentHP < 1)
+                                {
+                                    logResults.Add($"{combatants[targetIndex].Name} fell.");
+                                }
                             }
                         }
+
+                        if (spellResults.AffectType == "status")
+                        {
+                            combatants[targetIndex].Statuses.Add(spellResults.Status);
+                            logResults.Add($"{combatants[targetIndex].Name} is {spellResults.Status}.");
+                        }
                     }
 
-                    if(spellResults.AffectType == "status")
-                    {
-                        combatants[targetIndex].Statuses.Add(spellResults.Status);
-                    }
-
-                    //remove that spell from list
+                    //remove spell from list
                     combatants[priorityIndex].Spells.RemoveAt(0);
                 }
 

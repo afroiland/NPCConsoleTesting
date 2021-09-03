@@ -45,7 +45,7 @@ namespace NPCConsoleTesting
             MaxHP = 10;
             MinInitMod = 1;
             MaxInitMod = 5;
-            MinAC = -10;
+            MinAC = 3;
             MaxAC = 10;
             MinThac0 = 1;
             MaxThac0 = 20;
@@ -76,7 +76,7 @@ namespace NPCConsoleTesting
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
-            List<string> spells = GenerateSpellList();
+            List<string> spells = GenerateSpellList(charClass, level);
 
             return new Combatant(name, charClass, level, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, spells);
         }
@@ -269,29 +269,69 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomClass()
         {
-            List<string> charClasses = new() {"Fighter", "Paladin", "Ranger", "Magic-User", "Illusionist", "Cleric", "Monk", "Druid", "Thief", "Assassin"};
+            List<string> charClasses = new() {"Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin"};
             return charClasses[_random.Next(1, charClasses.Count)];
-        }
-
-        public List<string> GenerateSpellList()
-        {
-            return new List<string> {"Magic Missile"};
         }
 
         public static int CalcThac0(string charClass, int level)
         {
-            List<int> MUThac0s = new() {20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11};
-            List<int> ThiefThac0s = new() {20, 20, 20, 20, 19, 19, 19, 19, 16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10};
+            List<int> MUThac0s = new() { 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11 };
+            List<int> ThiefThac0s = new() { 20, 20, 20, 20, 19, 19, 19, 19, 16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10 };
 
             int result = charClass switch
             {
                 "Fighter" or "Paladin" or "Ranger" or "Monster" => 21 - level,
                 "Magic-User" or "Illusionist" => MUThac0s[level - 1],
-                "Cleric" or "Monk" or "Druid" => 20 - (int)(Math.Floor((level-1) / 3d) * 2),
+                "Cleric" or "Monk" or "Druid" => 20 - (int)(Math.Floor((level - 1) / 3d) * 2),
                 "Thief" or "Assassin" => ThiefThac0s[level - 1],
                 _ => 20
             };
             return result;
+        }
+
+        public static int CalcAC(string armor, int dex)
+        {
+            return 10;
+        }
+
+        private List<string> GenerateSpellList(string charClass, int level)
+        {
+            List<String> result = charClass switch
+            {
+                "Magic-User" => GenerateMUSpellList(level),
+                "Cleric" => GenerateClericSpellList(level),
+                "Paladin" => GeneratePaladinSpellList(level),
+                "Druid" => GenerateDruidSpellList(level),
+                "Ranger" => GenerateRangerSpellList(level),
+                _ => new List<String>() { }
+            };
+
+            return result;
+        }
+
+        private List<string> GenerateMUSpellList(int level)
+        {
+            return new List<string> { "Magic Missile", "Sleep" };
+        }
+
+        private List<string> GenerateClericSpellList(int level)
+        {
+            return new List<string> { "Hold Person", "Cure Light Wounds" };
+        }
+
+        private List<string> GeneratePaladinSpellList(int level)
+        {
+            return new List<string> { };
+        }
+
+        private List<string> GenerateDruidSpellList(int level)
+        {
+            return new List<string> { "Cure Light Wounds" };
+        }
+
+        private List<string> GenerateRangerSpellList(int level)
+        {
+            return new List<string> { };
         }
     }
 }
