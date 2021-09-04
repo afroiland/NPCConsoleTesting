@@ -8,7 +8,7 @@ namespace NPCConsoleTesting.Characters
         public string CharacterClass { get; set; }
         public int Level { get; set; }
         public int Strength { get; set; }
-        public int? Ex_Strength { get; set; }
+        public int Ex_Strength { get; set; }
         public int Dexterity { get; set; }
         public List<string> HP_By_Level { get; set; }
         public int CurrentHP { get; set; }

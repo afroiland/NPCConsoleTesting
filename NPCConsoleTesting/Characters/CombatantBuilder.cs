@@ -70,21 +70,22 @@ namespace NPCConsoleTesting
             string charClass = SelectRandomClass();
             int level = _random.Next(_MinLevel, _MaxLevel + 1);
             int str = GenerateAttributeByCharClass("Strength", charClass);
-            int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
+            //int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
+            int ex_str = 0;
             int dex = GenerateAttributeByCharClass("Dexterity", charClass);
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
             int HP = ConvertHPByLevelToMaxHP(HPByLevel);
             int initMod = 0;
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass);
-            int AC = charClass == "Monk" ? CalcMonkAC(level) : CalcAC(armor, dex);
+            //int AC = charClass == "Monk" ? CalcMonkAC(level) : CalcAC(armor, dex);
             int thac0 = CalcThac0(charClass, level);
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie,
+            return new Combatant(name, charClass, level, str, dex, HP, initMod, thac0, numberOfAttackDice, typeOfAttackDie,
                 dmgModifier, ex_str, armor, weapon, spells);
         }
 
@@ -105,11 +106,8 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter initMod for character");
             int initMod = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter AC for character");
-            int AC = int.Parse(Console.ReadLine());
-
-            Console.WriteLine("Enter thac0 for character");
-            int thac0 = int.Parse(Console.ReadLine());
+            //Console.WriteLine("Enter AC for character");
+            //int AC = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Enter numberOfAttackDice for character");
             int numberOfAttackDice = int.Parse(Console.ReadLine());
@@ -123,9 +121,11 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter weapon for character");
             string weapon = Console.ReadLine();
 
+            int thac0 = CalcThac0(charClass, level);
+
             //TODO: spells?
 
-            return new Combatant(name, charClass, level, 12, 12, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, null, weapon);
+            return new Combatant(name, charClass, level, 12, 12, HP, initMod, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, charWeapon:weapon);
         }
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
@@ -310,31 +310,6 @@ namespace NPCConsoleTesting
                 "Thief" or "Assassin" => ThiefThac0s[level - 1],
                 _ => 20
             };
-            return result;
-        }
-
-        public static int CalcAC(string armor, int dex)
-        {
-            int result = armor switch
-            {
-                "None" => 10,
-                "Shield Only" => 9,
-                "Leather" => 8,
-                "Leather + Shield" or "Studded Leather" => 7,
-                "Studded Leather + Shield" or "Scale Mail" => 6,
-                "Scale Mail + Shield" or "Chain Mail" => 5,
-                "Chain Mail + Shield" or "Banded Mail" => 4,
-                "Banded Mail + Shield" or "Plate Mail" => 3,
-                "Plate Mail + Shield" => 2,
-                _ => 10
-            };
-
-            //AC bonus for dex above 14
-            for (int i = 14; i < 18; i++)
-            {
-                if (dex > i) { result--; }
-            }
-
             return result;
         }
 
