@@ -37,7 +37,8 @@ namespace NPCConsoleTesting
 
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
                 //TODO: if target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
-                if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 || combatants[priorityIndex].Statuses.Contains("Held") || combatants[priorityIndex].Statuses.Contains("Asleep"))
+                if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 ||
+                    combatants[priorityIndex].Statuses.Contains("Held") || combatants[priorityIndex].Statuses.Contains("Asleep"))
                 {
                     priorityIndex++;
                     break;
@@ -47,11 +48,9 @@ namespace NPCConsoleTesting
                 if (combatants[priorityIndex].Spells == null || combatants[priorityIndex].Spells.Count < 1)
                 {
                     //priority combatant does an attack against target
-                    //int attackResult = combatMethods.Attack(combatants[priorityIndex].Thac0, combatants[targetIndex].AC,
-                    //    combatants[priorityIndex].NumberOfAttackDice, combatants[priorityIndex].TypeOfAttackDie, combatants[priorityIndex].DmgModifier);
-
-                    int attackResult = combatMethods.DoMeleeAttack(combatants[priorityIndex].CharacterClass, combatants[priorityIndex].Thac0, combatants[targetIndex].Strength,
-                        combatants[priorityIndex].Armor, combatants[priorityIndex].Dexterity, combatants[priorityIndex].Weapon, combatants[priorityIndex].Ex_Strength, 0, 0, 0);
+                    int attackResult = combatMethods.DoMeleeAttack(combatants[priorityIndex].CharacterClass, combatants[targetIndex].CharacterClass,
+                        combatants[priorityIndex].Level, combatants[targetIndex].Level, combatants[priorityIndex].Strength, combatants[targetIndex].Armor,
+                        combatants[targetIndex].Dexterity, combatants[priorityIndex].Weapon, combatants[priorityIndex].Ex_Strength);
 
                     if (attackResult > 0)
                     {

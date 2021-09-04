@@ -9,14 +9,15 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        public int DoMeleeAttack(string charClass, int thac0, int str, string armor, int dex, string weapon, int ex_str = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0)
+        public int DoMeleeAttack(string attackerClass, string defenderClass, int attackerLevel, int defenderLevel, int str, string armor,
+            int dex, string weapon, int ex_str = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0)
         {
             int result = 0;
             int attackRoll = _random.Next(1, 21);
-            int ac = CalcAC(armor, dex);
+            int ac = defenderClass != "Monk" ? CalcNonMonkAC(armor, dex) : CalcMonkAC(defenderLevel);
 
-            int targetNumber = thac0 - ac - magicalBonus - otherHitBonus;
-            if (charClass != "Monk")
+            int targetNumber = CalcThac0(attackerClass, attackerLevel) - ac - magicalBonus - otherHitBonus;
+            if (attackerClass != "Monk")
             {
                 targetNumber -= CalcStrBonusToHit(str, ex_str);
             }
@@ -25,6 +26,71 @@ namespace NPCConsoleTesting
             {
                 result = CalcWeaponDmg(weapon, str, ex_str, magicalBonus, otherDmgBonus);
             }
+
+            return result;
+        }
+
+        public static int CalcThac0(string charClass, int level)
+        {
+            List<int> MUThac0s = new() { 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11 };
+            List<int> ThiefThac0s = new() { 20, 20, 20, 20, 19, 19, 19, 19, 16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10 };
+
+            int result = charClass switch
+            {
+                "Fighter" or "Paladin" or "Ranger" or "Monster" => 21 - level,
+                "Magic-User" or "Illusionist" => MUThac0s[level - 1],
+                "Cleric" or "Monk" or "Druid" => 20 - (int)(Math.Floor((level - 1) / 3d) * 2),
+                "Thief" or "Assassin" => ThiefThac0s[level - 1],
+                _ => 20
+            };
+            return result;
+        }
+
+        public static int CalcNonMonkAC(string armor, int dex)
+        {
+            int result = armor switch
+            {
+                "None" => 10,
+                "Shield Only" => 9,
+                "Leather" => 8,
+                "Leather + Shield" or "Studded Leather" => 7,
+                "Studded Leather + Shield" or "Scale Mail" => 6,
+                "Scale Mail + Shield" or "Chain Mail" => 5,
+                "Chain Mail + Shield" or "Banded Mail" => 4,
+                "Banded Mail + Shield" or "Plate Mail" => 3,
+                "Plate Mail + Shield" => 2,
+                _ => 10
+            };
+
+            //AC bonus for dex above 14
+            for (int i = 14; i < 18; i++)
+            {
+                if (dex > i) { result--; }
+            }
+
+            return result;
+        }
+
+        public static int CalcMonkAC(int level)
+        {
+            int result = level switch
+            {
+                1 => 10,
+                2 => 9,
+                3 => 8,
+                4 or 5 => 7,
+                6 => 6,
+                7 => 5,
+                8 => 4,
+                9 or 10 => 3,
+                11 => 2,
+                12 => 1,
+                13 => 0,
+                14 or 15 => -1,
+                16 => -2,
+                17 => -3,
+                _ => 10
+            };
 
             return result;
         }
@@ -98,6 +164,7 @@ namespace NPCConsoleTesting
                 result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
             }
 
+            //TODO: exclude monks from getting str bonus
             return result + weaponInfo.DmgModifier + CalcStrBonusToDmg(str, ex_str) + magicalBonus + otherDmgBonus;
         }
 
@@ -115,31 +182,6 @@ namespace NPCConsoleTesting
             };
 
             return new WeaponInfo(results[0], results[1], results[2]);
-        }
-
-        public static int CalcAC(string armor, int dex)
-        {
-            int result = armor switch
-            {
-                "None" => 10,
-                "Shield Only" => 9,
-                "Leather" => 8,
-                "Leather + Shield" or "Studded Leather" => 7,
-                "Studded Leather + Shield" or "Scale Mail" => 6,
-                "Scale Mail + Shield" or "Chain Mail" => 5,
-                "Chain Mail + Shield" or "Banded Mail" => 4,
-                "Banded Mail + Shield" or "Plate Mail" => 3,
-                "Plate Mail + Shield" => 2,
-                _ => 10
-            };
-
-            //AC bonus for dex above 14
-            for (int i = 14; i < 18; i++)
-            {
-                if (dex > i) { result--; }
-            }
-
-            return result;
         }
 
         public List<Combatant> DetermineInit(List<Combatant> chars)

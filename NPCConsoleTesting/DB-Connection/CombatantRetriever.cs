@@ -13,7 +13,6 @@ namespace NPCConsoleTesting
 
             var queryResult = DBConnection.QueryDB(connectionString, query);
 
-            //TODO: Extract from char info: values for initMod and attack dice
             string name = queryResult[0].name;
             string charClass = queryResult[0].characterClass;
             int level = queryResult[0].level;
@@ -21,23 +20,12 @@ namespace NPCConsoleTesting
             int ex_str = queryResult[0].ex_str;
             int dex = queryResult[0].dex;
             int HP = queryResult[0].currentHP;
-            int initMod = 0;
+            int initMod = 0;   //currently nothing that would modify this
             string armor = queryResult[0].armor;
             string weapon = queryResult[0].weapon;
-            //int AC = charClass == "Monk" ? CombatantBuilder.CalcMonkAC(level) : CombatantBuilder.CalcAC(queryResult[0].armor, dex);
-            int thac0 = CombatantBuilder.CalcThac0(queryResult[0].characterClass, queryResult[0].level);
-            int numberOfAttackDice = 1;
-            int typeOfAttackDie = 4;
-            int dmgModifier = 1;
             List<string> spells = SelectOnlyCombatSpells(queryResult[0].memorized);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, ex_str, armor, weapon, spells);
-        }
-
-        public static string GetNameFromUserInput()
-        {
-            Console.WriteLine($"Enter the character's name.");
-            return Console.ReadLine();
+            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, spells);
         }
 
         public static List<string> SelectOnlyCombatSpells(string allSpells)

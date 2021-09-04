@@ -75,18 +75,12 @@ namespace NPCConsoleTesting
             int dex = GenerateAttributeByCharClass("Dexterity", charClass);
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
             int HP = ConvertHPByLevelToMaxHP(HPByLevel);
-            int initMod = 0;
+            int initMod = 0;   //currently nothing that would modify this
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass);
-            //int AC = charClass == "Monk" ? CalcMonkAC(level) : CalcAC(armor, dex);
-            int thac0 = CalcThac0(charClass, level);
-            int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
-            int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
-            int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, thac0, numberOfAttackDice, typeOfAttackDie,
-                dmgModifier, ex_str, armor, weapon, spells);
+            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -106,26 +100,12 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter initMod for character");
             int initMod = int.Parse(Console.ReadLine());
 
-            //Console.WriteLine("Enter AC for character");
-            //int AC = int.Parse(Console.ReadLine());
-
-            Console.WriteLine("Enter numberOfAttackDice for character");
-            int numberOfAttackDice = int.Parse(Console.ReadLine());
-
-            Console.WriteLine("Enter typeOfAttackDie for character");
-            int typeOfAttackDie = int.Parse(Console.ReadLine());
-
-            Console.WriteLine("Enter dmgModifier for character");
-            int dmgModifier = int.Parse(Console.ReadLine());
-
             Console.WriteLine("Enter weapon for character");
             string weapon = Console.ReadLine();
 
-            int thac0 = CalcThac0(charClass, level);
-
             //TODO: spells?
 
-            return new Combatant(name, charClass, level, 12, 12, HP, initMod, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, charWeapon:weapon);
+            return new Combatant(name, charClass, level, 12, 12, HP, initMod, charWeapon:weapon);
         }
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
@@ -182,7 +162,7 @@ namespace NPCConsoleTesting
                 }
                 else if (charOrigin == 3)
                 {
-                    string name = CombatantRetriever.GetNameFromUserInput();
+                    string name = GetNameFromUserInput();
                     try
                     {
                         combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
@@ -199,6 +179,12 @@ namespace NPCConsoleTesting
             }
 
             return combatants;
+        }
+
+        public static string GetNameFromUserInput()
+        {
+            Console.WriteLine($"Enter the character's name.");
+            return Console.ReadLine();
         }
 
         public static string GenerateRandomName()
@@ -295,46 +281,6 @@ namespace NPCConsoleTesting
         private static int ConvertHPByLevelToMaxHP(List<int> hpByLevel)
         {
             return 12;
-        }
-
-        public static int CalcThac0(string charClass, int level)
-        {
-            List<int> MUThac0s = new() { 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11 };
-            List<int> ThiefThac0s = new() { 20, 20, 20, 20, 19, 19, 19, 19, 16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10 };
-
-            int result = charClass switch
-            {
-                "Fighter" or "Paladin" or "Ranger" or "Monster" => 21 - level,
-                "Magic-User" or "Illusionist" => MUThac0s[level - 1],
-                "Cleric" or "Monk" or "Druid" => 20 - (int)(Math.Floor((level - 1) / 3d) * 2),
-                "Thief" or "Assassin" => ThiefThac0s[level - 1],
-                _ => 20
-            };
-            return result;
-        }
-
-        public static int CalcMonkAC(int level)
-        {
-            int result = level switch
-            {
-                1 => 10,
-                2 => 9,
-                3 => 8,
-                4 or 5 => 7,
-                6 => 6,
-                7 => 5,
-                8 => 4,
-                9 or 10 => 3,
-                11 => 2,
-                12 => 1,
-                13 => 0,
-                14 or 15 => -1,
-                16 => -2,
-                17 => -3,
-                _ => 10
-            };
-
-            return result;
         }
 
         private static string SelectRandomArmor(string charClass)
