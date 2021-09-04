@@ -22,15 +22,16 @@ namespace NPCConsoleTesting
             int dex = queryResult[0].dex;
             int HP = queryResult[0].currentHP;
             int initMod = 0;
-            int AC = CombatantBuilder.CalcAC(queryResult[0].armor, queryResult[0].dex);
+            string armor = queryResult[0].armor;
+            string weapon = queryResult[0].weapon;
+            int AC = charClass == "Monk" ? CombatantBuilder.CalcMonkAC(level) : CombatantBuilder.CalcAC(queryResult[0].armor, dex);
             int thac0 = CombatantBuilder.CalcThac0(queryResult[0].characterClass, queryResult[0].level);
             int numberOfAttackDice = 1;
             int typeOfAttackDie = 4;
             int dmgModifier = 1;
-            string weapon = queryResult[0].weapon;
             List<string> spells = SelectOnlyCombatSpells(queryResult[0].memorized);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, ex_str, weapon, spells);
+            return new Combatant(name, charClass, level, str, dex, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, ex_str, armor, weapon, spells);
         }
 
         public static string GetNameFromUserInput()

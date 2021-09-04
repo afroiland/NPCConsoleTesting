@@ -47,7 +47,7 @@ namespace NPCConsoleTesting
                 }
                 else
                 {
-                    ch.Init += ch.InitMod; // += weapon speed
+                    ch.Init += ch.InitMod + GetSpeedFactor(ch.Weapon);
                 }
             }
 
@@ -67,6 +67,24 @@ namespace NPCConsoleTesting
                 "Cure Light Wounds" or "Hold Person" => 5,
                 "Strength" => 10,
                 _ => 10
+            };
+
+            return result;
+        }
+
+        private static int GetSpeedFactor(string weapon)
+        {
+            int result = weapon switch
+            {
+                "Dagger" or "Darts" => 2,
+                "Shortsword" => 3,
+                "Club" or "Hammer" or "Staff" => 4,
+                "Longsword" => 5,
+                "Flail" or "Mace" => 6,
+                "Axe" or "Spear" => 7,
+                "Halberd" => 9,
+                "Two-Handed Sword" => 10,
+                _ => 0
             };
 
             return result;

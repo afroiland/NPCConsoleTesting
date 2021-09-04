@@ -74,16 +74,18 @@ namespace NPCConsoleTesting
             int dex = GenerateAttributeByCharClass("Dexterity", charClass);
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
             int HP = ConvertHPByLevelToMaxHP(HPByLevel);
-            int initMod = _random.Next(_MinInitMod, _MaxInitMod + 1);
-            int AC = CalcAC("", 14);
+            int initMod = 0;
+            string armor = SelectRandomArmor(charClass);
+            string weapon = SelectRandomWeapon(charClass);
+            int AC = charClass == "Monk" ? CalcMonkAC(level) : CalcAC(armor, dex);
             int thac0 = CalcThac0(charClass, level);
             int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
             int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
             int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
-            string weapon = SelectRandomWeapon(charClass);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier, ex_str, weapon, spells);
+            return new Combatant(name, charClass, level, str, dex, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie,
+                dmgModifier, ex_str, armor, weapon, spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -185,7 +187,7 @@ namespace NPCConsoleTesting
                     {
                         combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         Console.WriteLine("That didn't work. Try again.");
                     }
@@ -277,7 +279,7 @@ namespace NPCConsoleTesting
         private static string SelectRandomClass()
         {
             List<string> charClasses = new() {"Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin"};
-            return charClasses[_random.Next(1, charClasses.Count)];
+            return charClasses[_random.Next(0, charClasses.Count)];
         }
 
         private static int GenerateAttributeByCharClass(string attribute, string charClass)
@@ -332,6 +334,44 @@ namespace NPCConsoleTesting
             {
                 if (dex > i) { result--; }
             }
+
+            return result;
+        }
+
+        public static int CalcMonkAC(int level)
+        {
+            int result = level switch
+            {
+                1 => 10,
+                2 => 9,
+                3 => 8,
+                4 or 5 => 7,
+                6 => 6,
+                7 => 5,
+                8 => 4,
+                9 or 10 => 3,
+                11 => 2,
+                12 => 1,
+                13 => 0,
+                14 or 15 => -1,
+                16 => -2,
+                17 => -3,
+                _ => 10
+            };
+
+            return result;
+        }
+
+        private static string SelectRandomArmor(string charClass)
+        {
+            List<string> armorList = new() { "Leather", "Studded Leather", "Scale Mail", "Chain Mail", "Banded Mail", "Plate Mail" };
+
+            string result = charClass switch
+            {
+                "Fighter" or "Cleric" or "Paladin" or "Ranger" => armorList[_random.Next(0, armorList.Count)],
+                "Druid" or "Assassin" or "Thief" => "Leather",
+                _ => "None"
+            };
 
             return result;
         }
