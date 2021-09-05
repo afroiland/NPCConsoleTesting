@@ -12,6 +12,7 @@ namespace NPCConsoleTesting
         List<string> Statuses { get; set; }
         string Armor { get; set; }
         string Weapon { get; set; }
+        bool HasShield { get; set; }
         int Init { get; set; }
         string Target { get; set; }
         bool GotHitThisRound { get; set; }

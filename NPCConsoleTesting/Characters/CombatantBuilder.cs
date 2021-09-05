@@ -70,7 +70,7 @@ namespace NPCConsoleTesting
             string charClass = SelectRandomClass();
             int level = _random.Next(_MinLevel, _MaxLevel + 1);
             int str = GenerateAttributeByCharClass("Strength", charClass);
-            //int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
+            //TODO: int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
             int ex_str = 0;
             int dex = GenerateAttributeByCharClass("Dexterity", charClass);
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
@@ -78,9 +78,10 @@ namespace NPCConsoleTesting
             int initMod = 0;   //currently nothing that would modify this
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass);
+            bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, spells);
+            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, hasShield, spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -300,6 +301,20 @@ namespace NPCConsoleTesting
         private static string SelectRandomWeapon(string charClass)
         {
             return "Dagger";
+        }
+
+        private static bool DetermineShieldPresence(string charClass, string weapon)
+        {
+            List<string> classesThatCannotUseShield = new() { "Magic-User", "Illusionist" };
+            List<string> weaponsThatRequireTwoHands = new() { "Spear", "Halberd", "Staff", "Two-Handed Sword" };
+
+            bool result = true;
+            if (classesThatCannotUseShield.Contains(charClass) || weaponsThatRequireTwoHands.Contains(weapon))
+            {
+                result = false;
+            }
+
+            return result;
         }
 
         private List<string> GenerateSpellList(string charClass, int level)

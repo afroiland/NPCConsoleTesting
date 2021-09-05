@@ -10,11 +10,11 @@ namespace NPCConsoleTesting
         static Random _random = new();
 
         public int DoAMeleeAttack(string attackerClass, string defenderClass, int attackerLevel, int defenderLevel, int str, string armor,
-            int dex, string weapon, int ex_str = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0)
+            bool hasShield, int dex, string weapon, int ex_str = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0)
         {
             int result = 0;
             int attackRoll = _random.Next(1, 21);
-            int ac = defenderClass != "Monk" ? CalcNonMonkAC(armor, dex) : CalcMonkAC(defenderLevel);
+            int ac = defenderClass != "Monk" ? CalcNonMonkAC(armor, hasShield, dex) : CalcMonkAC(defenderLevel);
 
             int targetNumber = CalcThac0(attackerClass, attackerLevel) - ac - magicalBonus - otherHitBonus;
             if (attackerClass != "Monk")
@@ -24,7 +24,7 @@ namespace NPCConsoleTesting
             //An attack roll of 20 always suceeds and a roll of 1 always fails
             if (attackRoll == 20 || (targetNumber <= attackRoll && attackRoll != 1))
             {
-                result = CalcMeleeDmg(weapon, str, ex_str, magicalBonus, otherDmgBonus);
+                result = CalcMeleeDmg(attackerClass, weapon, str, ex_str, magicalBonus, otherDmgBonus);
             }
 
             return result;
@@ -46,7 +46,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public static int CalcNonMonkAC(string armor, int dex)
+        public static int CalcNonMonkAC(string armor, bool hasShield, int dex)
         {
             int result = armor switch
             {
@@ -62,10 +62,16 @@ namespace NPCConsoleTesting
                 _ => 10
             };
 
+            //lower AC by 1 if combatant has shield
+            result -= hasShield ? 1 : 0;
+
             //AC bonus for dex above 14
-            for (int i = 14; i < 18; i++)
+            if (dex > 14)
             {
-                if (dex > i) { result--; }
+                for (int i = 14; i < 18; i++)
+                {
+                    if (dex > i) { result--; }
+                }
             }
 
             return result;
@@ -154,7 +160,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public int CalcMeleeDmg(string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus = 0)
+        public int CalcMeleeDmg(string attackerClass, string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus)
         {
             WeaponInfo weaponInfo = GetWeaponInfo(weapon);
             int result = 0;
@@ -164,8 +170,13 @@ namespace NPCConsoleTesting
                 result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
             }
 
-            //TODO: exclude monks from getting str bonus
-            return result + weaponInfo.DmgModifier + CalcStrBonusToDmg(str, ex_str) + magicalBonus + otherDmgBonus;
+            result += weaponInfo.DmgModifier + magicalBonus + otherDmgBonus;
+            if (attackerClass != "Monk")
+            {
+                result += CalcStrBonusToDmg(str, ex_str);
+            }
+            
+            return result;
         }
 
         public static WeaponInfo GetWeaponInfo(string weapon)
@@ -182,28 +193,6 @@ namespace NPCConsoleTesting
             };
 
             return new WeaponInfo(results[0], results[1], results[2]);
-        }
-
-        public List<Combatant> DetermineInit(List<Combatant> chars)
-        {
-            //set inits
-            foreach (Combatant ch in chars)
-            {
-                ch.Init = _random.Next(1, 11);
-                if (ch.Spells != null && ch.Spells.Count > 0)
-                {
-                    ch.Init += GetCastingTime(ch.Spells[0]);
-                }
-                else
-                {
-                    ch.Init += ch.InitMod + GetSpeedFactor(ch.Weapon);
-                }
-            }
-
-            //order chars with hp > 0 by init
-            chars = chars.Where(x => x.CurrentHP > 0).OrderBy(x => x.Init).ToList();
-
-            return chars;
         }
 
         private static int GetCastingTime(string spellName)
@@ -237,6 +226,28 @@ namespace NPCConsoleTesting
             };
 
             return result;
+        }
+
+        public List<Combatant> DetermineInit(List<Combatant> chars)
+        {
+            //set inits
+            foreach (Combatant ch in chars)
+            {
+                ch.Init = _random.Next(1, 11);
+                if (ch.Spells != null && ch.Spells.Count > 0)
+                {
+                    ch.Init += GetCastingTime(ch.Spells[0]);
+                }
+                else
+                {
+                    ch.Init += ch.InitMod + GetSpeedFactor(ch.Weapon);
+                }
+            }
+
+            //order chars with hp > 0 by init
+            chars = chars.Where(x => x.CurrentHP > 0).OrderBy(x => x.Init).ToList();
+
+            return chars;
         }
 
         public List<Combatant> DetermineTargets(List<Combatant> chars)
