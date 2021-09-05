@@ -48,7 +48,7 @@ namespace NPCConsoleTesting
                 if (combatants[priorityIndex].Spells == null || combatants[priorityIndex].Spells.Count < 1)
                 {
                     //priority combatant does an attack against target
-                    int attackResult = combatMethods.DoMeleeAttack(combatants[priorityIndex].CharacterClass, combatants[targetIndex].CharacterClass,
+                    int attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex].CharacterClass, combatants[targetIndex].CharacterClass,
                         combatants[priorityIndex].Level, combatants[targetIndex].Level, combatants[priorityIndex].Strength, combatants[targetIndex].Armor,
                         combatants[targetIndex].Dexterity, combatants[priorityIndex].Weapon, combatants[priorityIndex].Ex_Strength);
 

@@ -9,7 +9,7 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        public int DoMeleeAttack(string attackerClass, string defenderClass, int attackerLevel, int defenderLevel, int str, string armor,
+        public int DoAMeleeAttack(string attackerClass, string defenderClass, int attackerLevel, int defenderLevel, int str, string armor,
             int dex, string weapon, int ex_str = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0)
         {
             int result = 0;
@@ -24,7 +24,7 @@ namespace NPCConsoleTesting
             //An attack roll of 20 always suceeds and a roll of 1 always fails
             if (attackRoll == 20 || (targetNumber <= attackRoll && attackRoll != 1))
             {
-                result = CalcWeaponDmg(weapon, str, ex_str, magicalBonus, otherDmgBonus);
+                result = CalcMeleeDmg(weapon, str, ex_str, magicalBonus, otherDmgBonus);
             }
 
             return result;
@@ -154,7 +154,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public int CalcWeaponDmg(string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus = 0)
+        public int CalcMeleeDmg(string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus = 0)
         {
             WeaponInfo weaponInfo = GetWeaponInfo(weapon);
             int result = 0;

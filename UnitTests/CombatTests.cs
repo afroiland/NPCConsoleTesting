@@ -36,8 +36,8 @@ namespace UnitTests
             //Act
             //for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             //{
-            //    if (combatMethods.DoMeleeAttack(thac0, poorAC, numOfAttackDice, typeOfAttackDie, dmgModifier) == 0) { missesAgainstPoorAC++; }
-            //    if (combatMethods.DoMeleeAttack(thac0, goodAC, numOfAttackDice, typeOfAttackDie, dmgModifier) != 0) { hitsAgainstGoodAC++; }
+            //    if (combatMethods.DoAMeleeAttack(thac0, poorAC, numOfAttackDice, typeOfAttackDie, dmgModifier) == 0) { missesAgainstPoorAC++; }
+            //    if (combatMethods.DoAMeleeAttack(thac0, goodAC, numOfAttackDice, typeOfAttackDie, dmgModifier) != 0) { hitsAgainstGoodAC++; }
             //}
 
             ////Assert
