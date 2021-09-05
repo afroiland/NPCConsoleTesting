@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using NPCConsoleTesting.DB_Connection;
 using System.IO;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using NPCConsoleTesting.Models;
+using NPCConsoleTesting.Combat;
+using System.Collections.Generic;
+using System;
 
 namespace NPCConsoleTesting
 {
-    class Program : CombatantRetriever
+    class Program
     {
         static void Main()
         {
@@ -24,100 +23,34 @@ namespace NPCConsoleTesting
                 .WriteTo.Console()
                 .CreateLogger();
 
-            Log.Logger.Information("App Starting");
+            //Log.Logger.Information("App Starting");
 
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    //services.AddTransient<IGreetingService, GreetingService>();
-                    services.AddTransient<ConnectionStringService>();
+                    services.AddTransient<IConnectionStringService, ConnectionStringService>();
                 })
                 .UseSerilog()
                 .Build();
 
-            Console.WriteLine($"How many are battling?");
-            int numberBattling = int.Parse(Console.ReadLine());
-            Console.WriteLine($"1 = Random, 2 = Custom, 3 = Get from db");
-            int charOrigin = int.Parse(Console.ReadLine());
+            var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
 
-            CombatantBuilder cBuilder = new();
-            CombatantRetriever cRetriever = new();
-            List<ICombatant> combatants = new();
-            string connectionString = "";
-
-            if (charOrigin == 3)
+            bool weAreDone = false;
+            while (!weAreDone)
             {
-                var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
-                connectionString = connectionStringSvc.GetConnectionString();
-            }
+                //build combatant list
+                CombatantBuilder cbtBuilder = new();
+                List<Combatant> combatants = cbtBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
 
-            for (int i = 0; i < numberBattling; i++)
-            {
-                if (charOrigin == 2)
+                //do a full combat
+                FullCombat.DoAFullCombat(combatants);
+
+                Console.WriteLine();
+                Console.WriteLine($"Go again? Y/N");
+                if (Console.ReadLine().ToUpper() != "Y")
                 {
-                    combatants.Add(CombatantBuilder.BuildCombatantViaConsole());
+                    weAreDone = true;
                 }
-                else if (charOrigin == 3)
-                {
-                    string name = cRetriever.GetNameFromUserInput();
-                    combatants.Add(cRetriever.GetCombatantByName(connectionString, name));
-                }
-                else
-                {
-                    combatants.Add(cBuilder.BuildCombatantRandomly());
-                }
-            }
-
-            //combatants fight until only one* remains.  (*in rare cases, zero)
-            List<string> wholeFightLog = new() {" ", "Here's what happened:"};
-            bool downToOne = false;
-            int roundNumber = 0;
-
-            while (!downToOne)
-            {
-                List<string> logResults = CombatRound.DoACombatRound(combatants);
-
-                roundNumber++;
-                wholeFightLog.Add($"------Round {roundNumber}------");
-
-                //TODO: ensure there is not a shorter way to do this. No luck briefly with Join, Concat
-                //add roundLog to wholeFightLog
-                foreach (string logEntry in logResults)
-                {
-                    wholeFightLog.Add(logEntry);
-                }
-
-                //TODO: clean this up, likely using LINQ
-                //check if we're down to one
-                int numberOfSurvivors = 0;
-                foreach (ICombatant ch in combatants)
-                {
-                    if (ch.HP > 0)
-                    {
-                        numberOfSurvivors++;
-                    }
-                }
-                if (numberOfSurvivors == 1)
-                {
-                    //the fight has ended
-                    downToOne = true;
-
-                    List<string> winner = combatants.Where(x => x.HP > 0).Select(x => x.Name).ToList();
-                    wholeFightLog.Add($"{winner[0]} won.");
-
-                    wholeFightLog.ForEach(i => Console.WriteLine(i));
-                    Console.ReadLine();
-                }
-
-                //lol
-                if (numberOfSurvivors < 1)
-                {
-                    Console.WriteLine("lol");
-                    break;
-                }
-
-                //update combatants list with returned
-                //combatants = roundResults.combatants;
             }
         }
 

@@ -5,10 +5,7 @@ namespace NPCConsoleTesting
 {
     public class CombatRound
     {
-        private static readonly bool doReadLines = false;
-        //private static readonly bool doReadLines = true;
-
-        public static List<string> DoACombatRound(List<ICombatant> combatants)
+        public static List<string> DoACombatRound(List<Combatant> combatants)
         {
             ICombatMethods combatMethods = new CombatMethods();
             List<String> logResults = new();
@@ -16,10 +13,11 @@ namespace NPCConsoleTesting
             combatants = combatMethods.DetermineTargets(combatants);
             combatants = combatMethods.DetermineInit(combatants);
 
-            //foreach (ICombatant x in combatants)
-            //{
-            //    Console.WriteLine($"{x.Name} hp: {x.HP}");
-            //}
+            //clear GotHitThisRound status for all combatants
+            foreach (var cbt in combatants)
+            {
+                cbt.GotHitThisRound = false;
+            }
                 
             int segment = 0;
             int priorityIndex = 0;
@@ -38,45 +36,77 @@ namespace NPCConsoleTesting
                 targetIndex = combatants.FindIndex(x => x.Name == combatants[priorityIndex].Target);
 
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
-                if ((combatants[priorityIndex].HP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].HP <= 0)
+                //TODO: if target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
+                if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 ||
+                    combatants[priorityIndex].Statuses.Contains("Held") || combatants[priorityIndex].Statuses.Contains("Asleep"))
                 {
                     priorityIndex++;
                     break;
                 }
 
-                //Console.WriteLine($"It is segment {segment}, {combatants[priorityIndex].name} is about to attack {combatants[priorityIndex].target}");
-                //if (doReadLines) { Console.ReadLine(); }
-                
-                //priority combatant does an attack against target
-                int attackResult = combatMethods.Attack(combatants[priorityIndex].Thac0, combatants[targetIndex].AC,
-                    combatants[priorityIndex].NumberOfAttackDice, combatants[priorityIndex].TypeOfAttackDie, combatants[priorityIndex].DmgModifier);
-                //Console.WriteLine($"attackResult: {attackResult}");
-                //if (doReadLines) { Console.ReadLine(); }
-
-                if (attackResult > 0)
+                //check for spells--if none, do an attack
+                if (combatants[priorityIndex].Spells == null || combatants[priorityIndex].Spells.Count < 1)
                 {
-                    logResults.Add($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
+                    //priority combatant does an attack against target
+                    int attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex].CharacterClass, combatants[targetIndex].CharacterClass,
+                        combatants[priorityIndex].Level, combatants[targetIndex].Level, combatants[priorityIndex].Strength, combatants[targetIndex].Armor,
+                        combatants[targetIndex].Dexterity, combatants[priorityIndex].Weapon, combatants[priorityIndex].Ex_Strength);
 
-                    //adjust target hp
-                    combatants[targetIndex].HP -= attackResult;
-
-                    if (combatants[targetIndex].HP <= 0)
+                    if (attackResult > 0)
                     {
-                        logResults.Add($"{combatants[targetIndex].Name} fell.");
+                        logResults.Add($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
 
-                        if (combatants[targetIndex].Init == segment)
+                        //adjust target hp and GotHitThisRound status
+                        combatants[targetIndex].CurrentHP -= attackResult;
+                        combatants[targetIndex].GotHitThisRound = true;
+
+                        if (combatants[targetIndex].CurrentHP <= 0)
                         {
-                            opportunityForSimulAttack = true;
+                            logResults.Add($"{combatants[targetIndex].Name} fell.");
+
+                            if (combatants[targetIndex].Init == segment)
+                            {
+                                opportunityForSimulAttack = true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (!combatants[priorityIndex].GotHitThisRound)
+                    {
+                        //do the spell effect
+                        SpellResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex].Level);
+
+                        //update combatants with spell results
+                        if (spellResults.AffectType == "damage")
+                        {
+                            if (spellResults.Damage < 0)   //a negative result indicates cure light wounds
+                            {
+                                combatants[priorityIndex].CurrentHP -= spellResults.Damage;
+                            }
+                            else
+                            {
+                                combatants[targetIndex].CurrentHP -= spellResults.Damage;
+                                combatants[targetIndex].GotHitThisRound = true;
+                                logResults.Add($"{combatants[targetIndex].Name} got hit with a {combatants[priorityIndex].Spells[0]} effect for {spellResults.Damage} damage.");
+                                if (combatants[targetIndex].CurrentHP < 1)
+                                {
+                                    logResults.Add($"{combatants[targetIndex].Name} fell.");
+                                }
+                            }
+                        }
+
+                        if (spellResults.AffectType == "status")
+                        {
+                            combatants[targetIndex].Statuses.Add(spellResults.Status);
+                            logResults.Add($"{combatants[targetIndex].Name} is {spellResults.Status}.");
                         }
                     }
 
-                    //Console.WriteLine($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
-                    //Console.WriteLine($"{combatants[targetIndex].Name} is at {combatants[targetIndex].HP}hp.");
+                    //remove spell from list
+                    combatants[priorityIndex].Spells.RemoveAt(0);
                 }
-                //else
-                //{
-                //    logResults.Add($"{combatants[priorityIndex].Name} missed {combatants[targetIndex].Name}.");
-                //}
 
                 priorityIndex++;
             }

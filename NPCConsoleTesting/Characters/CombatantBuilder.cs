@@ -19,6 +19,8 @@ namespace NPCConsoleTesting
         private int _MaxTypeOfAttackDie;
         private int _MinDmgModifier;
         private int _MaxDmgModifier;
+        private int _MinLevel;
+        private int _MaxLevel;
 
         public int MinHP { get => _MinHP; set => _MinHP = value; }
         public int MaxHP { get => _MaxHP; set => _MaxHP = value; }
@@ -34,6 +36,8 @@ namespace NPCConsoleTesting
         public int MaxTypeOfAttackDie { get => _MaxTypeOfAttackDie; set => _MaxTypeOfAttackDie = value; }
         public int MinDmgModifier { get => _MinDmgModifier; set => _MinDmgModifier = value; }
         public int MaxDmgModifier { get => _MaxDmgModifier; set => _MaxDmgModifier = value; }
+        public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
+        public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
 
         public CombatantBuilder()
         {
@@ -41,7 +45,7 @@ namespace NPCConsoleTesting
             MaxHP = 10;
             MinInitMod = 1;
             MaxInitMod = 5;
-            MinAC = -10;
+            MinAC = 3;
             MaxAC = 10;
             MinThac0 = 1;
             MaxThac0 = 20;
@@ -51,6 +55,8 @@ namespace NPCConsoleTesting
             MaxTypeOfAttackDie = 6;
             MinDmgModifier = 0;
             MaxDmgModifier = 2;
+            MinLevel = 1;
+            MaxLevel = 5;
         }
 
         const int MIN_NAME_PATTERN_LENGTH = 3;
@@ -58,24 +64,35 @@ namespace NPCConsoleTesting
 
         static Random _random = new();
 
-        public ICombatant BuildCombatantRandomly()
+        public Combatant BuildCombatantRandomly()
         {
             string name = GenerateRandomName();
-            int HP = _random.Next(_MinHP, _MaxHP + 1);
-            int initMod = _random.Next(_MinInitMod, _MaxInitMod + 1);
-            int AC = _random.Next(_MinAC, _MaxAC + 1);
-            int thac0 = _random.Next(_MinThac0, _MaxThac0 + 1);
-            int numberOfAttackDice = _random.Next(_MinNumberOfAttackDice, _MaxNumberOfAttackDice + 1);
-            int typeOfAttackDie = _random.Next(_MinTypeOfAttackDie, _MaxTypeOfAttackDie + 1);
-            int dmgModifier = _random.Next(_MinDmgModifier, _MaxDmgModifier + 1);
+            string charClass = SelectRandomClass();
+            int level = _random.Next(_MinLevel, _MaxLevel + 1);
+            int str = GenerateAttributeByCharClass("Strength", charClass);
+            //int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
+            int ex_str = 0;
+            int dex = GenerateAttributeByCharClass("Dexterity", charClass);
+            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
+            int HP = ConvertHPByLevelToMaxHP(HPByLevel);
+            int initMod = 0;   //currently nothing that would modify this
+            string armor = SelectRandomArmor(charClass);
+            string weapon = SelectRandomWeapon(charClass);
+            List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Fighter(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, spells);
         }
 
-        public static ICombatant BuildCombatantViaConsole()
+        public static Combatant BuildCombatantViaConsole()
         {
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
+
+            Console.WriteLine("Enter class for character");
+            string charClass = Console.ReadLine();
+
+            Console.WriteLine("Enter level for character");
+            int level = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Enter HP for character");
             int HP = int.Parse(Console.ReadLine());
@@ -83,22 +100,91 @@ namespace NPCConsoleTesting
             Console.WriteLine("Enter initMod for character");
             int initMod = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter AC for character");
-            int AC = int.Parse(Console.ReadLine());
+            Console.WriteLine("Enter weapon for character");
+            string weapon = Console.ReadLine();
 
-            Console.WriteLine("Enter thac0 for character");
-            int thac0 = int.Parse(Console.ReadLine());
+            //TODO: spells?
 
-            Console.WriteLine("Enter numberOfAttackDice for character");
-            int numberOfAttackDice = int.Parse(Console.ReadLine());
+            return new Combatant(name, charClass, level, 12, 12, HP, initMod, charWeapon:weapon);
+        }
 
-            Console.WriteLine("Enter typeOfAttackDie for character");
-            int typeOfAttackDie = int.Parse(Console.ReadLine());
+        public List<Combatant> BuildListOfCombatants(string connectionString)
+        {
+            int numberBattling = 0;
+            while (numberBattling < 2)
+            {
+                Console.WriteLine("How many are battling?");
+                try
+                {
+                    numberBattling = int.Parse(Console.ReadLine());
+                    if (numberBattling < 2)
+                    {
+                        Console.WriteLine("Must be at least two");
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("We're looking for an integer");
+                }
+            }
+            
+            Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
+            int charOrigin = 0;
+            bool intEntered = false;
+            while (!intEntered)
+            {
+                try
+                {
+                    charOrigin = int.Parse(Console.ReadLine());
+                    intEntered = true;
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("We're looking for an integer");
+                }
+            }
 
-            Console.WriteLine("Enter dmgModifier for character");
-            int dmgModifier = int.Parse(Console.ReadLine());
+            List<Combatant> combatants = new();
 
-            return new Fighter(name, HP, initMod, AC, thac0, numberOfAttackDice, typeOfAttackDie, dmgModifier);
+            while (combatants.Count < numberBattling)
+            {
+                if (charOrigin == 2)
+                {
+                    try
+                    {
+                        combatants.Add(BuildCombatantViaConsole());
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
+
+                }
+                else if (charOrigin == 3)
+                {
+                    string name = GetNameFromUserInput();
+                    try
+                    {
+                        combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
+                }
+                else
+                {
+                    combatants.Add(BuildCombatantRandomly());
+                }
+            }
+
+            return combatants;
+        }
+
+        public static string GetNameFromUserInput()
+        {
+            Console.WriteLine($"Enter the character's name.");
+            return Console.ReadLine();
         }
 
         public static string GenerateRandomName()
@@ -174,6 +260,86 @@ namespace NPCConsoleTesting
         public enum LetterGroups
         {
             consonants, startingBlends, endingBlends, vowels
+        }
+
+        private static string SelectRandomClass()
+        {
+            List<string> charClasses = new() {"Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin"};
+            return charClasses[_random.Next(0, charClasses.Count)];
+        }
+
+        private static int GenerateAttributeByCharClass(string attribute, string charClass)
+        {
+            return 12;
+        }
+
+        private static List<int> GenerateHPByLevelByCharClass(string charClass)
+        {
+            return new List<int> { 4, 4, 4 };
+        }
+
+        private static int ConvertHPByLevelToMaxHP(List<int> hpByLevel)
+        {
+            return 12;
+        }
+
+        private static string SelectRandomArmor(string charClass)
+        {
+            List<string> armorList = new() { "Leather", "Studded Leather", "Scale Mail", "Chain Mail", "Banded Mail", "Plate Mail" };
+
+            string result = charClass switch
+            {
+                "Fighter" or "Cleric" or "Paladin" or "Ranger" => armorList[_random.Next(0, armorList.Count)],
+                "Druid" or "Assassin" or "Thief" => "Leather",
+                _ => "None"
+            };
+
+            return result;
+        }
+
+        private static string SelectRandomWeapon(string charClass)
+        {
+            return "Dagger";
+        }
+
+        private List<string> GenerateSpellList(string charClass, int level)
+        {
+            List<String> result = charClass switch
+            {
+                "Magic-User" => GenerateMUSpellList(level),
+                "Cleric" => GenerateClericSpellList(level),
+                "Paladin" => GeneratePaladinSpellList(level),
+                "Druid" => GenerateDruidSpellList(level),
+                "Ranger" => GenerateRangerSpellList(level),
+                _ => new List<String>() { }
+            };
+
+            return result;
+        }
+
+        private List<string> GenerateMUSpellList(int level)
+        {
+            return new List<string> { "Magic Missile", "Sleep" };
+        }
+
+        private List<string> GenerateClericSpellList(int level)
+        {
+            return new List<string> { "Hold Person", "Cure Light Wounds" };
+        }
+
+        private List<string> GeneratePaladinSpellList(int level)
+        {
+            return new List<string> { };
+        }
+
+        private List<string> GenerateDruidSpellList(int level)
+        {
+            return new List<string> { "Cure Light Wounds" };
+        }
+
+        private List<string> GenerateRangerSpellList(int level)
+        {
+            return new List<string> { };
         }
     }
 }

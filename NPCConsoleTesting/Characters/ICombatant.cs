@@ -1,17 +1,19 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace NPCConsoleTesting
 {
     public interface ICombatant
     {
         string Name { get; set; }
-        int HP { get; set; }
+        string CharacterClass { get; set; }
+        int Level { get; set; }
+        int CurrentHP { get; set; }
         int InitMod { get; set; }
-        int AC { get; set; }
-        int Thac0 { get; set; }
-        int NumberOfAttackDice { get; set; }
-        int TypeOfAttackDie { get; set; }
-        int DmgModifier { get; set; }
+        List<string> Statuses { get; set; }
+        string Armor { get; set; }
+        string Weapon { get; set; }
         int Init { get; set; }
         string Target { get; set; }
+        bool GotHitThisRound { get; set; }
     }
 }

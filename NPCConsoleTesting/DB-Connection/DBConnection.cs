@@ -1,27 +1,28 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using NPCConsoleTesting.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NPCConsoleTesting.DB_Connection
 {
     public class DBConnection
     {
-        public static IEnumerable<CharacterModel> QueryDB(string connectionString, string query)
+        public static List<CharacterModel> QueryDB(string connectionString, string query)
         {
-            IEnumerable<CharacterModel> result;
+            List<CharacterModel> listResult = new();
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                result = connection.Query<CharacterModel>(query);
+                var result = connection.Query<CharacterModel>(query);
+
+                foreach (var x in result)
+                {
+                    listResult.Add(x);
+                }
             }
 
-            return result;
+            return listResult;
         }
     }
 }
