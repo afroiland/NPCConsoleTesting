@@ -75,13 +75,14 @@ namespace NPCConsoleTesting
             int dex = GenerateAttributeByCharClass("Dexterity", charClass);
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
             int HP = ConvertHPByLevelToMaxHP(HPByLevel);
-            int initMod = 0;   //currently nothing that would modify this
+            //int initMod = 0;
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass);
             bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, hasShield, spells);
+            return new Combatant(name, charClass, level, str, dex, HP, ex_str, charArmor:armor, charWeapon:weapon,
+                charHasShield:hasShield, charSpells:spells);
         }
 
         public static Combatant BuildCombatantViaConsole()

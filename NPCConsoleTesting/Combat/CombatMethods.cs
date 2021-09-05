@@ -9,22 +9,21 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        public int DoAMeleeAttack(string attackerClass, string defenderClass, int attackerLevel, int defenderLevel, int str, string armor,
-            bool hasShield, int dex, string weapon, int ex_str = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0)
+        public int DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
             int result = 0;
             int attackRoll = _random.Next(1, 21);
-            int ac = defenderClass != "Monk" ? CalcNonMonkAC(armor, hasShield, dex) : CalcMonkAC(defenderLevel);
+            int armorClass = defender.CharacterClass != "Monk" ? CalcNonMonkAC(defender.Armor, defender.HasShield, defender.Dexterity) : CalcMonkAC(defender.Level);
 
-            int targetNumber = CalcThac0(attackerClass, attackerLevel) - ac - magicalBonus - otherHitBonus;
-            if (attackerClass != "Monk")
+            int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus;
+            if (attacker.CharacterClass != "Monk")
             {
-                targetNumber -= CalcStrBonusToHit(str, ex_str);
+                targetNumber -= CalcStrBonusToHit(attacker.Strength, attacker.Ex_Strength);
             }
             //An attack roll of 20 always suceeds and a roll of 1 always fails
             if (attackRoll == 20 || (targetNumber <= attackRoll && attackRoll != 1))
             {
-                result = CalcMeleeDmg(attackerClass, weapon, str, ex_str, magicalBonus, otherDmgBonus);
+                result = CalcMeleeDmg(attacker.CharacterClass, attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
             }
 
             return result;

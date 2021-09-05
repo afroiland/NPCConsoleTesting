@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPCConsoleTesting.Combat;
+using System;
 using System.Collections.Generic;
 
 namespace NPCConsoleTesting
@@ -48,9 +49,7 @@ namespace NPCConsoleTesting
                 if (combatants[priorityIndex].Spells == null || combatants[priorityIndex].Spells.Count < 1)
                 {
                     //priority combatant does an attack against target
-                    int attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex].CharacterClass, combatants[targetIndex].CharacterClass,
-                        combatants[priorityIndex].Level, combatants[targetIndex].Level, combatants[priorityIndex].Strength, combatants[targetIndex].Armor,
-                        combatants[targetIndex].HasShield, combatants[targetIndex].Dexterity, combatants[priorityIndex].Weapon, combatants[priorityIndex].Ex_Strength);
+                    int attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
 
                     if (attackResult > 0)
                     {

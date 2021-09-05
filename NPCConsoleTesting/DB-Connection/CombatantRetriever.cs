@@ -20,14 +20,15 @@ namespace NPCConsoleTesting
             int ex_str = queryResult[0].ex_str;
             int dex = queryResult[0].dex;
             int HP = queryResult[0].currentHP;
-            int initMod = 0;   //currently nothing that would modify this
+            //int initMod = 0;
             string armor = queryResult[0].armor;
             string weapon = queryResult[0].weapon;
             //TODO: once db is updated, determine shield presence
             bool hasShield = false;
             List<string> spells = SelectOnlyCombatSpells(queryResult[0].memorized);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, hasShield, spells);
+            return new Combatant(name, charClass, level, str, dex, HP, ex_str, charArmor: armor, charWeapon: weapon,
+                charHasShield: hasShield, charSpells: spells);
         }
 
         public static List<string> SelectOnlyCombatSpells(string allSpells)
