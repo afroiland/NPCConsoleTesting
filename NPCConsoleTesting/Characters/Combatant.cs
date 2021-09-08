@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace NPCConsoleTesting
 {
-    public class Combatant : BaseCharacter, ICombatant, IAttacker, IDefender
+    public class Combatant : BaseCharacter, IAttacker, IDefender
     {
         private int init;
 

@@ -68,6 +68,11 @@ namespace NPCConsoleTesting
                                 opportunityForSimulAttack = true;
                             }
                         }
+                        //a sleeping character who gets hit (and survives) wakes up
+                        else if (combatants[targetIndex].Statuses.Contains("Asleep"))
+                        {
+                            combatants[targetIndex].Statuses.RemoveAll(r => r == "Asleep");
+                        }
                     }
                 }
                 else

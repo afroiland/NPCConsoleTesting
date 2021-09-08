@@ -21,7 +21,7 @@ namespace UnitTests
         const float ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE = .17F;
 
         [Test]
-        public void Attack_succeeds_and_fails_as_expected()
+        public void DoAMeleeAttack_succeeds_and_fails_as_expected()
         {
             //Arrange
             int thac0 = 11;
@@ -48,8 +48,29 @@ namespace UnitTests
             //});
         }
 
+
+        //TODO:
+
+        //calcThac0
+
+        //CalcNonMonkAC
+
+        //CalcMonkAC
+
+        //CalcStrBonusToHit
+
+        //CalcStrBonusToDmg
+
+        //GetWeaponInfo
+
+        //GetCastingTime
+
+        //GetSpeedFactor
+
+        //CalcMeleeDmg_falls_within_range_for_non_monk()
+
         [Test]
-        public void CalcDmg_falls_within_range()
+        public void CalcMeleeDmg_falls_within_range_for_non_monk()
         {
             //Arrange
             int numOfAttackDice = 1;
