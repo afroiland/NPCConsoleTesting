@@ -48,14 +48,41 @@ namespace UnitTests
             //});
         }
 
+        [Test]
+        public void CalcThac0_returns_correct_values()
+        {
+            //Arrange
 
-        //TODO:
 
-        //calcThac0
+            //Act
+            //int fighterResult = 
+
+            //Assert
+
+        }
 
         //CalcNonMonkAC
 
-        //CalcMonkAC
+        [Test]
+        public void CalcMonkAC_returns_correct_value()
+        {
+            //Act
+            int level1Result = CombatMethods.CalcMonkAC(1);
+            int level3Result = CombatMethods.CalcMonkAC(3);
+            int level7Result = CombatMethods.CalcMonkAC(7);
+            int level10Result = CombatMethods.CalcMonkAC(10);
+            int level17Result = CombatMethods.CalcMonkAC(17);
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(level1Result, Is.EqualTo(10));
+                Assert.That(level3Result, Is.EqualTo(8));
+                Assert.That(level7Result, Is.EqualTo(5));
+                Assert.That(level10Result, Is.EqualTo(3));
+                Assert.That(level17Result, Is.EqualTo(-3));
+            });
+        }
 
         //CalcStrBonusToHit
 
