@@ -77,6 +77,7 @@ namespace NPCConsoleTesting
                 }
                 else
                 {
+                    //unless they have been hit this round, a combatant with a spell will cast it
                     if (!combatants[priorityIndex].GotHitThisRound)
                     {
                         //do the spell effect

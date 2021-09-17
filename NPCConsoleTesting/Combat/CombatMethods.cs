@@ -272,5 +272,42 @@ namespace NPCConsoleTesting
 
             return chars;
         }
+
+        public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant defender, int attackResult, int segment)
+        {
+            List<string> entries = new();
+            bool opportunityForSimulAttack = false;
+
+            if (attackResult > 0)
+            {
+                entries.Add($"{attacker.Name} struck {defender.Name} for {attackResult} damage.");
+
+                //adjust target hp and GotHitThisRound status
+                defender.CurrentHP -= attackResult;
+                defender.GotHitThisRound = true;
+
+                if (defender.CurrentHP <= 0)
+                {
+                    entries.Add($"{defender.Name} fell.");
+
+                    if (defender.Init == segment)
+                    {
+                        opportunityForSimulAttack = true;
+                    }
+                }
+                //a sleeping character who gets hit (and survives) wakes up
+                else if (defender.Statuses.Contains("Asleep"))
+                {
+                    defender.Statuses.RemoveAll(r => r == "Asleep");
+                }
+            }
+
+            return new CombatantUpdateResults(entries, opportunityForSimulAttack);
+        }
+
+        public CombatantUpdateResults ApplySpellResultToCombatant(Combatant attacker, Combatant defender, SpellResults spellResults)
+        {
+
+        }
     }
 }
