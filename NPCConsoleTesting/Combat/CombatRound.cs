@@ -1,6 +1,7 @@
 ﻿using NPCConsoleTesting.Combat;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NPCConsoleTesting
 {
@@ -15,10 +16,7 @@ namespace NPCConsoleTesting
             combatants = combatMethods.DetermineInit(combatants);
 
             //clear GotHitThisRound status for all combatants
-            foreach (var cbt in combatants)
-            {
-                cbt.GotHitThisRound = false;
-            }
+            combatants.ForEach(x => x.GotHitThisRound = false);
                 
             int segment = 0;
             int priorityIndex = 0;
@@ -39,7 +37,7 @@ namespace NPCConsoleTesting
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
                 //TODO: if target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
                 if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 ||
-                    combatants[priorityIndex].Statuses.Contains("Held") || combatants[priorityIndex].Statuses.Contains("Asleep"))
+                    combatants[priorityIndex].Statuses.Any(x => x == "Held" || x == "Asleep"))
                 {
                     priorityIndex++;
                     break;
@@ -55,6 +53,7 @@ namespace NPCConsoleTesting
                     CombatantUpdateResults updateResults = combatMethods.ApplyMeleeResultToCombatant(combatants[priorityIndex], combatants[targetIndex], attackResult, segment);
 
                     //update log
+                    logResults.AddRange(updateResults.LogEntries);
 
                     opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
                 }
@@ -67,6 +66,7 @@ namespace NPCConsoleTesting
                     CombatantUpdateResults updateResults = combatMethods.ApplySpellResultToCombatant(combatants[priorityIndex], combatants[targetIndex], combatants[priorityIndex].Spells[0], spellResults, segment);
 
                     //update log
+                    logResults.AddRange(updateResults.LogEntries);
 
                     opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
                 }

@@ -20,12 +20,8 @@ namespace NPCConsoleTesting.Combat
                 roundNumber++;
                 wholeFightLog.Add($"------Round {roundNumber}------");
 
-                //TODO: ensure there is not a shorter way to do this. No luck briefly with Join, Concat
                 //add roundLog to wholeFightLog
-                foreach (string logEntry in logResults)
-                {
-                    wholeFightLog.Add(logEntry);
-                }
+                wholeFightLog.AddRange(logResults);
 
                 //TODO: clean this up, likely using LINQ
                 //check if we're down to one

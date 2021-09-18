@@ -318,12 +318,14 @@ namespace NPCConsoleTesting
                     if (spellResults.Damage < 0)   //a negative result indicates cure light wounds, which gets applied to caster
                     {
                         caster.CurrentHP -= spellResults.Damage;
+                        entries.Add($"{caster.Name} healed themself for {-(spellResults.Damage)} hit points.");
                     }
                     else
                     {
+
                         target.CurrentHP -= spellResults.Damage;
                         target.GotHitThisRound = true;
-                        entries.Add($"{target.Name} got hit with a {spellName} effect for {spellResults.Damage} damage.");
+                        entries.Add($"{caster.Name} hit {target.Name} with a {spellName} effect for {spellResults.Damage} damage.");
                         if (target.CurrentHP < 1)
                         {
                             entries.Add($"{target.Name} fell.");
