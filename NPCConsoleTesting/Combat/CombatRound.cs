@@ -51,66 +51,24 @@ namespace NPCConsoleTesting
                     //priority combatant does an attack against target
                     int attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
 
-                    if (attackResult > 0)
-                    {
-                        logResults.Add($"{combatants[priorityIndex].Name} struck {combatants[targetIndex].Name} for {attackResult} damage.");
+                    //update target combatant
+                    CombatantUpdateResults updateResults = combatMethods.ApplyMeleeResultToCombatant(combatants[priorityIndex], combatants[targetIndex], attackResult, segment);
 
-                        //adjust target hp and GotHitThisRound status
-                        combatants[targetIndex].CurrentHP -= attackResult;
-                        combatants[targetIndex].GotHitThisRound = true;
+                    //update log
 
-                        if (combatants[targetIndex].CurrentHP <= 0)
-                        {
-                            logResults.Add($"{combatants[targetIndex].Name} fell.");
-
-                            if (combatants[targetIndex].Init == segment)
-                            {
-                                opportunityForSimulAttack = true;
-                            }
-                        }
-                        //a sleeping character who gets hit (and survives) wakes up
-                        else if (combatants[targetIndex].Statuses.Contains("Asleep"))
-                        {
-                            combatants[targetIndex].Statuses.RemoveAll(r => r == "Asleep");
-                        }
-                    }
+                    opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
                 }
                 else
                 {
-                    //unless they have been hit this round, a combatant with a spell will cast it
-                    if (!combatants[priorityIndex].GotHitThisRound)
-                    {
-                        //do the spell effect
-                        SpellResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex].Level);
+                    //do the spell effect
+                    SpellResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex].Level);
 
-                        //update combatants with spell results
-                        if (spellResults.AffectType == "damage")
-                        {
-                            if (spellResults.Damage < 0)   //a negative result indicates cure light wounds
-                            {
-                                combatants[priorityIndex].CurrentHP -= spellResults.Damage;
-                            }
-                            else
-                            {
-                                combatants[targetIndex].CurrentHP -= spellResults.Damage;
-                                combatants[targetIndex].GotHitThisRound = true;
-                                logResults.Add($"{combatants[targetIndex].Name} got hit with a {combatants[priorityIndex].Spells[0]} effect for {spellResults.Damage} damage.");
-                                if (combatants[targetIndex].CurrentHP < 1)
-                                {
-                                    logResults.Add($"{combatants[targetIndex].Name} fell.");
-                                }
-                            }
-                        }
+                    //update combatants with spell results
+                    CombatantUpdateResults updateResults = combatMethods.ApplySpellResultToCombatant(combatants[priorityIndex], combatants[targetIndex], combatants[priorityIndex].Spells[0], spellResults, segment);
 
-                        if (spellResults.AffectType == "status")
-                        {
-                            combatants[targetIndex].Statuses.Add(spellResults.Status);
-                            logResults.Add($"{combatants[targetIndex].Name} is {spellResults.Status}.");
-                        }
-                    }
+                    //update log
 
-                    //remove spell from list
-                    combatants[priorityIndex].Spells.RemoveAt(0);
+                    opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
                 }
 
                 priorityIndex++;

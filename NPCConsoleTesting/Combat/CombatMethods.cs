@@ -273,41 +273,84 @@ namespace NPCConsoleTesting
             return chars;
         }
 
-        public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant defender, int attackResult, int segment)
+        public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, int attackResult, int segment)
         {
             List<string> entries = new();
             bool opportunityForSimulAttack = false;
 
             if (attackResult > 0)
             {
-                entries.Add($"{attacker.Name} struck {defender.Name} for {attackResult} damage.");
+                entries.Add($"{attacker.Name} struck {target.Name} for {attackResult} damage.");
 
                 //adjust target hp and GotHitThisRound status
-                defender.CurrentHP -= attackResult;
-                defender.GotHitThisRound = true;
+                target.CurrentHP -= attackResult;
+                target.GotHitThisRound = true;
 
-                if (defender.CurrentHP <= 0)
+                if (target.CurrentHP <= 0)
                 {
-                    entries.Add($"{defender.Name} fell.");
+                    entries.Add($"{target.Name} fell.");
 
-                    if (defender.Init == segment)
+                    if (target.Init == segment)
                     {
                         opportunityForSimulAttack = true;
                     }
                 }
                 //a sleeping character who gets hit (and survives) wakes up
-                else if (defender.Statuses.Contains("Asleep"))
+                else if (target.Statuses.Contains("Asleep"))
                 {
-                    defender.Statuses.RemoveAll(r => r == "Asleep");
+                    target.Statuses.RemoveAll(r => r == "Asleep");
                 }
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
-        public CombatantUpdateResults ApplySpellResultToCombatant(Combatant attacker, Combatant defender, SpellResults spellResults)
+        public CombatantUpdateResults ApplySpellResultToCombatant(Combatant caster, Combatant target, string spellName, SpellResults spellResults, int segment)
         {
+            List<string> entries = new();
+            bool opportunityForSimulAttack = false;
 
+            //unless they have been hit this round, a combatant with a spell will cast it
+            if (!caster.GotHitThisRound)
+            {
+                if (spellResults.AffectType == "damage")
+                {
+                    if (spellResults.Damage < 0)   //a negative result indicates cure light wounds, which gets applied to caster
+                    {
+                        caster.CurrentHP -= spellResults.Damage;
+                    }
+                    else
+                    {
+                        target.CurrentHP -= spellResults.Damage;
+                        target.GotHitThisRound = true;
+                        entries.Add($"{target.Name} got hit with a {spellName} effect for {spellResults.Damage} damage.");
+                        if (target.CurrentHP < 1)
+                        {
+                            entries.Add($"{target.Name} fell.");
+
+                            if (target.Init == segment)
+                            {
+                                opportunityForSimulAttack = true;
+                            }
+                        }
+                    }
+                }
+
+                if (spellResults.AffectType == "status")
+                {
+                    target.Statuses.Add(spellResults.Status);
+                    entries.Add($"{target.Name} is {spellResults.Status}.");
+                }
+            }
+            else
+            {
+                entries.Add($"{caster.Name}'s casting of {spellName} was interrupted.");
+            }
+
+            //remove spell from list
+            caster.Spells.RemoveAt(0);
+
+            return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
     }
 }
