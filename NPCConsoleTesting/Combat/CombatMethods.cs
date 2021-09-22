@@ -349,10 +349,6 @@ namespace NPCConsoleTesting
                 entries.Add($"{caster.Name}'s casting of {spellName} was interrupted.");
             }
 
-            ////remove spell from list
-            //int index = caster.Spells.IndexOf(spellName);
-            //caster.Spells.RemoveAt(index);
-
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
     }

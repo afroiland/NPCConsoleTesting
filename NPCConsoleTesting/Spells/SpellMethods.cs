@@ -83,36 +83,23 @@ namespace NPCConsoleTesting
 
         public static string SelectFromCombatantsSpells(Combatant combatant)
         {
-            if (combatant.Spells == null || combatant.Spells.Count < 1)
+            List<string> cureSpells = combatant.Spells.Where(x => x.Contains("Cure")).ToList();
+            List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).ToList();
+
+            if (combatant.Spells.Count < 1 || (combatant.CurrentHP == combatant.HP_By_Level.Sum() && nonCureSpells.Count < 1))
             {
                 return "";
             }
 
-            List<string> cureSpells = combatant.Spells.Where(x => x.Contains("Cure")).Select(x => x).ToList();
-            List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).Select(x => x).ToList();
-
             //unless the combatant is at full health, cure spells are prioritized
-            //if (combatant.CurrentHP != combatant.HP_By_Level.Sum() && SpellListContainsCureSpell(combatant.Spells))
-            //{
-            //    return "Cure Light Wounds";
-            //}
+            if (combatant.CurrentHP < combatant.HP_By_Level.Sum() && cureSpells.Count > 0)
+            {
+                //select random cure spell
+                return cureSpells[_random.Next(0, cureSpells.Count)];
+            }
 
-            string result = "";
-
-            //bool aSpellHasBeenSelected = false;
-            //while (!aSpellHasBeenSelected)
-            //{
-
-            //}
-
-            return result;
+            //select random nonCure spell
+            return nonCureSpells[_random.Next(0, nonCureSpells.Count)];
         }
-
-        //public bool SpellListContainsCureSpell(List<string> spells)
-        //{
-
-        //}
     }
 }
-
-//string selectedSpell = combatant.Spells[_random.Next(0, combatant.Spells.Count)];
