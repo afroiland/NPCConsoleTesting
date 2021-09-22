@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NPCConsoleTesting
 {
@@ -80,27 +81,38 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        //public string SelectFromCombatantsSpells(Combatant combatant)
+        public static string SelectFromCombatantsSpells(Combatant combatant)
+        {
+            if (combatant.Spells == null || combatant.Spells.Count < 1)
+            {
+                return "";
+            }
+
+            List<string> cureSpells = combatant.Spells.Where(x => x.Contains("Cure")).Select(x => x).ToList();
+            List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).Select(x => x).ToList();
+
+            //unless the combatant is at full health, cure spells are prioritized
+            //if (combatant.CurrentHP != combatant.HP_By_Level.Sum() && SpellListContainsCureSpell(combatant.Spells))
+            //{
+            //    return "Cure Light Wounds";
+            //}
+
+            string result = "";
+
+            //bool aSpellHasBeenSelected = false;
+            //while (!aSpellHasBeenSelected)
+            //{
+
+            //}
+
+            return result;
+        }
+
+        //public bool SpellListContainsCureSpell(List<string> spells)
         //{
-        //    string result = "";
 
-        //    if (combatant.Spells != null)
-        //    {
-        //        if (combatant.Spells.Count > 1)
-        //        {
-        //            bool aSpellHasBeenSelected = false;
-        //            while (!aSpellHasBeenSelected)
-        //            {
-        //                string selectedSpell = combatant.Spells[_random.Next(0, combatant.Spells.Count)];
-        //                if (selectedSpell == "Cure Light Wounds" && combatant.CurrentHP == combatant.MaxHP)
-        //                {
-
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    return result;
         //}
     }
 }
+
+//string selectedSpell = combatant.Spells[_random.Next(0, combatant.Spells.Count)];

@@ -43,8 +43,11 @@ namespace NPCConsoleTesting
                     break;
                 }
 
-                //check for spells--if none, do an attack
-                if (combatants[priorityIndex].Spells == null || combatants[priorityIndex].Spells.Count < 1)
+                //check for spells
+                string spellName = SpellMethods.SelectFromCombatantsSpells(combatants[priorityIndex]);
+
+                //if spellName is an empty string, the combatant has no appropriate spell and does a melee attack
+                if (spellName == "")
                 {
                     //priority combatant does an attack against target
                     int attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
@@ -60,15 +63,19 @@ namespace NPCConsoleTesting
                 else
                 {
                     //do the spell effect
-                    SpellResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].Spells[0], combatants[priorityIndex].Level);
+                    SpellResults spellResults = SpellMethods.DoASpell(spellName, combatants[priorityIndex].Level);
 
                     //update combatants with spell results
-                    CombatantUpdateResults updateResults = combatMethods.ApplySpellResultToCombatant(combatants[priorityIndex], combatants[targetIndex], combatants[priorityIndex].Spells[0], spellResults, segment);
+                    CombatantUpdateResults updateResults = combatMethods.ApplySpellResultToCombatant(combatants[priorityIndex], combatants[targetIndex], spellName, spellResults, segment);
 
                     //update log
                     logResults.AddRange(updateResults.LogEntries);
 
                     opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
+
+                    //remove spell from list
+                    int index = combatants[priorityIndex].Spells.IndexOf(spellName);
+                    combatants[priorityIndex].Spells.RemoveAt(index);
                 }
 
                 priorityIndex++;
