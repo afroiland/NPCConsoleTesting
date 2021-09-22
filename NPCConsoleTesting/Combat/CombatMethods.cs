@@ -350,7 +350,8 @@ namespace NPCConsoleTesting
             }
 
             //remove spell from list
-            caster.Spells.RemoveAt(0);
+            int index = caster.Spells.IndexOf(spellName);
+            caster.Spells.RemoveAt(index);
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }

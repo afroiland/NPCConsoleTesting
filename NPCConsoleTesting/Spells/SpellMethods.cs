@@ -79,5 +79,28 @@ namespace NPCConsoleTesting
 
             return result;
         }
+
+        //public string SelectFromCombatantsSpells(Combatant combatant)
+        //{
+        //    string result = "";
+
+        //    if (combatant.Spells != null)
+        //    {
+        //        if (combatant.Spells.Count > 1)
+        //        {
+        //            bool aSpellHasBeenSelected = false;
+        //            while (!aSpellHasBeenSelected)
+        //            {
+        //                string selectedSpell = combatant.Spells[_random.Next(0, combatant.Spells.Count)];
+        //                if (selectedSpell == "Cure Light Wounds" && combatant.CurrentHP == combatant.MaxHP)
+        //                {
+
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return result;
+        //}
     }
 }

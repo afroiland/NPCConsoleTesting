@@ -81,8 +81,8 @@ namespace NPCConsoleTesting
             bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, HP, ex_str, charArmor:armor, charWeapon:weapon,
-                charHasShield:hasShield, charSpells:spells);
+            return new Combatant(name, charClass, level, str, dex, HPByLevel, HP, ex_str, charArmor:armor,
+                charWeapon:weapon, charHasShield:hasShield, charSpells:spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -107,7 +107,8 @@ namespace NPCConsoleTesting
 
             //TODO: spells?
 
-            return new Combatant(name, charClass, level, 12, 12, HP, initMod, charWeapon:weapon);
+            //TODO: figure out what we do for HP_By_Level here
+            return new Combatant(name, charClass, level, 12, 12, new List<int>() { 1 }, HP, initMod, charWeapon:weapon);
         }
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
