@@ -83,10 +83,16 @@ namespace NPCConsoleTesting
 
         public static string SelectFromCombatantsSpells(Combatant combatant)
         {
+            if (combatant.Spells == null || combatant.Spells.Count < 1)
+            {
+                return "";
+            }
+
             List<string> cureSpells = combatant.Spells.Where(x => x.Contains("Cure")).ToList();
             List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).ToList();
 
-            if (combatant.Spells.Count < 1 || (combatant.CurrentHP == combatant.HP_By_Level.Sum() && nonCureSpells.Count < 1))
+            //a combatant at full HP with only cure spells will not cast a spell
+            if (combatant.CurrentHP == combatant.HP_By_Level.Sum() && nonCureSpells.Count < 1)
             {
                 return "";
             }
