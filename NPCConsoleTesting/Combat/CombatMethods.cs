@@ -187,8 +187,6 @@ namespace NPCConsoleTesting
                 {
                     15 => 1,
                     >15 => 2,
-                    //17 => 3,
-                    //18 => 4,
                     _ => 0
                 };
             }

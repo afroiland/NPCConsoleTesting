@@ -24,7 +24,7 @@ namespace NPCConsoleTesting
         public List<string> Spells { get; set; }
 
         public Combatant(string charName, string charClass, int charLevel, int charStrength, int charDexterity, int charCon, List<int> charHP_By_Level,
-            int charHp, int charInitMod = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0, int charEx_Strength = 0,
+            int charCurrentHP, int charInitMod = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0, int charEx_Strength = 0,
             string charArmor = "None", string charWeapon = "None", bool charHasShield = false, List<string> charSpells = null)
         {
             Name = charName;
@@ -35,7 +35,7 @@ namespace NPCConsoleTesting
             Dexterity = charDexterity;
             Constitution = charCon;
             HP_By_Level = charHP_By_Level;
-            CurrentHP = charHp;
+            CurrentHP = charCurrentHP;
             InitMod = charInitMod;
             Armor = charArmor;
             Weapon = charWeapon;

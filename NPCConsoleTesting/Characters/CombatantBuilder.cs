@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NPCConsoleTesting
 {
@@ -75,14 +76,15 @@ namespace NPCConsoleTesting
             int dex = GenerateAttributeByCharClass("Dexterity", charClass);
             int con = GenerateAttributeByCharClass("Constitution", charClass);
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
-            int HP = ConvertHPByLevelToMaxHP(HPByLevel);
+            //set currentHP to maxHP (sum of HPByLevel values + con bonus)
+            int currentHP = HPByLevel.Sum() + CombatMethods.CalcConBonusToHP(con, charClass);
             //int initMod = 0;
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass);
             bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, con, HPByLevel, HP, ex_str, charArmor:armor,
+            return new Combatant(name, charClass, level, str, dex, con, HPByLevel, currentHP, ex_str, charArmor:armor,
                 charWeapon:weapon, charHasShield:hasShield, charSpells:spells);
         }
 
