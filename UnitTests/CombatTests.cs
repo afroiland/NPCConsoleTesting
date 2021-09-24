@@ -88,6 +88,29 @@ namespace UnitTests
 
         //CalcStrBonusToDmg
 
+        [Test]
+        public void CalcConBonusToHP_returns_correct_value()
+        {
+            //Act
+            int fighter14Con = CombatMethods.CalcConBonusToHP(14, "Fighter");
+            int ranger18Con = CombatMethods.CalcConBonusToHP(18, "Ranger");
+            int paladin17Con = CombatMethods.CalcConBonusToHP(17, "Paladin");
+            int cleric15Con = CombatMethods.CalcConBonusToHP(15, "Cleric");
+            int monk17Con = CombatMethods.CalcConBonusToHP(17, "Monk");
+            int thief5Con = CombatMethods.CalcConBonusToHP(5, "Thief");
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(fighter14Con, Is.EqualTo(0));
+                Assert.That(ranger18Con, Is.EqualTo(4));
+                Assert.That(paladin17Con, Is.EqualTo(3));
+                Assert.That(cleric15Con, Is.EqualTo(1));
+                Assert.That(monk17Con, Is.EqualTo(2));
+                Assert.That(thief5Con, Is.EqualTo(0));
+            });
+        }
+
         //GetWeaponInfo
 
         //GetCastingTime

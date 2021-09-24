@@ -75,7 +75,7 @@ namespace NPCConsoleTesting
             int ex_str = 0;
             int dex = GenerateAttributeByCharClass("Dexterity", charClass);
             int con = GenerateAttributeByCharClass("Constitution", charClass);
-            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
+            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
             //set currentHP to maxHP (sum of HPByLevel values + con bonus)
             int currentHP = HPByLevel.Sum() + CombatMethods.CalcConBonusToHP(con, charClass);
             //int initMod = 0;
@@ -276,11 +276,16 @@ namespace NPCConsoleTesting
 
         private static int GenerateAttributeByCharClass(string attribute, string charClass)
         {
+
+
+
             return 12;
         }
 
-        private static List<int> GenerateHPByLevelByCharClass(string charClass)
+        private static List<int> GenerateHPByLevelByCharClass(string charClass, int level)
         {
+
+
             return new List<int> { 4, 4, 4 };
         }
 

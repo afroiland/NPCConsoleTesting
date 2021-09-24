@@ -163,31 +163,26 @@ namespace NPCConsoleTesting
 
         public static int CalcConBonusToHP(int con, string charClass)
         {
-            int result = 0;
-
-            if (con < 15)
-            {
-                result = 0;
-            }
+            int result;
 
             if (charClass == "Fighter" || charClass == "Ranger" || charClass == "Paladin")
             {
                 result = con switch
                 {
+                    <15 => 0,
                     15 => 1,
                     16 => 2,
                     17 => 3,
-                    18 => 4,
-                    _ => 0
+                    >17 => 4
                 };
             }
             else
             {
                 result = con switch
                 {
+                    < 15 => 0,
                     15 => 1,
-                    >15 => 2,
-                    _ => 0
+                    >15 => 2
                 };
             }
 
