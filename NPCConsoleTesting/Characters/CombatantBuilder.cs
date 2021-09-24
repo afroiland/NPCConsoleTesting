@@ -73,6 +73,7 @@ namespace NPCConsoleTesting
             //TODO: int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
             int ex_str = 0;
             int dex = GenerateAttributeByCharClass("Dexterity", charClass);
+            int con = GenerateAttributeByCharClass("Constitution", charClass);
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
             int HP = ConvertHPByLevelToMaxHP(HPByLevel);
             //int initMod = 0;
@@ -81,7 +82,7 @@ namespace NPCConsoleTesting
             bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, HPByLevel, HP, ex_str, charArmor:armor,
+            return new Combatant(name, charClass, level, str, dex, con, HPByLevel, HP, ex_str, charArmor:armor,
                 charWeapon:weapon, charHasShield:hasShield, charSpells:spells);
         }
 
@@ -108,7 +109,7 @@ namespace NPCConsoleTesting
             //TODO: spells?
 
             //TODO: figure out what we do for HP_By_Level here
-            return new Combatant(name, charClass, level, 12, 12, new List<int>() { 1 }, HP, initMod, charWeapon:weapon);
+            return new Combatant(name, charClass, level, 12, 12, 12, new List<int>() { 1 }, HP, initMod, charWeapon:weapon);
         }
 
         public List<Combatant> BuildListOfCombatants(string connectionString)

@@ -14,5 +14,6 @@ namespace NPCConsoleTesting.Characters
         public int Strength { get; set; }
         public int Ex_Strength { get; set; }
         public int Dexterity { get; set; }
+        public int Constitution { get; set; }
     }
 }

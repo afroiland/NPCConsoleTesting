@@ -92,7 +92,8 @@ namespace NPCConsoleTesting
             List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).ToList();
 
             //a combatant at full HP with only cure spells will not cast a spell
-            if (combatant.CurrentHP == combatant.HP_By_Level.Sum() && nonCureSpells.Count < 1)
+            //if (combatant.CurrentHP >= combatant.HP_By_Level.Sum() && nonCureSpells.Count < 1)
+            if (combatant.CurrentHP >= (combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass)) && nonCureSpells.Count < 1)
             {
                 return "";
             }

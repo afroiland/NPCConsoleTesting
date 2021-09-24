@@ -9,6 +9,8 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
+        //TODO: Lots of refactoring to be done here
+
         public int DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
             int result = 0;
@@ -154,6 +156,41 @@ namespace NPCConsoleTesting
                 {
                     result += 6;
                 }
+            }
+
+            return result;
+        }
+
+        public static int CalcConBonusToHP(int con, string charClass)
+        {
+            int result = 0;
+
+            if (con < 15)
+            {
+                result = 0;
+            }
+
+            if (charClass == "Fighter" || charClass == "Ranger" || charClass == "Paladin")
+            {
+                result = con switch
+                {
+                    15 => 1,
+                    16 => 2,
+                    17 => 3,
+                    18 => 4,
+                    _ => 0
+                };
+            }
+            else
+            {
+                result = con switch
+                {
+                    15 => 1,
+                    >15 => 2,
+                    //17 => 3,
+                    //18 => 4,
+                    _ => 0
+                };
             }
 
             return result;
