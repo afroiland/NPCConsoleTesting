@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPCConsoleTesting.Characters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -90,6 +91,8 @@ namespace NPCConsoleTesting
 
         public static Combatant BuildCombatantViaConsole()
         {
+            int str = GenerateAttributeByCharClass("Strength", "Fighter");
+
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
 
@@ -276,10 +279,20 @@ namespace NPCConsoleTesting
 
         private static int GenerateAttributeByCharClass(string attribute, string charClass)
         {
+            AttributeMinimums attributeMins = GetAttributeMins(charClass);
+            int result = 0;
 
+            while (result < (int)attributeMins.GetType().GetProperty(attribute).GetValue(attributeMins, null))
+            {
+                result = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+            }
 
+            return result;
+        }
 
-            return 12;
+        private static AttributeMinimums GetAttributeMins(string charClass)
+        {
+            return new AttributeMinimums() {Strength = 9};
         }
 
         private static List<int> GenerateHPByLevelByCharClass(string charClass, int level)
