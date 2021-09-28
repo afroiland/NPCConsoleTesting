@@ -11,9 +11,9 @@ namespace UnitTests
         //Arrange
         ICombatMethods combatMethods = new CombatMethods();
         Combatant testChar = new("testChar", "Fighter", 10, 12, 12, 12, new List<int>() { 1 }, 10);
-        Combatant testCharGoodAC = new("testCharGoodAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 20);
-        Combatant testCharPoorAC = new("testCharPoorAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -20);
-
+        Combatant testCharPoorAC = new("testCharPoorAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -5);
+        Combatant testCharGoodAC = new("testCharGoodAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 25);
+        
         const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
         const float ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE = .17F;
 
@@ -42,17 +42,51 @@ namespace UnitTests
         [Test]
         public void CalcThac0_returns_correct_values()
         {
-            //Arrange
-
-
             //Act
-            //int fighterResult = 
+            int fighterLvl1Thac0 = CombatMethods.CalcThac0("Fighter", 1);
+            int paladinLvl10Thac0 = CombatMethods.CalcThac0("Paladin", 10);
+            int muLvl6Thac0 = CombatMethods.CalcThac0("Magic-User", 6);
+            int illusionistLvl11Thac0 = CombatMethods.CalcThac0("Illusionist", 11);
+            int clericLvl4Thac0 = CombatMethods.CalcThac0("Cleric", 4);
+            int druidLvl10Thac0 = CombatMethods.CalcThac0("Druid", 10);
+            int thiefLvl2Thac0 = CombatMethods.CalcThac0("Thief", 2);
+            int assassinLvl10Thac0 = CombatMethods.CalcThac0("Assassin", 10);
 
             //Assert
-
+            Assert.Multiple(() =>
+            {
+                Assert.That(fighterLvl1Thac0, Is.EqualTo(20));
+                Assert.That(paladinLvl10Thac0, Is.EqualTo(11));
+                Assert.That(muLvl6Thac0, Is.EqualTo(19));
+                Assert.That(illusionistLvl11Thac0, Is.EqualTo(16));
+                Assert.That(clericLvl4Thac0, Is.EqualTo(18));
+                Assert.That(druidLvl10Thac0, Is.EqualTo(14));
+                Assert.That(thiefLvl2Thac0, Is.EqualTo(20));
+                Assert.That(assassinLvl10Thac0, Is.EqualTo(16));
+            });
         }
 
         //CalcNonMonkAC
+        [Test]
+        public void CalcNonMonkAC_returns_correct_value()
+        {
+            //Act
+            int chainWithShield = CombatMethods.CalcNonMonkAC("Chain", true, 12, 0);
+            int chainNoShield = CombatMethods.CalcNonMonkAC("Chain", false, 12, 0);
+            int leatherDex16 = CombatMethods.CalcNonMonkAC("Leather", false, 16, 0);
+            int noArmorDex18 = CombatMethods.CalcNonMonkAC("None", false, 18, 0);
+            int plateShieldAndBonus = CombatMethods.CalcNonMonkAC("Plate", true, 12, 5);
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(chainWithShield, Is.EqualTo(4));
+                Assert.That(chainNoShield, Is.EqualTo(5));
+                Assert.That(leatherDex16, Is.EqualTo(6));
+                Assert.That(noArmorDex18, Is.EqualTo(6));
+                Assert.That(plateShieldAndBonus, Is.EqualTo(-3));
+            });
+        }
 
         [Test]
         public void CalcMonkAC_returns_correct_value()

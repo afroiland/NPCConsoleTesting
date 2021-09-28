@@ -53,14 +53,22 @@ namespace NPCConsoleTesting
             int result = armor switch
             {
                 "None" => 10,
-                "Shield Only" => 9,
                 "Leather" => 8,
-                "Leather + Shield" or "Studded Leather" => 7,
-                "Studded Leather + Shield" or "Scale Mail" => 6,
-                "Scale Mail + Shield" or "Chain Mail" => 5,
-                "Chain Mail + Shield" or "Banded Mail" => 4,
-                "Banded Mail + Shield" or "Plate Mail" => 3,
-                "Plate Mail + Shield" => 2,
+                "Studded Leather" => 7,
+                "Scale" => 6,
+                "Chain" => 5,
+                "Banded" => 4,
+                "Plate" => 3,
+
+                //"None" => 10,
+                //"Shield Only" => 9,
+                //"Leather" => 8,
+                //"Leather + Shield" or "Studded Leather" => 7,
+                //"Studded Leather + Shield" or "Scale Mail" => 6,
+                //"Scale Mail + Shield" or "Chain Mail" => 5,
+                //"Chain Mail + Shield" or "Banded Mail" => 4,
+                //"Banded Mail + Shield" or "Plate Mail" => 3,
+                //"Plate Mail + Shield" => 2,
                 _ => 10
             };
 
