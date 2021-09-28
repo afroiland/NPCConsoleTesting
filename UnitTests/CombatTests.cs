@@ -66,7 +66,6 @@ namespace UnitTests
             });
         }
 
-        //CalcNonMonkAC
         [Test]
         public void CalcNonMonkAC_returns_correct_value()
         {
@@ -109,9 +108,43 @@ namespace UnitTests
             });
         }
 
-        //CalcStrBonusToHit
+        [Test]
+        public void CalcStrBonusToHit_returns_correct_value()
+        {
+            //Act
+            int str10 = CombatMethods.CalcStrBonusToHit(10, 0);
+            int str18 = CombatMethods.CalcStrBonusToHit(18, 0);
+            int str18_51 = CombatMethods.CalcStrBonusToHit(18, 51);
+            int str18_00 = CombatMethods.CalcStrBonusToHit(18, 100);
 
-        //CalcStrBonusToDmg
+            //Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(str10, Is.EqualTo(0));
+                Assert.That(str18, Is.EqualTo(1));
+                Assert.That(str18_51, Is.EqualTo(2));
+                Assert.That(str18_00, Is.EqualTo(3));
+            });
+        }
+
+        [Test]
+        public void CalcStrBonusToDmg_returns_correct_value()
+        {
+            //Act
+            int str10 = CombatMethods.CalcStrBonusToDmg(10, 0);
+            int str18 = CombatMethods.CalcStrBonusToDmg(18, 0);
+            int str18_51 = CombatMethods.CalcStrBonusToDmg(18, 51);
+            int str18_00 = CombatMethods.CalcStrBonusToDmg(18, 100);
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(str10, Is.EqualTo(0));
+                Assert.That(str18, Is.EqualTo(2));
+                Assert.That(str18_51, Is.EqualTo(3));
+                Assert.That(str18_00, Is.EqualTo(6));
+            });
+        }
 
         [Test]
         public void CalcConBonusToHP_returns_correct_value()
