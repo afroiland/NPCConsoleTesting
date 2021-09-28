@@ -15,7 +15,8 @@ namespace NPCConsoleTesting
         {
             int result = 0;
             int attackRoll = _random.Next(1, 21);
-            int armorClass = defender.CharacterClass != "Monk" ? CalcNonMonkAC(defender.Armor, defender.HasShield, defender.Dexterity) : CalcMonkAC(defender.Level);
+            int armorClass = defender.CharacterClass != "Monk" ? CalcNonMonkAC(defender.Armor, defender.HasShield, defender.Dexterity, defender.OtherACBonus) :
+                CalcMonkAC(defender.Level, defender.OtherACBonus);
 
             int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus;
             if (attacker.CharacterClass != "Monk")
@@ -47,7 +48,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public static int CalcNonMonkAC(string armor, bool hasShield, int dex)
+        public static int CalcNonMonkAC(string armor, bool hasShield, int dex, int otherBonus)
         {
             int result = armor switch
             {
@@ -75,10 +76,10 @@ namespace NPCConsoleTesting
                 }
             }
 
-            return result;
+            return result - otherBonus;
         }
 
-        public static int CalcMonkAC(int level)
+        public static int CalcMonkAC(int level, int otherBonus)
         {
             int result = level switch
             {
@@ -99,7 +100,7 @@ namespace NPCConsoleTesting
                 _ => 10
             };
 
-            return result;
+            return result - otherBonus;
         }
 
         public static int CalcStrBonusToHit(int str, int ex_str)

@@ -91,7 +91,8 @@ namespace NPCConsoleTesting
 
         public static Combatant BuildCombatantViaConsole()
         {
-            int str = GenerateAttributeByCharClass("Strength", "Fighter");
+            //TODO: remove--this was just for testing GenerateAttributeByCharClass()
+            //int str = GenerateAttributeByCharClass("Strength", "Fighter");
 
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
@@ -281,6 +282,10 @@ namespace NPCConsoleTesting
         {
             AttributeMinimums attributeMins = GetAttributeMins(charClass);
             int result = 0;
+            //TODO: remove--used for testing
+            //var temp1 = attributeMins.GetType();
+            //var temp2 = temp1.GetProperty(attribute);
+            //var temp3 = temp2.GetValue(attributeMins, null);
 
             while (result < (int)attributeMins.GetType().GetProperty(attribute).GetValue(attributeMins, null))
             {

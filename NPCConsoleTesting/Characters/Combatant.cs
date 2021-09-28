@@ -14,6 +14,7 @@ namespace NPCConsoleTesting
         public int MagicalBonus { get; set; }
         public int OtherHitBonus { get; set; }
         public int OtherDmgBonus { get; set; }
+        public int OtherACBonus { get; set; }
         public int Init
         {
             get { return init; }
@@ -24,8 +25,8 @@ namespace NPCConsoleTesting
         public List<string> Spells { get; set; }
 
         public Combatant(string charName, string charClass, int charLevel, int charStrength, int charDexterity, int charCon, List<int> charHP_By_Level,
-            int charCurrentHP, int charInitMod = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0, int charEx_Strength = 0,
-            string charArmor = "None", string charWeapon = "None", bool charHasShield = false, List<string> charSpells = null)
+            int charCurrentHP, int charInitMod = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0, int otherACBonus = 0,
+            int charEx_Strength = 0, string charArmor = "None", string charWeapon = "None", bool charHasShield = false, List<string> charSpells = null)
         {
             Name = charName;
             CharacterClass = charClass;
@@ -43,6 +44,7 @@ namespace NPCConsoleTesting
             MagicalBonus = magicalBonus;
             OtherHitBonus = otherHitBonus;
             OtherDmgBonus = otherDmgBonus;
+            OtherACBonus = otherACBonus;
             Spells = charSpells;
             Init = 0;
             Target = "";

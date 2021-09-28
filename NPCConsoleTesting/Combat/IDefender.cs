@@ -7,5 +7,6 @@
         int Dexterity { get; set; }
         string Armor { get; set; }
         bool HasShield { get; set; }
+        int OtherACBonus { get; set; }
     }
 }

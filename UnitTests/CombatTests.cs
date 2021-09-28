@@ -10,12 +10,9 @@ namespace UnitTests
     {
         //Arrange
         ICombatMethods combatMethods = new CombatMethods();
-        List<Combatant> testList = new()
-        {
-            new Combatant("testChar1", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0),
-            new Combatant("testChar2", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0),
-            new Combatant("testChar3", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0)
-        };
+        Combatant testChar = new("testChar", "Fighter", 10, 12, 12, 12, new List<int>() { 1 }, 10);
+        Combatant testCharGoodAC = new("testCharGoodAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 20);
+        Combatant testCharPoorAC = new("testCharPoorAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -20);
 
         const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
         const float ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE = .17F;
@@ -24,28 +21,22 @@ namespace UnitTests
         public void DoAMeleeAttack_succeeds_and_fails_as_expected()
         {
             //Arrange
-            int thac0 = 11;
-            int poorAC = 10;
-            int goodAC = -10;
-            int numOfAttackDice = 1;
-            int typeOfAttackDie = 6;
-            int dmgModifier = 2;
             int missesAgainstPoorAC = 0;
             int hitsAgainstGoodAC = 0;
 
             //Act
-            //for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
-            //{
-            //    if (combatMethods.DoAMeleeAttack(thac0, poorAC, numOfAttackDice, typeOfAttackDie, dmgModifier) == 0) { missesAgainstPoorAC++; }
-            //    if (combatMethods.DoAMeleeAttack(thac0, goodAC, numOfAttackDice, typeOfAttackDie, dmgModifier) != 0) { hitsAgainstGoodAC++; }
-            //}
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
+            {
+                if (combatMethods.DoAMeleeAttack(testChar, testCharPoorAC) == 0) { missesAgainstPoorAC++; }
+                if (combatMethods.DoAMeleeAttack(testChar, testCharGoodAC) != 0) { hitsAgainstGoodAC++; }
+            }
 
             ////Assert
-            //Assert.Multiple(() =>
-            //{
-            //    Assert.That((float)missesAgainstPoorAC / (float)TIMES_TO_LOOP_FOR_RANDOM_TESTS, Is.LessThan(ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE));
-            //    Assert.That((float)hitsAgainstGoodAC / (float)TIMES_TO_LOOP_FOR_RANDOM_TESTS, Is.LessThan(ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE));
-            //});
+            Assert.Multiple(() =>
+            {
+                Assert.That((float)missesAgainstPoorAC / (float)TIMES_TO_LOOP_FOR_RANDOM_TESTS, Is.LessThan(ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE));
+                Assert.That((float)hitsAgainstGoodAC / (float)TIMES_TO_LOOP_FOR_RANDOM_TESTS, Is.LessThan(ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE));
+            });
         }
 
         [Test]
@@ -67,11 +58,11 @@ namespace UnitTests
         public void CalcMonkAC_returns_correct_value()
         {
             //Act
-            int level1Result = CombatMethods.CalcMonkAC(1);
-            int level3Result = CombatMethods.CalcMonkAC(3);
-            int level7Result = CombatMethods.CalcMonkAC(7);
-            int level10Result = CombatMethods.CalcMonkAC(10);
-            int level17Result = CombatMethods.CalcMonkAC(17);
+            int level1Result = CombatMethods.CalcMonkAC(1, 0);
+            int level3Result = CombatMethods.CalcMonkAC(3, 0);
+            int level7Result = CombatMethods.CalcMonkAC(7, 0);
+            int level10Result = CombatMethods.CalcMonkAC(10, 0);
+            int level17Result = CombatMethods.CalcMonkAC(17, 0);
 
             //Assert
             Assert.Multiple(() =>
@@ -141,6 +132,9 @@ namespace UnitTests
         [Test]
         public void DoACombatRound_returns_logResults()
         {
+            //Arrange
+            List<Combatant> testList = new() {testChar, testCharGoodAC, testCharPoorAC };
+
             //Act
             List<string> logResults = CombatRound.DoACombatRound(testList);
 
@@ -151,6 +145,9 @@ namespace UnitTests
         [Test]
         public void Inits_get_set_for_all_chars()
         {
+            //Arrange
+            List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
+
             //Act
             var result = combatMethods.DetermineInit(testList);
 
@@ -219,6 +216,9 @@ namespace UnitTests
         [Test]
         public void Targets_get_set_for_all_chars()
         {
+            //Arrange
+            List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
+
             //Act
             var result = combatMethods.DetermineTargets(testList);
 
