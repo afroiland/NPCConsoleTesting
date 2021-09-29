@@ -70,12 +70,14 @@ namespace NPCConsoleTesting
         {
             string name = GenerateRandomName();
             string charClass = SelectRandomClass();
+            string race = SelectRandomRace();
             int level = _random.Next(_MinLevel, _MaxLevel + 1);
-            int str = GenerateAttributeByCharClass("Strength", charClass);
-            //TODO: int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
+            Attributes attributes = GetAttributes(charClass, race);
+            int str = attributes.Strength;
+            //TODO: int ex_str = attributes.Ex_Strength;
             int ex_str = 0;
-            int dex = GenerateAttributeByCharClass("Dexterity", charClass);
-            int con = GenerateAttributeByCharClass("Constitution", charClass);
+            int dex = attributes.Dexterity;
+            int con = attributes.Constitution;
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
             //set currentHP to maxHP (sum of HPByLevel values + con bonus)
             int currentHP = HPByLevel.Sum() + CombatMethods.CalcConBonusToHP(con, charClass);
@@ -85,13 +87,13 @@ namespace NPCConsoleTesting
             bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, con, HPByLevel, currentHP, ex_str, charArmor:armor,
-                charWeapon:weapon, charHasShield:hasShield, charSpells:spells);
+            return new Combatant(name, charClass, level, str, dex, con, HPByLevel, currentHP, ex_str, charArmor: armor,
+                charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
         {
-            //TODO: remove--this was just for testing GenerateAttributeByCharClass()
+            //TODO: remove the following line--just used for testing GenerateAttributeByCharClass()
             //int str = GenerateAttributeByCharClass("Strength", "Fighter");
 
             Console.WriteLine("Enter name for character");
@@ -278,26 +280,103 @@ namespace NPCConsoleTesting
             return charClasses[_random.Next(0, charClasses.Count)];
         }
 
-        private static int GenerateAttributeByCharClass(string attribute, string charClass)
+        private static string SelectRandomRace()
         {
-            AttributeMinimums attributeMins = GetAttributeMins(charClass);
-            int result = 0;
-            //TODO: remove--used for testing
-            //var temp1 = attributeMins.GetType();
-            //var temp2 = temp1.GetProperty(attribute);
-            //var temp3 = temp2.GetValue(attributeMins, null);
-
-            while (result < (int)attributeMins.GetType().GetProperty(attribute).GetValue(attributeMins, null))
-            {
-                result = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-            }
-
-            return result;
+            List<string> races = new() { "Human", "Elf", "Dwarf", "Halfling" };
+            return races[_random.Next(0, races.Count)];
         }
 
-        private static AttributeMinimums GetAttributeMins(string charClass)
+        public static Attributes GetAttributes(string charClass, string race)
         {
-            return new AttributeMinimums() {Strength = 9};
+            Attributes mins = GetAttributeMins(charClass);
+            Attributes attributes = new();
+
+            while (!MinsMet(attributes, mins))
+            {
+                attributes.Strength = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+                attributes.Intelligence = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+                attributes.Constitution = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+                attributes.Wisdom = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+                attributes.Dexterity = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+                attributes.Charisma = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+
+                ApplyRacialAttributeModifiers(attributes, race);
+            }
+
+            return attributes;
+        }
+
+        private static bool MinsMet(Attributes attributes, Attributes mins)
+        {
+            if (attributes.Strength >= mins.Strength &&
+                attributes.Intelligence >= mins.Intelligence &&
+                attributes.Constitution >= mins.Constitution &&
+                attributes.Wisdom >= mins.Wisdom &&
+                attributes.Dexterity >= mins.Dexterity &&
+                attributes.Charisma >= mins.Charisma)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static Attributes ApplyRacialAttributeModifiers(Attributes attributes, string race)
+        {
+            switch (race)
+            {
+                case "Dwarf":
+                    attributes.Constitution++;
+                    attributes.Charisma--;
+                    break;
+                case "Elf":
+                    attributes.Dexterity++;
+                    attributes.Constitution--;
+                    break;
+                case "Halfling":
+                    attributes.Dexterity++;
+                    attributes.Strength--;
+                    break;
+                default: break;
+            }
+
+            return attributes;
+        }
+
+        //private static int GenerateAttribute(string attribute, string race)
+        //{
+        //    //Attributes attributeMins = GetAttributeMins(charClass);
+        //    int result = 0;
+        //    //TODO: remove--used for testing
+        //    //var temp1 = attributeMins.GetType();
+        //    //var temp2 = temp1.GetProperty(attribute);
+        //    //var temp3 = temp2.GetValue(attributeMins, null);
+
+        //    while (result < (int)attributeMins.GetType().GetProperty(attribute).GetValue(attributeMins, null))
+        //    {
+        //        result = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+        //    }
+
+        //    return result;
+        //}
+
+        private static Attributes GetAttributeMins(string charClass)
+        {
+            Attributes result = charClass switch
+            {
+                "Fighter" => new Attributes() { Strength = 9},
+                "Paladin" => new Attributes() { Strength = 12, Intelligence = 9, Wisdom = 13, Constitution = 9, Charisma = 17 },
+                "Ranger" => new Attributes() { Strength = 13, Wisdom = 14, Constitution = 14 },
+                "Magic-User" => new Attributes() { Intelligence = 9 },
+                "Cleric" => new Attributes() { Wisdom = 9 },
+                "Druid" => new Attributes() { Wisdom = 12, Charisma = 15 },
+                "Thief" => new Attributes() { Dexterity = 9 },
+                "Assassin" => new Attributes() { Strength = 12, Intelligence = 11, Dexterity = 12 },
+                "Monk" => new Attributes() { Strength = 15, Wisdom = 15, Dexterity = 15, Constitution = 11 },                
+                _ => new Attributes() { }
+            };
+
+            return result;
         }
 
         private static List<int> GenerateHPByLevelByCharClass(string charClass, int level)

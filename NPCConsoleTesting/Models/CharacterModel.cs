@@ -23,6 +23,7 @@
         public int cha { get; set; }
         public int gold { get; set; }
         public string armor { get; set; }
+        public bool hasShield { get; set; }
         public string weapon { get; set; }
         public string items { get; set; }
         public int probity { get; set; }

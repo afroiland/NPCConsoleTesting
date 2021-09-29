@@ -54,7 +54,6 @@ namespace UnitTests
             Assert.That(resultsList, Is.All.Length.GreaterThan(2) & Is.All.Length.LessThan(16));
         }
 
-
         //TODO:
 
         //SelectRandomClass

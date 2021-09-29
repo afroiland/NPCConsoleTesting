@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace NPCConsoleTesting.Characters
 {
-    class AttributeMinimums
+    public class Attributes
     {
         public int Strength { get; set; }
         public int Ex_Strength { get; set; }
+        public int Intelligence { get; set; }
+        public int Wisdom { get; set; }
         public int Dexterity { get; set; }
         public int Constitution { get; set; }
+        public int Charisma { get; set; }
     }
 }

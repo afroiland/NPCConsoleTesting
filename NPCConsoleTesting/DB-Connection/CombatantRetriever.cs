@@ -25,8 +25,7 @@ namespace NPCConsoleTesting
             //int initMod = 0;
             string armor = queryResult[0].armor;
             string weapon = queryResult[0].weapon;
-            //TODO: once db is updated, determine shield presence
-            bool hasShield = false;
+            bool hasShield = queryResult[0].hasShield;
             List<string> spells = SelectOnlyCombatSpells(queryResult[0].memorized);
 
             return new Combatant(name, charClass, level, str, dex, con, HP_By_Level, HP, ex_str, charArmor: armor, charWeapon: weapon,
