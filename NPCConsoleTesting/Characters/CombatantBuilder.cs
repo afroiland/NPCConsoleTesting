@@ -72,7 +72,7 @@ namespace NPCConsoleTesting
             string charClass = SelectRandomClass();
             string race = SelectRandomRace();
             int level = _random.Next(_MinLevel, _MaxLevel + 1);
-            Attributes attributes = GetAttributes(charClass, race);
+            Attributes attributes = GenerateAttributes(charClass, race);
             int str = attributes.Strength;
             //TODO: int ex_str = attributes.Ex_Strength;
             int ex_str = 0;
@@ -286,79 +286,66 @@ namespace NPCConsoleTesting
             return races[_random.Next(0, races.Count)];
         }
 
-        public static Attributes GetAttributes(string charClass, string race)
+        public static Attributes GenerateAttributes(string charClass, string race)
         {
             Attributes mins = GetAttributeMins(charClass);
             Attributes attributes = new();
 
-            while (!MinsMet(attributes, mins))
+            do
             {
-                attributes.Strength = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+                attributes.Strength = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Strength", race);
+            } while (attributes.Strength < mins.Strength);
+            
+            do
+            {
                 attributes.Intelligence = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-                attributes.Constitution = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-                attributes.Wisdom = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-                attributes.Dexterity = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-                attributes.Charisma = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+            } while (attributes.Intelligence < mins.Intelligence);
 
-                ApplyRacialAttributeModifiers(attributes, race);
-            }
+            do
+            {
+                attributes.Constitution = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Constitution", race);
+            } while (attributes.Constitution < mins.Constitution);
+
+            do
+            {
+                attributes.Wisdom = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+            } while (attributes.Wisdom < mins.Wisdom);
+
+            do
+            {
+                attributes.Dexterity = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Dexterity", race);
+            } while (attributes.Dexterity < mins.Dexterity);
+
+            do
+            {
+                attributes.Charisma = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Charisma", race);
+            } while (attributes.Charisma < mins.Charisma);
 
             return attributes;
         }
 
-        private static bool MinsMet(Attributes attributes, Attributes mins)
+        private static int GetRacialAttributeModifier(string attribute, string race)
         {
-            if (attributes.Strength >= mins.Strength &&
-                attributes.Intelligence >= mins.Intelligence &&
-                attributes.Constitution >= mins.Constitution &&
-                attributes.Wisdom >= mins.Wisdom &&
-                attributes.Dexterity >= mins.Dexterity &&
-                attributes.Charisma >= mins.Charisma)
+            switch (attribute)
             {
-                return true;
-            }
-
-            return false;
-        }
-
-        private static Attributes ApplyRacialAttributeModifiers(Attributes attributes, string race)
-        {
-            switch (race)
-            {
-                case "Dwarf":
-                    attributes.Constitution++;
-                    attributes.Charisma--;
+                case "Strength":
+                    if(race == "Halfling") { return -1; }
                     break;
-                case "Elf":
-                    attributes.Dexterity++;
-                    attributes.Constitution--;
+                case "Constitution":
+                    if (race == "Dwarf") { return 1; }
+                    if (race == "Elf") { return -1; }
                     break;
-                case "Halfling":
-                    attributes.Dexterity++;
-                    attributes.Strength--;
+                case "Dexterity":
+                    if (race == "Halfling" || race == "Elf") { return 1; }
+                    break;
+                case "Charisma":
+                    if (race == "Dwarf") { return -1; }
                     break;
                 default: break;
             }
 
-            return attributes;
+            return 0;
         }
-
-        //private static int GenerateAttribute(string attribute, string race)
-        //{
-        //    //Attributes attributeMins = GetAttributeMins(charClass);
-        //    int result = 0;
-        //    //TODO: remove--used for testing
-        //    //var temp1 = attributeMins.GetType();
-        //    //var temp2 = temp1.GetProperty(attribute);
-        //    //var temp3 = temp2.GetValue(attributeMins, null);
-
-        //    while (result < (int)attributeMins.GetType().GetProperty(attribute).GetValue(attributeMins, null))
-        //    {
-        //        result = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-        //    }
-
-        //    return result;
-        //}
 
         private static Attributes GetAttributeMins(string charClass)
         {
@@ -384,11 +371,6 @@ namespace NPCConsoleTesting
 
 
             return new List<int> { 4, 4, 4 };
-        }
-
-        private static int ConvertHPByLevelToMaxHP(List<int> hpByLevel)
-        {
-            return 12;
         }
 
         private static string SelectRandomArmor(string charClass)
