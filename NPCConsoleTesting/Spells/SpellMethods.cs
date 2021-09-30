@@ -92,14 +92,15 @@ namespace NPCConsoleTesting
             List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).ToList();
 
             //a combatant at full HP with only cure spells will not cast a spell
-            //if (combatant.CurrentHP >= combatant.HP_By_Level.Sum() && nonCureSpells.Count < 1)
-            if (combatant.CurrentHP >= (combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass)) && nonCureSpells.Count < 1)
+            if (combatant.CurrentHP >= (combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass)) &&
+                nonCureSpells.Count < 1)
             {
                 return "";
             }
 
             //unless the combatant is at full health, cure spells are prioritized
-            if (combatant.CurrentHP < combatant.HP_By_Level.Sum() && cureSpells.Count > 0)
+            if (combatant.CurrentHP < combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass) &&
+                cureSpells.Count > 0)
             {
                 //select random cure spell
                 return cureSpells[_random.Next(0, cureSpells.Count)];

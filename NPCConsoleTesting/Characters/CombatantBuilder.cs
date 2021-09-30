@@ -93,9 +93,6 @@ namespace NPCConsoleTesting
 
         public static Combatant BuildCombatantViaConsole()
         {
-            //TODO: remove the following line--just used for testing GenerateAttributeByCharClass()
-            //int str = GenerateAttributeByCharClass("Strength", "Fighter");
-
             Console.WriteLine("Enter name for character");
             string name = Console.ReadLine();
 
@@ -421,27 +418,27 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        private List<string> GenerateMUSpellList(int level)
+        private static List<string> GenerateMUSpellList(int level)
         {
             return new List<string> { "Magic Missile", "Sleep" };
         }
 
-        private List<string> GenerateClericSpellList(int level)
+        private static List<string> GenerateClericSpellList(int level)
         {
             return new List<string> { "Hold Person", "Cure Light Wounds" };
         }
 
-        private List<string> GeneratePaladinSpellList(int level)
+        private static List<string> GeneratePaladinSpellList(int level)
         {
             return new List<string> { };
         }
 
-        private List<string> GenerateDruidSpellList(int level)
+        private static List<string> GenerateDruidSpellList(int level)
         {
             return new List<string> { "Cure Light Wounds" };
         }
 
-        private List<string> GenerateRangerSpellList(int level)
+        private static List<string> GenerateRangerSpellList(int level)
         {
             return new List<string> { };
         }

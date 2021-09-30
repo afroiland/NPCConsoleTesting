@@ -2,33 +2,33 @@
 {
     public class CharacterModel
     {
-        public string name { get; set; }
-        public string title { get; set; }
-        public int level { get; set; }
-        public string characterClass { get; set; }
-        public string race { get; set; }
-        public int age { get; set; }
-        public string gender { get; set; }
-        public int currentHP { get; set; }
-        public string hp_by_lvl { get; set; }
-        public int ac_adj { get; set; }
-        public int att_adj { get; set; }
-        public string status { get; set; }
-        public int str { get; set; }
-        public int ex_str { get; set; }
-        public int intel { get; set; }
-        public int dex { get; set; }
-        public int con { get; set; }
-        public int wis { get; set; }
-        public int cha { get; set; }
-        public int gold { get; set; }
-        public string armor { get; set; }
-        public bool hasShield { get; set; }
-        public string weapon { get; set; }
-        public string items { get; set; }
-        public int probity { get; set; }
-        public string affiliation { get; set; }
-        public string notes { get; set; }
-        public string memorized { get; set; }
+        public string Name { get; set; }
+        public string Title { get; set; }
+        public int Level { get; set; }
+        public string CharacterClass { get; set; }
+        public string Race { get; set; }
+        public int Age { get; set; }
+        public string Gender { get; set; }
+        public int CurrentHP { get; set; }
+        public string HP_by_lvl { get; set; }
+        public int AC_adj { get; set; }
+        public int Att_adj { get; set; }
+        public string Status { get; set; }
+        public int Str { get; set; }
+        public int Ex_str { get; set; }
+        public int Intel { get; set; }
+        public int Dex { get; set; }
+        public int Con { get; set; }
+        public int Wis { get; set; }
+        public int Cha { get; set; }
+        public int Gold { get; set; }
+        public string Armor { get; set; }
+        public bool HasShield { get; set; }
+        public string Weapon { get; set; }
+        public string Items { get; set; }
+        public int Probity { get; set; }
+        public string Affiliation { get; set; }
+        public string Notes { get; set; }
+        public string Memorized { get; set; }
     }
 }

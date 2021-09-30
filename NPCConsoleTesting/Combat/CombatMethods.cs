@@ -59,16 +59,6 @@ namespace NPCConsoleTesting
                 "Chain" => 5,
                 "Banded" => 4,
                 "Plate" => 3,
-
-                //"None" => 10,
-                //"Shield Only" => 9,
-                //"Leather" => 8,
-                //"Leather + Shield" or "Studded Leather" => 7,
-                //"Studded Leather + Shield" or "Scale Mail" => 6,
-                //"Scale Mail + Shield" or "Chain Mail" => 5,
-                //"Chain Mail + Shield" or "Banded Mail" => 4,
-                //"Banded Mail + Shield" or "Plate Mail" => 3,
-                //"Plate Mail + Shield" => 2,
                 _ => 10
             };
 
@@ -380,7 +370,7 @@ namespace NPCConsoleTesting
                 if (spellResults.AffectType == "status")
                 {
                     target.Statuses.Add(spellResults.Status);
-                    entries.Add($"{target.Name} is {spellResults.Status}.");
+                    entries.Add($"{caster.Name} cast {spellName} on {target.Name}. {target.Name} is {spellResults.Status}.");
                 }
             }
             else
