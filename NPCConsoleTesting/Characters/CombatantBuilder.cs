@@ -74,8 +74,7 @@ namespace NPCConsoleTesting
             int level = _random.Next(_MinLevel, _MaxLevel + 1);
             Attributes attributes = GenerateAttributes(charClass, race);
             int str = attributes.Strength;
-            //TODO: int ex_str = attributes.Ex_Strength;
-            int ex_str = 0;
+            int ex_str = attributes.Ex_Strength;
             int dex = attributes.Dexterity;
             int con = attributes.Constitution;
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
@@ -318,6 +317,9 @@ namespace NPCConsoleTesting
                 attributes.Charisma = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Charisma", race);
             } while (attributes.Charisma < mins.Charisma);
 
+            //Fighters with 18 strength get Ex_Strength
+            attributes.Ex_Strength = charClass == "Fighter" && attributes.Strength == 18 ? _random.Next(1, 101) : 0;
+
             return attributes;
         }
 
@@ -365,9 +367,31 @@ namespace NPCConsoleTesting
 
         private static List<int> GenerateHPByLevelByCharClass(string charClass, int level)
         {
+            int dieType = charClass switch
+            {
+                "Fighter" or "Paladin" => 10,
+                "Cleric" or "Druid" or "Ranger" => 8,
+                "Thief" or "Assassin" => 6,
+                "Magic-User" or "Illusionist" or "Monk" => 4,
+                _ => 3
+            };
 
+            //first-level HD is maximum of range
+            List<int> result = new() { dieType };
 
-            return new List<int> { 4, 4, 4 };
+            //rangers and monks get two HD at first level
+            if (charClass == "Ranger" || charClass == "Monk")
+            {
+                result[0] += dieType;
+            }
+
+            //HD values for levels beyond first assigned randomly
+            for (int i = 1; i < level; i++)
+            {
+                result.Add(_random.Next(1, dieType + 1));
+            }
+
+            return result;
         }
 
         private static string SelectRandomArmor(string charClass)
