@@ -1,5 +1,7 @@
-﻿using System;
+﻿using NPCConsoleTesting.Characters;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NPCConsoleTesting
 {
@@ -68,19 +70,25 @@ namespace NPCConsoleTesting
         {
             string name = GenerateRandomName();
             string charClass = SelectRandomClass();
+            string race = SelectRandomRace();
             int level = _random.Next(_MinLevel, _MaxLevel + 1);
-            int str = GenerateAttributeByCharClass("Strength", charClass);
-            //int ex_str = GenerateAttributeByCharClass("Ex_Strength", charClass);
+            Attributes attributes = GenerateAttributes(charClass, race);
+            int str = attributes.Strength;
+            //TODO: int ex_str = attributes.Ex_Strength;
             int ex_str = 0;
-            int dex = GenerateAttributeByCharClass("Dexterity", charClass);
-            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass);
-            int HP = ConvertHPByLevelToMaxHP(HPByLevel);
-            int initMod = 0;   //currently nothing that would modify this
+            int dex = attributes.Dexterity;
+            int con = attributes.Constitution;
+            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
+            //set currentHP to maxHP (sum of HPByLevel values + con bonus)
+            int currentHP = HPByLevel.Sum() + CombatMethods.CalcConBonusToHP(con, charClass);
+            //int initMod = 0;
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass);
+            bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, spells);
+            return new Combatant(name, charClass, level, str, dex, con, HPByLevel, currentHP, ex_str, charArmor: armor,
+                charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
         }
 
         public static Combatant BuildCombatantViaConsole()
@@ -105,7 +113,8 @@ namespace NPCConsoleTesting
 
             //TODO: spells?
 
-            return new Combatant(name, charClass, level, 12, 12, HP, initMod, charWeapon:weapon);
+            //TODO: figure out what we do for HP_By_Level here
+            return new Combatant(name, charClass, level, 12, 12, 12, new List<int>() { 1 }, HP, initMod, charWeapon:weapon);
         }
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
@@ -268,19 +277,97 @@ namespace NPCConsoleTesting
             return charClasses[_random.Next(0, charClasses.Count)];
         }
 
-        private static int GenerateAttributeByCharClass(string attribute, string charClass)
+        private static string SelectRandomRace()
         {
-            return 12;
+            List<string> races = new() { "Human", "Elf", "Dwarf", "Halfling" };
+            return races[_random.Next(0, races.Count)];
         }
 
-        private static List<int> GenerateHPByLevelByCharClass(string charClass)
+        public static Attributes GenerateAttributes(string charClass, string race)
         {
+            Attributes mins = GetAttributeMins(charClass);
+            Attributes attributes = new();
+
+            do
+            {
+                attributes.Strength = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Strength", race);
+            } while (attributes.Strength < mins.Strength);
+            
+            do
+            {
+                attributes.Intelligence = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+            } while (attributes.Intelligence < mins.Intelligence);
+
+            do
+            {
+                attributes.Constitution = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Constitution", race);
+            } while (attributes.Constitution < mins.Constitution);
+
+            do
+            {
+                attributes.Wisdom = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
+            } while (attributes.Wisdom < mins.Wisdom);
+
+            do
+            {
+                attributes.Dexterity = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Dexterity", race);
+            } while (attributes.Dexterity < mins.Dexterity);
+
+            do
+            {
+                attributes.Charisma = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Charisma", race);
+            } while (attributes.Charisma < mins.Charisma);
+
+            return attributes;
+        }
+
+        private static int GetRacialAttributeModifier(string attribute, string race)
+        {
+            switch (attribute)
+            {
+                case "Strength":
+                    if(race == "Halfling") { return -1; }
+                    break;
+                case "Constitution":
+                    if (race == "Dwarf") { return 1; }
+                    if (race == "Elf") { return -1; }
+                    break;
+                case "Dexterity":
+                    if (race == "Halfling" || race == "Elf") { return 1; }
+                    break;
+                case "Charisma":
+                    if (race == "Dwarf") { return -1; }
+                    break;
+                default: break;
+            }
+
+            return 0;
+        }
+
+        private static Attributes GetAttributeMins(string charClass)
+        {
+            Attributes result = charClass switch
+            {
+                "Fighter" => new Attributes() { Strength = 9},
+                "Paladin" => new Attributes() { Strength = 12, Intelligence = 9, Wisdom = 13, Constitution = 9, Charisma = 17 },
+                "Ranger" => new Attributes() { Strength = 13, Wisdom = 14, Constitution = 14 },
+                "Magic-User" => new Attributes() { Intelligence = 9 },
+                "Cleric" => new Attributes() { Wisdom = 9 },
+                "Druid" => new Attributes() { Wisdom = 12, Charisma = 15 },
+                "Thief" => new Attributes() { Dexterity = 9 },
+                "Assassin" => new Attributes() { Strength = 12, Intelligence = 11, Dexterity = 12 },
+                "Monk" => new Attributes() { Strength = 15, Wisdom = 15, Dexterity = 15, Constitution = 11 },                
+                _ => new Attributes() { }
+            };
+
+            return result;
+        }
+
+        private static List<int> GenerateHPByLevelByCharClass(string charClass, int level)
+        {
+
+
             return new List<int> { 4, 4, 4 };
-        }
-
-        private static int ConvertHPByLevelToMaxHP(List<int> hpByLevel)
-        {
-            return 12;
         }
 
         private static string SelectRandomArmor(string charClass)
@@ -302,6 +389,20 @@ namespace NPCConsoleTesting
             return "Dagger";
         }
 
+        private static bool DetermineShieldPresence(string charClass, string weapon)
+        {
+            List<string> classesThatCannotUseShield = new() { "Magic-User", "Illusionist" };
+            List<string> weaponsThatRequireTwoHands = new() { "Spear", "Halberd", "Staff", "Two-Handed Sword" };
+
+            bool result = true;
+            if (classesThatCannotUseShield.Contains(charClass) || weaponsThatRequireTwoHands.Contains(weapon))
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
         private List<string> GenerateSpellList(string charClass, int level)
         {
             List<String> result = charClass switch
@@ -317,27 +418,27 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        private List<string> GenerateMUSpellList(int level)
+        private static List<string> GenerateMUSpellList(int level)
         {
             return new List<string> { "Magic Missile", "Sleep" };
         }
 
-        private List<string> GenerateClericSpellList(int level)
+        private static List<string> GenerateClericSpellList(int level)
         {
             return new List<string> { "Hold Person", "Cure Light Wounds" };
         }
 
-        private List<string> GeneratePaladinSpellList(int level)
+        private static List<string> GeneratePaladinSpellList(int level)
         {
             return new List<string> { };
         }
 
-        private List<string> GenerateDruidSpellList(int level)
+        private static List<string> GenerateDruidSpellList(int level)
         {
             return new List<string> { "Cure Light Wounds" };
         }
 
-        private List<string> GenerateRangerSpellList(int level)
+        private static List<string> GenerateRangerSpellList(int level)
         {
             return new List<string> { };
         }

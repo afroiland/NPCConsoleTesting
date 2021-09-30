@@ -53,5 +53,23 @@ namespace UnitTests
             //Assert
             Assert.That(resultsList, Is.All.Length.GreaterThan(2) & Is.All.Length.LessThan(16));
         }
+
+        //TODO:
+
+        //SelectRandomClass
+
+        //GenerateHPByLevelByCharClass
+
+        //ConvertHPByLevelToMaxHP
+
+        //SelectRandomArmor
+
+        //SelectRandomWeapon
+
+        //DetermineShieldPresence
+
+        //GenerateSpellList    (for five classes; maybe break this out into 5 separate tests)
+
+
     }
 }

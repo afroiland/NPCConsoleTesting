@@ -13,19 +13,23 @@ namespace NPCConsoleTesting
 
             var queryResult = DBConnection.QueryDB(connectionString, query);
 
-            string name = queryResult[0].name;
-            string charClass = queryResult[0].characterClass;
-            int level = queryResult[0].level;
-            int str = queryResult[0].str;
-            int ex_str = queryResult[0].ex_str;
-            int dex = queryResult[0].dex;
-            int HP = queryResult[0].currentHP;
-            int initMod = 0;   //currently nothing that would modify this
-            string armor = queryResult[0].armor;
-            string weapon = queryResult[0].weapon;
-            List<string> spells = SelectOnlyCombatSpells(queryResult[0].memorized);
+            string name = queryResult[0].Name;
+            string charClass = queryResult[0].CharacterClass;
+            int level = queryResult[0].Level;
+            int str = queryResult[0].Str;
+            int ex_str = queryResult[0].Ex_str;
+            int dex = queryResult[0].Dex;
+            int con = queryResult[0].Con;
+            List<int> HP_By_Level = queryResult[0].HP_by_lvl.Split(',').Select(int.Parse).ToList();
+            int HP = queryResult[0].CurrentHP;
+            //int initMod = 0;
+            string armor = queryResult[0].Armor;
+            string weapon = queryResult[0].Weapon;
+            bool hasShield = queryResult[0].HasShield;
+            List<string> spells = SelectOnlyCombatSpells(queryResult[0].Memorized);
 
-            return new Combatant(name, charClass, level, str, dex, HP, initMod, ex_str, armor, weapon, spells);
+            return new Combatant(name, charClass, level, str, dex, con, HP_By_Level, HP, ex_str, charArmor: armor, charWeapon: weapon,
+                charHasShield: hasShield, charSpells: spells);
         }
 
         public static List<string> SelectOnlyCombatSpells(string allSpells)

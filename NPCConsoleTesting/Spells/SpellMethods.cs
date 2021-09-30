@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NPCConsoleTesting
 {
@@ -50,68 +51,63 @@ namespace NPCConsoleTesting
 
         public static int GetSpellDamage(string spellName, int casterLevel)
         {
-            int result = 0;
-
-            switch(spellName)
+            int result = spellName switch
             {
-                case "Burning Hands":
-                    result = casterLevel;
-                    break;
-                case "Cure Light Wounds":
-                    result = -(_random.Next(1, 9));
-                    break;
-                case "Fireball":
-                case "Lightning Bolt":
-                    for (int i = 0; i < casterLevel; i++)
-                    {
-                        result += _random.Next(1, 7);
-                    }
-                    break;
-                case "Magic Missile":
-                    for (int i = 0; i < Math.Floor(casterLevel/3d)+1; i++)
-                    {
-                        result += _random.Next(1, 5) + 1;
-                    }
-                    break;
-                case "Shocking Grasp":
-                    result = _random.Next(1, 9) + casterLevel;
-                    break;
-            }
+                //TODO: calc damage by level where needed
+                "Burning Hands" => casterLevel,
+                "Cure Light Wounds" => -(_random.Next(1, 9)),
+                "Fireball" or "Lightning Bolt" => 18,                
+                "Magic Missile" => 5,
+                "Shocking Grasp" => _random.Next(1, 9) + casterLevel,
+                _ => 0
+            };
 
             return result;
         }
 
         public static string GetSpellStatusEffect(string spellName)
         {
-            string result = "";
-
-            switch(spellName)
+            string result = spellName switch
             {
-                case "Haste":
-                    result = "Hasted";
-                    break;
-                case "Hold Person":
-                case "Web":
-                    result = "Held";
-                    break;
-                case "Slow":
-                    result = "Slowed";
-                    break;
-                //case "Strength":
-                //    result = "";
-                //    break;
-                //case "Ray of Enfeeblement":
-                //    result = "";
-                //    break;
-                case "Sleep":
-                    result = "Asleep";
-                    break;
-                //case "Web":
-                //    result = "Held";
-                //    break;
-            }
+                "Haste" => "Hasted",
+                "Hold Person" or "Web" => "Held",
+                "Slow" => "Slowed",
+                "Strength" => "Strong",
+                "Ray of Enfeeblement" => "Weakened",
+                "Sleep" => "Asleep",
+                _ => ""
+            };
 
             return result;
+        }
+
+        public static string SelectFromCombatantsSpells(Combatant combatant)
+        {
+            if (combatant.Spells == null || combatant.Spells.Count < 1)
+            {
+                return "";
+            }
+
+            List<string> cureSpells = combatant.Spells.Where(x => x.Contains("Cure")).ToList();
+            List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).ToList();
+
+            //a combatant at full HP with only cure spells will not cast a spell
+            if (combatant.CurrentHP >= (combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass)) &&
+                nonCureSpells.Count < 1)
+            {
+                return "";
+            }
+
+            //unless the combatant is at full health, cure spells are prioritized
+            if (combatant.CurrentHP < combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass) &&
+                cureSpells.Count > 0)
+            {
+                //select random cure spell
+                return cureSpells[_random.Next(0, cureSpells.Count)];
+            }
+
+            //select random nonCure spell
+            return nonCureSpells[_random.Next(0, nonCureSpells.Count)];
         }
     }
 }
