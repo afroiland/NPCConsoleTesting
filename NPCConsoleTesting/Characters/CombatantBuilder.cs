@@ -365,7 +365,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        private static List<int> GenerateHPByLevelByCharClass(string charClass, int level)
+        public static List<int> GenerateHPByLevelByCharClass(string charClass, int level)
         {
             int dieType = charClass switch
             {
@@ -427,7 +427,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        private List<string> GenerateSpellList(string charClass, int level)
+        private static List<string> GenerateSpellList(string charClass, int level)
         {
             List<String> result = charClass switch
             {

@@ -1,6 +1,7 @@
 ﻿using NPCConsoleTesting;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnitTests
 {
@@ -58,7 +59,32 @@ namespace UnitTests
 
         //SelectRandomClass
 
-        //GenerateHPByLevelByCharClass
+        [Test]
+        public void GenerateHPByLevelByCharClass_returns_values_within_range()
+        {
+            //Act
+            List<int> fighterLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("Fighter", 1);
+            List<int> rangerLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("Ranger", 1);
+            List<int> rangerLvl7 = CombatantBuilder.GenerateHPByLevelByCharClass("Ranger", 7);
+            List<int> thiefLvl3 = CombatantBuilder.GenerateHPByLevelByCharClass("Thief", 3);
+            List<int> monkLvl5 = CombatantBuilder.GenerateHPByLevelByCharClass("Monk", 5);
+
+            //for testing the range of all values, exclude the first int for monks and rangers
+            List<int> rangerLvl7Copy = new(rangerLvl7);
+            rangerLvl7Copy.RemoveAt(0);
+            List<int> monkLvl5Copy = new(monkLvl5);
+            monkLvl5Copy.RemoveAt(0);
+
+            //Assert
+            Assert.That(fighterLvl1[0], Is.EqualTo(10));
+            Assert.That(rangerLvl1[0], Is.EqualTo(16));
+            Assert.That(rangerLvl7.Sum(), Is.GreaterThan(21) & Is.LessThan(65));
+            Assert.That(rangerLvl7Copy, Is.All.GreaterThan(0) & Is.All.LessThan(9));
+            Assert.That(thiefLvl3.Sum(), Is.GreaterThan(7) & Is.LessThan(19));
+            Assert.That(thiefLvl3, Is.All.GreaterThan(0) & Is.All.LessThan(7));
+            Assert.That(monkLvl5.Sum(), Is.GreaterThan(10) & Is.LessThan(21));
+            Assert.That(monkLvl5Copy, Is.All.GreaterThan(0) & Is.All.LessThan(5));
+        }
 
         //ConvertHPByLevelToMaxHP
 
