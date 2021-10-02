@@ -12,8 +12,8 @@ namespace NPCConsoleTesting
             ICombatMethods combatMethods = new CombatMethods();
             List<String> logResults = new();
             
-            combatants = combatMethods.DetermineTargets(combatants);
-            combatants = combatMethods.DetermineInit(combatants);
+            combatMethods.DetermineTargets(combatants);
+            combatMethods.DetermineInit(combatants);
 
             //clear GotHitThisRound status for all combatants
             combatants.ForEach(x => x.GotHitThisRound = false);

@@ -256,7 +256,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public List<Combatant> DetermineInit(List<Combatant> chars)
+        public void DetermineInit(List<Combatant> chars)
         {
             //set inits
             foreach (Combatant ch in chars)
@@ -275,10 +275,10 @@ namespace NPCConsoleTesting
             //order chars with hp > 0 by init
             chars = chars.Where(x => x.CurrentHP > 0).OrderBy(x => x.Init).ToList();
 
-            return chars;
+            //return chars;
         }
 
-        public List<Combatant> DetermineTargets(List<Combatant> chars)
+        public void DetermineTargets(List<Combatant> chars)
         {
             //set targets if needed
             foreach (Combatant ch in chars)
@@ -299,7 +299,7 @@ namespace NPCConsoleTesting
             //}
             //if (doReadLines) { Console.ReadLine(); }
 
-            return chars;
+            //return chars;
         }
 
         public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, int attackResult, int segment)

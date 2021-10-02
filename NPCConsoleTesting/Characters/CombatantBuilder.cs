@@ -90,24 +90,23 @@ namespace NPCConsoleTesting
                 charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
         }
 
-        public static Combatant BuildCombatantViaConsole()
+        public static Combatant BuildCombatantViaConsole(int charNumber)
         {
-            Console.WriteLine("Enter name for character");
-            string name = Console.ReadLine();
+            string name = GetNameFromUserInput(charNumber);
 
-            Console.WriteLine("Enter class for character");
+            Console.WriteLine($"Enter class for character {charNumber}");
             string charClass = Console.ReadLine();
 
-            Console.WriteLine("Enter level for character");
+            Console.WriteLine($"Enter level for character {charNumber}");
             int level = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter HP for character");
+            Console.WriteLine($"Enter HP for character {charNumber}");
             int HP = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter initMod for character");
+            Console.WriteLine($"Enter initMod for character {charNumber}");
             int initMod = int.Parse(Console.ReadLine());
 
-            Console.WriteLine("Enter weapon for character");
+            Console.WriteLine($"Enter weapon for character {charNumber}");
             string weapon = Console.ReadLine();
 
             //TODO: spells?
@@ -136,6 +135,7 @@ namespace NPCConsoleTesting
                 }
             }
             
+            //Set the source for all characters
             Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
             int charOrigin = 0;
             bool intEntered = false;
@@ -160,7 +160,7 @@ namespace NPCConsoleTesting
                 {
                     try
                     {
-                        combatants.Add(BuildCombatantViaConsole());
+                        combatants.Add(BuildCombatantViaConsole(combatants.Count +1));
                     }
                     catch (Exception)
                     {
@@ -170,7 +170,7 @@ namespace NPCConsoleTesting
                 }
                 else if (charOrigin == 3)
                 {
-                    string name = GetNameFromUserInput();
+                    string name = GetNameFromUserInput(combatants.Count + 1);
                     try
                     {
                         combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
@@ -189,9 +189,10 @@ namespace NPCConsoleTesting
             return combatants;
         }
 
-        public static string GetNameFromUserInput()
+        public static string GetNameFromUserInput(int charNumber)
         {
-            Console.WriteLine($"Enter the character's name.");
+            //Console.WriteLine($"Enter the character's name.");
+            Console.WriteLine($"Enter name for character {charNumber}");
             return Console.ReadLine();
         }
 
@@ -410,6 +411,8 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomWeapon(string charClass)
         {
+            List<string> weaponList = new() { };
+
             return "Dagger";
         }
 

@@ -216,10 +216,11 @@ namespace UnitTests
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            var result = combatMethods.DetermineInit(testList);
+            combatMethods.DetermineInit(testList);
 
             //Assert
-            Assert.That(result, Is.Ordered.By("Init"));
+            //TODO: 
+            Assert.That(testList, Is.Ordered.By("Init"));
         }
 
         [Test]
@@ -287,10 +288,11 @@ namespace UnitTests
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            var result = combatMethods.DetermineTargets(testList);
+            //var result = combatMethods.DetermineTargets(testList);
+            combatMethods.DetermineTargets(testList);
 
             //Assert
-            CollectionAssert.DoesNotContain(result.Select(x => x.Target), "");
+            CollectionAssert.DoesNotContain(testList.Select(x => x.Target), "");
         }
     }
 }
