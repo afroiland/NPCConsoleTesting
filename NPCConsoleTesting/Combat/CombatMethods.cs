@@ -256,6 +256,28 @@ namespace NPCConsoleTesting
             return result;
         }
 
+        public void DetermineTargets(List<Combatant> chars)
+        {
+            //set targets if needed
+            foreach (Combatant ch in chars)
+            {
+                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Count() == 0)
+                {
+                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name).Select(x => x.Name).ToList();
+                    ch.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
+                }
+            }
+            //show targets
+            //for (int i = 0; i < chars.Count; i++)
+            //{
+            //    if (chars[i].hp > 0)
+            //    {
+            //        Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
+            //    }
+            //}
+            //if (doReadLines) { Console.ReadLine(); }
+        }
+
         public void DetermineInit(List<Combatant> chars)
         {
             //set inits
@@ -272,34 +294,8 @@ namespace NPCConsoleTesting
                 }
             }
 
-            //order chars with hp > 0 by init
-            chars = chars.Where(x => x.CurrentHP > 0).OrderBy(x => x.Init).ToList();
-
-            //return chars;
-        }
-
-        public void DetermineTargets(List<Combatant> chars)
-        {
-            //set targets if needed
-            foreach (Combatant ch in chars)
-            {
-                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Select(x => x.CurrentHP).ToList()[0] <= 0)
-                {
-                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name && x.CurrentHP > 0).Select(x => x.Name).ToList();
-                    ch.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
-                }
-            }
-            //show targets
-            //for (int i = 0; i < chars.Count; i++)
-            //{
-            //    if (chars[i].hp > 0)
-            //    {
-            //        Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
-            //    }
-            //}
-            //if (doReadLines) { Console.ReadLine(); }
-
-            //return chars;
+            //order combatants by init
+            chars.Sort((p, q) => p.Init.CompareTo(q.Init));
         }
 
         public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, int attackResult, int segment)
@@ -351,7 +347,6 @@ namespace NPCConsoleTesting
                     }
                     else
                     {
-
                         target.CurrentHP -= spellResults.Damage;
                         target.GotHitThisRound = true;
                         entries.Add($"{caster.Name} hit {target.Name} with a {spellName} effect for {spellResults.Damage} damage.");

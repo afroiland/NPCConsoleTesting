@@ -82,7 +82,7 @@ namespace UnitTests
             Assert.That(rangerLvl7Copy, Is.All.GreaterThan(0) & Is.All.LessThan(9));
             Assert.That(thiefLvl3.Sum(), Is.GreaterThan(7) & Is.LessThan(19));
             Assert.That(thiefLvl3, Is.All.GreaterThan(0) & Is.All.LessThan(7));
-            Assert.That(monkLvl5.Sum(), Is.GreaterThan(10) & Is.LessThan(21));
+            Assert.That(monkLvl5.Sum(), Is.GreaterThan(11) & Is.LessThan(25));
             Assert.That(monkLvl5Copy, Is.All.GreaterThan(0) & Is.All.LessThan(5));
         }
 

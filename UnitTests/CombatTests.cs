@@ -210,6 +210,20 @@ namespace UnitTests
         }
 
         [Test]
+        public void Targets_get_set_for_all_chars()
+        {
+            //Arrange
+            List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
+
+            //Act
+            //var result = combatMethods.DetermineTargets(testList);
+            combatMethods.DetermineTargets(testList);
+
+            //Assert
+            CollectionAssert.DoesNotContain(testList.Select(x => x.Target), "");
+        }
+
+        [Test]
         public void Inits_get_set_for_all_chars()
         {
             //Arrange
@@ -219,7 +233,6 @@ namespace UnitTests
             combatMethods.DetermineInit(testList);
 
             //Assert
-            //TODO: 
             Assert.That(testList, Is.Ordered.By("Init"));
         }
 
@@ -279,20 +292,6 @@ namespace UnitTests
                 Assert.AreEqual(init1, init2);
                 Assert.That(twoCombatantTestList.Select(x => x.CurrentHP), Is.All.LessThanOrEqualTo(0));
             });
-        }
-
-        [Test]
-        public void Targets_get_set_for_all_chars()
-        {
-            //Arrange
-            List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
-
-            //Act
-            //var result = combatMethods.DetermineTargets(testList);
-            combatMethods.DetermineTargets(testList);
-
-            //Assert
-            CollectionAssert.DoesNotContain(testList.Select(x => x.Target), "");
         }
     }
 }
