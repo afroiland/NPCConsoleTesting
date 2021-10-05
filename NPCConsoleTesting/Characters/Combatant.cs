@@ -49,7 +49,7 @@ namespace NPCConsoleTesting
             Init = 0;
             Target = "";
             GotHitThisRound = false;
-            Statuses = new List<string>();
+            Statuses = new List<Status>();
         }
     }
 }

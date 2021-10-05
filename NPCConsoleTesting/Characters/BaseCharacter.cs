@@ -10,7 +10,7 @@ namespace NPCConsoleTesting.Characters
         public List<int> HP_By_Level { get; set; }
         public int CurrentHP { get; set; }
         public int InitMod { get; set; }
-        public List<string> Statuses { get; set; }
+        public List<Status> Statuses { get; set; }
         public int Strength { get; set; }
         public int Ex_Strength { get; set; }
         public int Intelligence { get; set; }

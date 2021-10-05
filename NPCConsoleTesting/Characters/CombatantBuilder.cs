@@ -66,55 +66,6 @@ namespace NPCConsoleTesting
 
         static Random _random = new();
 
-        public Combatant BuildCombatantRandomly()
-        {
-            string name = GenerateRandomName();
-            string charClass = SelectRandomClass();
-            string race = SelectRandomRace();
-            int level = _random.Next(_MinLevel, _MaxLevel + 1);
-            Attributes attributes = GenerateAttributes(charClass, race);
-            int str = attributes.Strength;
-            int ex_str = attributes.Ex_Strength;
-            int dex = attributes.Dexterity;
-            int con = attributes.Constitution;
-            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
-            //set currentHP to maxHP (sum of HPByLevel values + con bonus)
-            int currentHP = HPByLevel.Sum() + CombatMethods.CalcConBonusToHP(con, charClass);
-            //int initMod = 0;
-            string armor = SelectRandomArmor(charClass);
-            string weapon = SelectRandomWeapon(charClass);
-            bool hasShield = DetermineShieldPresence(charClass, weapon);
-            List<string> spells = GenerateSpellList(charClass, level);
-
-            return new Combatant(name, charClass, level, str, dex, con, HPByLevel, currentHP, ex_str, charArmor: armor,
-                charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
-        }
-
-        public static Combatant BuildCombatantViaConsole(int charNumber)
-        {
-            string name = GetNameFromUserInput(charNumber);
-
-            Console.WriteLine($"Enter class for character {charNumber}");
-            string charClass = Console.ReadLine();
-
-            Console.WriteLine($"Enter level for character {charNumber}");
-            int level = int.Parse(Console.ReadLine());
-
-            Console.WriteLine($"Enter HP for character {charNumber}");
-            int HP = int.Parse(Console.ReadLine());
-
-            Console.WriteLine($"Enter initMod for character {charNumber}");
-            int initMod = int.Parse(Console.ReadLine());
-
-            Console.WriteLine($"Enter weapon for character {charNumber}");
-            string weapon = Console.ReadLine();
-
-            //TODO: spells?
-
-            //TODO: figure out what we do for HP_By_Level here
-            return new Combatant(name, charClass, level, 12, 12, 12, new List<int>() { 1 }, HP, initMod, charWeapon:weapon);
-        }
-
         public List<Combatant> BuildListOfCombatants(string connectionString)
         {
             int numberBattling = 0;
@@ -134,7 +85,7 @@ namespace NPCConsoleTesting
                     Console.WriteLine("We're looking for an integer");
                 }
             }
-            
+
             //Set the source for all characters
             Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
             int charOrigin = 0;
@@ -160,7 +111,7 @@ namespace NPCConsoleTesting
                 {
                     try
                     {
-                        combatants.Add(BuildCombatantViaConsole(combatants.Count +1));
+                        combatants.Add(BuildCombatantViaConsole(combatants.Count + 1));
                     }
                     catch (Exception)
                     {
@@ -187,6 +138,55 @@ namespace NPCConsoleTesting
             }
 
             return combatants;
+        }
+
+        public Combatant BuildCombatantRandomly()
+        {
+            string name = GenerateRandomName();
+            string charClass = SelectRandomClass();
+            string race = SelectRandomRace();
+            int level = _random.Next(_MinLevel, _MaxLevel + 1);
+            Attributes attributes = GenerateAttributes(charClass, race);
+            int str = attributes.Strength;
+            int ex_str = attributes.Ex_Strength;
+            int dex = attributes.Dexterity;
+            int con = attributes.Constitution;
+            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
+            //set currentHP to maxHP (sum of HPByLevel values + con bonus)
+            int currentHP = HPByLevel.Sum() + CombatMethods.CalcConBonusToHP(con, charClass);
+            //int initMod = 0;
+            string armor = SelectRandomArmor(charClass);
+            string weapon = SelectRandomWeapon(charClass);
+            bool hasShield = DetermineShieldPresence(charClass, weapon);
+            List<string> spells = GenerateSpellList(charClass, level);
+
+            return new Combatant(name, charClass, level, str, dex, con, HPByLevel, currentHP, charEx_Strength: ex_str, charArmor: armor,
+                charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
+        }
+
+        public static Combatant BuildCombatantViaConsole(int charNumber)
+        {
+            string name = GetNameFromUserInput(charNumber);
+
+            Console.WriteLine($"Enter class for character {charNumber}");
+            string charClass = Console.ReadLine();
+
+            Console.WriteLine($"Enter level for character {charNumber}");
+            int level = int.Parse(Console.ReadLine());
+
+            Console.WriteLine($"Enter HP for character {charNumber}");
+            int HP = int.Parse(Console.ReadLine());
+
+            Console.WriteLine($"Enter initMod for character {charNumber}");
+            int initMod = int.Parse(Console.ReadLine());
+
+            Console.WriteLine($"Enter weapon for character {charNumber}");
+            string weapon = Console.ReadLine();
+
+            //TODO: spells?
+
+            //TODO: figure out what we do for HP_By_Level here
+            return new Combatant(name, charClass, level, 12, 12, 12, new List<int>() { 1 }, HP, initMod, charWeapon:weapon);
         }
 
         public static string GetNameFromUserInput(int charNumber)

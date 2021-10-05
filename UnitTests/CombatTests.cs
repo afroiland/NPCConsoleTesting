@@ -251,7 +251,7 @@ namespace UnitTests
             FullCombat.DoAFullCombat(fullCombatTestList);
 
             //Assert
-            Assert.Less(fullCombatTestList.Where(x => x.CurrentHP > 0).Count(), 2);
+            Assert.AreEqual(fullCombatTestList.Count, 1);
         }
 
         [Test]

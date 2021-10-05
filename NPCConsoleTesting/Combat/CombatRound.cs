@@ -11,7 +11,8 @@ namespace NPCConsoleTesting
         {
             ICombatMethods combatMethods = new CombatMethods();
             List<String> logResults = new();
-            
+
+            combatMethods.IncrementStatuses(combatants);
             combatMethods.DetermineTargets(combatants);
             combatMethods.DetermineInit(combatants);
 
@@ -37,7 +38,7 @@ namespace NPCConsoleTesting
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
                 //TODO: if target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
                 if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 ||
-                    combatants[priorityIndex].Statuses.Any(x => x == "Held" || x == "Asleep"))
+                    combatants[priorityIndex].Statuses.Any(x => x.Name == "Held" || x.Name == "Asleep"))
                 {
                     priorityIndex++;
                     break;

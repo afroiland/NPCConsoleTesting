@@ -50,10 +50,10 @@ namespace UnitTests
         }
 
         [Test]
-        public void GetSpellStatusEffect_returns_correct_value()
+        public void GetStatusName_returns_correct_value()
         {
             //Act
-            var results = SpellMethods.GetSpellStatusEffect(statusSpellName);
+            var results = SpellMethods.GetStatusName(statusSpellName);
 
             //Assert
             Assert.That(results, Is.EqualTo("Asleep"));

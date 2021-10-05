@@ -1,4 +1,5 @@
-﻿using NPCConsoleTesting.Combat;
+﻿using NPCConsoleTesting.Characters;
+using NPCConsoleTesting.Combat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,22 +10,26 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        //TODO: Lots of refactoring to be done here
+        //TODO: Lots of refactoring to be done in this file
 
         public int DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
             int result = 0;
             int attackRoll = _random.Next(1, 21);
+
+            //calculate defender's armor class
             int armorClass = defender.CharacterClass != "Monk" ? CalcNonMonkAC(defender.Armor, defender.HasShield, defender.Dexterity, defender.OtherACBonus) :
                 CalcMonkAC(defender.Level, defender.OtherACBonus);
 
+            //calculate number needed for successful attack roll
             int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus;
             if (attacker.CharacterClass != "Monk")
             {
                 targetNumber -= CalcStrBonusToHit(attacker.Strength, attacker.Ex_Strength);
             }
-            //An attack roll of 20 always suceeds and a roll of 1 always fails
-            if (attackRoll == 20 || (targetNumber <= attackRoll && attackRoll != 1))
+
+            //an attack roll of 20 always succeeds and a roll of 1 always fails
+            if (attackRoll == 20 || (attackRoll >= targetNumber && attackRoll != 1))
             {
                 result = CalcMeleeDmg(attacker.CharacterClass, attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
             }
@@ -298,6 +303,19 @@ namespace NPCConsoleTesting
             chars.Sort((p, q) => p.Init.CompareTo(q.Init));
         }
 
+        public void IncrementStatuses(List<Combatant> chars)
+        {
+            foreach (Combatant x in chars)
+            {
+                foreach (Status y in x.Statuses)
+                {
+                    y.Duration--;
+                }
+
+                x.Statuses.RemoveAll(z => z.Duration < 1);
+            }
+        }
+
         public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, int attackResult, int segment)
         {
             List<string> entries = new();
@@ -320,11 +338,9 @@ namespace NPCConsoleTesting
                         opportunityForSimulAttack = true;
                     }
                 }
+
                 //a sleeping character who gets hit (and survives) wakes up
-                else if (target.Statuses.Contains("Asleep"))
-                {
-                    target.Statuses.RemoveAll(r => r == "Asleep");
-                }
+                target.Statuses.RemoveAll(r => r.Name == "Asleep");
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
@@ -340,7 +356,7 @@ namespace NPCConsoleTesting
             {
                 if (spellResults.AffectType == "damage")
                 {
-                    if (spellResults.Damage < 0)   //a negative result indicates cure light wounds, which gets applied to caster
+                    if (spellResults.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
                     {
                         caster.CurrentHP -= spellResults.Damage;
                         entries.Add($"{caster.Name} healed themself for {-(spellResults.Damage)} hit points.");
@@ -365,7 +381,7 @@ namespace NPCConsoleTesting
                 if (spellResults.AffectType == "status")
                 {
                     target.Statuses.Add(spellResults.Status);
-                    entries.Add($"{caster.Name} cast {spellName} on {target.Name}. {target.Name} is {spellResults.Status}.");
+                    entries.Add($"{caster.Name} cast {spellName} on {target.Name}. {target.Name} is {spellResults.Status.Name} for {spellResults.Status.Duration} rounds.");
                 }
             }
             else
