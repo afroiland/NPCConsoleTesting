@@ -85,8 +85,18 @@ namespace NPCConsoleTesting
 
         public static int GetStatusDuration(string spellName, int casterLevel)
         {
-            //TODO
-            return 5;
+            int result = spellName switch
+            {
+                "Haste" => 3 + casterLevel,
+                "Hold Person" => 4 + casterLevel,
+                "Slow" => 3 + casterLevel,
+                "Strength" => 60 * casterLevel,
+                "Ray of Enfeeblement" => casterLevel,
+                "Sleep" => 5 * casterLevel,
+                _ => 0
+            };
+
+            return result;
         }
 
         public static string SelectFromCombatantsSpells(Combatant combatant)

@@ -303,13 +303,17 @@ namespace NPCConsoleTesting
             chars.Sort((p, q) => p.Init.CompareTo(q.Init));
         }
 
-        public void IncrementStatuses(List<Combatant> chars)
+        public void IncrementStatuses(List<Combatant> chars, List<string> log)
         {
             foreach (Combatant x in chars)
             {
                 foreach (Status y in x.Statuses)
                 {
                     y.Duration--;
+                    if (y.Duration < 1)
+                    {
+                        log.Add($"{x.Name} is no longer {y.Name}.");
+                    }
                 }
 
                 x.Statuses.RemoveAll(z => z.Duration < 1);
@@ -323,13 +327,12 @@ namespace NPCConsoleTesting
 
             if (attackResult > 0)
             {
-                entries.Add($"{attacker.Name} struck {target.Name} for {attackResult} damage.");
-
                 //adjust target hp and GotHitThisRound status
                 target.CurrentHP -= attackResult;
                 target.GotHitThisRound = true;
+                entries.Add($"{attacker.Name} struck {target.Name} for {attackResult} damage.");
 
-                if (target.CurrentHP <= 0)
+                if (target.CurrentHP < 1)
                 {
                     entries.Add($"{target.Name} fell.");
 
@@ -339,8 +342,12 @@ namespace NPCConsoleTesting
                     }
                 }
 
-                //a sleeping character who gets hit (and survives) wakes up
-                target.Statuses.RemoveAll(r => r.Name == "Asleep");
+                //a sleeping character who takes damage (and survives) wakes up
+                if (target.Statuses.FindIndex(x => x.Name == "Asleep") >= 0)
+                {
+                    entries.Add($"{target.Name} is no longer asleep.");
+                    target.Statuses.RemoveAll(r => r.Name == "Asleep");
+                }
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
@@ -363,9 +370,11 @@ namespace NPCConsoleTesting
                     }
                     else
                     {
+                        //adjust target hp and GotHitThisRound status
                         target.CurrentHP -= spellResults.Damage;
                         target.GotHitThisRound = true;
                         entries.Add($"{caster.Name} hit {target.Name} with a {spellName} effect for {spellResults.Damage} damage.");
+
                         if (target.CurrentHP < 1)
                         {
                             entries.Add($"{target.Name} fell.");
@@ -374,6 +383,13 @@ namespace NPCConsoleTesting
                             {
                                 opportunityForSimulAttack = true;
                             }
+                        }
+
+                        //a sleeping character who takes damage (and survives) wakes up
+                        if (target.Statuses.FindIndex(x => x.Name == "Asleep") >= 0)
+                        {
+                            entries.Add($"{target.Name} is no longer asleep.");
+                            target.Statuses.RemoveAll(r => r.Name == "Asleep");
                         }
                     }
                 }

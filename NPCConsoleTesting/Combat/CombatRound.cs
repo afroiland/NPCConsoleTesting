@@ -12,7 +12,7 @@ namespace NPCConsoleTesting
             ICombatMethods combatMethods = new CombatMethods();
             List<String> logResults = new();
 
-            combatMethods.IncrementStatuses(combatants);
+            combatMethods.IncrementStatuses(combatants, logResults);
             combatMethods.DetermineTargets(combatants);
             combatMethods.DetermineInit(combatants);
 
