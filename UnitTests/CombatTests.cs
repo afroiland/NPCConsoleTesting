@@ -27,8 +27,8 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                if (combatMethods.DoAMeleeAttack(testChar, testCharPoorAC) == 0) { missesAgainstPoorAC++; }
-                if (combatMethods.DoAMeleeAttack(testChar, testCharGoodAC) != 0) { hitsAgainstGoodAC++; }
+                if (combatMethods.DoAMeleeAttack(testChar, testCharPoorAC).Damage == 0) { missesAgainstPoorAC++; }
+                if (combatMethods.DoAMeleeAttack(testChar, testCharGoodAC).Damage != 0) { hitsAgainstGoodAC++; }
             }
 
             ////Assert

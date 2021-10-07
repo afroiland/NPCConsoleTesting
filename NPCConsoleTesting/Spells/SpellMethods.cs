@@ -29,7 +29,7 @@ namespace NPCConsoleTesting
             "Web"
         };
 
-        public static SpellResults DoASpell(string spellName, int casterLevel, int bonus = 0)
+        public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
             string affectType = DamageSpells.Contains(spellName) ? "damage" : "status";
             Status status = new("", 0);
@@ -48,7 +48,7 @@ namespace NPCConsoleTesting
                 status.Duration = GetStatusDuration(spellName, casterLevel);
             }
 
-            return new SpellResults(affectType, status, dmg);
+            return new ActionResults(dmg, spellName, affectType, status);
         }
 
         public static int GetSpellDamage(string spellName, int casterLevel)

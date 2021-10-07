@@ -50,8 +50,8 @@ namespace NPCConsoleTesting
                 //if spellName is an empty string, the combatant has no appropriate spell and does a melee attack
                 if (spellName == "")
                 {
-                    //priority combatant does an attack against target
-                    int attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
+                    //priority combatant does a melee attack against target
+                    ActionResults attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
 
                     //update target combatant
                     CombatantUpdateResults updateResults = combatMethods.ApplyMeleeResultToCombatant(combatants[priorityIndex], combatants[targetIndex], attackResult, segment);
@@ -64,10 +64,10 @@ namespace NPCConsoleTesting
                 else
                 {
                     //do the spell effect
-                    SpellResults spellResults = SpellMethods.DoASpell(spellName, combatants[priorityIndex].Level);
+                    ActionResults spellResults = SpellMethods.DoASpell(spellName, combatants[priorityIndex].Level);
 
                     //update combatants with spell results
-                    CombatantUpdateResults updateResults = combatMethods.ApplySpellResultToCombatant(combatants[priorityIndex], combatants[targetIndex], spellName, spellResults, segment);
+                    CombatantUpdateResults updateResults = combatMethods.ApplySpellResultToCombatant(combatants[priorityIndex], combatants[targetIndex], spellResults, segment);
 
                     //update log
                     logResults.AddRange(updateResults.LogEntries);

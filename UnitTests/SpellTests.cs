@@ -20,7 +20,7 @@ namespace UnitTests
             var results = SpellMethods.DoASpell(damageSpellName, casterLevel);
 
             //Assert
-            Assert.That(results, Is.InstanceOf<SpellResults>());
+            Assert.That(results, Is.InstanceOf<ActionResults>());
         }
 
         [Test]
@@ -30,7 +30,7 @@ namespace UnitTests
             var results = SpellMethods.DoASpell(statusSpellName, casterLevel);
 
             //Assert
-            Assert.That(results, Is.InstanceOf<SpellResults>());
+            Assert.That(results, Is.InstanceOf<ActionResults>());
         }
 
         [Test]

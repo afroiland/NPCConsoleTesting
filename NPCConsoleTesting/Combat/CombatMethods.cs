@@ -12,9 +12,9 @@ namespace NPCConsoleTesting
 
         //TODO: Lots of refactoring to be done in this file
 
-        public int DoAMeleeAttack(IAttacker attacker, IDefender defender)
+        public ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
-            int result = 0;
+            ActionResults result = new(0);
             int attackRoll = _random.Next(1, 21);
 
             //calculate defender's armor class
@@ -31,7 +31,7 @@ namespace NPCConsoleTesting
             //an attack roll of 20 always succeeds and a roll of 1 always fails
             if (attackRoll == 20 || (attackRoll >= targetNumber && attackRoll != 1))
             {
-                result = CalcMeleeDmg(attacker.CharacterClass, attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
+                result.Damage = CalcMeleeDmg(attacker.CharacterClass, attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
             }
 
             return result;
@@ -320,17 +320,61 @@ namespace NPCConsoleTesting
             }
         }
 
-        public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, int attackResult, int segment)
+        //public CombatantUpdateResults ApplyActionResultToCombatant(Combatant targeter, Combatant target, ActionResults results, int segment)
+        //{
+        //    List<string> entries = new();
+        //    bool opportunityForSimulAttack = false;
+
+        //if spell
+        //    if targeter gotHitThisRound
+        //        entries.Add($"{targeter.Name}'s casting of {spellName} was interrupted.");
+        //        return new CombatantUpdateResults(entries, opportunityForSimulAttack);
+
+        //    if spell effect type == status
+        //        target.Statuses.Add(spellResults.Status);
+        //        entries.Add($"{targeter.Name} cast {spellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+
+        //    if spellDmg < 0
+        //        caster.CurrentHP -= spellResults.Damage;
+        //        entries.Add($"{targeter.Name} healed themself for {-(spellResults.Damage)} hit points.");
+
+        //else (dmg from spell or melee handled the same from here)
+        //    //adjust target hp and GotHitThisRound status
+        //    target.CurrentHP -= spellResults.Damage;
+        //    target.GotHitThisRound = true;
+        //    entries.Add($"{caster.Name} hit {target.Name} with a {spellName} effect for {spellResults.Damage} damage.");
+
+        //    if (target.CurrentHP < 1)
+        //    {
+        //        entries.Add($"{target.Name} fell.");
+
+        //        if (target.Init == segment)
+        //        {
+        //            opportunityForSimulAttack = true;
+        //        }
+        //    }
+
+        //    //a sleeping character who takes damage (and survives) wakes up
+        //    if (target.Statuses.FindIndex(x => x.Name == "Asleep") >= 0)
+        //    {
+        //        entries.Add($"{target.Name} is no longer asleep.");
+        //        target.Statuses.RemoveAll(r => r.Name == "Asleep");
+        //    }
+
+        //    return new CombatantUpdateResults(entries, opportunityForSimulAttack);
+        //}
+
+        public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, ActionResults attackResult, int segment)
         {
             List<string> entries = new();
             bool opportunityForSimulAttack = false;
 
-            if (attackResult > 0)
+            if (attackResult.Damage > 0)
             {
                 //adjust target hp and GotHitThisRound status
-                target.CurrentHP -= attackResult;
+                target.CurrentHP -= attackResult.Damage;
                 target.GotHitThisRound = true;
-                entries.Add($"{attacker.Name} struck {target.Name} for {attackResult} damage.");
+                entries.Add($"{attacker.Name} struck {target.Name} for {attackResult.Damage} damage.");
 
                 if (target.CurrentHP < 1)
                 {
@@ -353,7 +397,7 @@ namespace NPCConsoleTesting
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
-        public CombatantUpdateResults ApplySpellResultToCombatant(Combatant caster, Combatant target, string spellName, SpellResults spellResults, int segment)
+        public CombatantUpdateResults ApplySpellResultToCombatant(Combatant caster, Combatant target, ActionResults spellResults, int segment)
         {
             List<string> entries = new();
             bool opportunityForSimulAttack = false;
@@ -361,7 +405,7 @@ namespace NPCConsoleTesting
             //unless they have been hit this round, a combatant with a spell will cast it
             if (!caster.GotHitThisRound)
             {
-                if (spellResults.AffectType == "damage")
+                if (spellResults.SpellAffectType == "damage")
                 {
                     if (spellResults.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
                     {
@@ -373,7 +417,7 @@ namespace NPCConsoleTesting
                         //adjust target hp and GotHitThisRound status
                         target.CurrentHP -= spellResults.Damage;
                         target.GotHitThisRound = true;
-                        entries.Add($"{caster.Name} hit {target.Name} with a {spellName} effect for {spellResults.Damage} damage.");
+                        entries.Add($"{caster.Name} hit {target.Name} with a {spellResults.SpellName} effect for {spellResults.Damage} damage.");
 
                         if (target.CurrentHP < 1)
                         {
@@ -394,15 +438,15 @@ namespace NPCConsoleTesting
                     }
                 }
 
-                if (spellResults.AffectType == "status")
+                if (spellResults.SpellAffectType == "status")
                 {
                     target.Statuses.Add(spellResults.Status);
-                    entries.Add($"{caster.Name} cast {spellName} on {target.Name}. {target.Name} is {spellResults.Status.Name} for {spellResults.Status.Duration} rounds.");
+                    entries.Add($"{caster.Name} cast {spellResults.SpellName} on {target.Name}. {target.Name} is {spellResults.Status.Name} for {spellResults.Status.Duration} rounds.");
                 }
             }
             else
             {
-                entries.Add($"{caster.Name}'s casting of {spellName} was interrupted.");
+                entries.Add($"{caster.Name}'s casting of {spellResults.SpellName} was interrupted.");
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
