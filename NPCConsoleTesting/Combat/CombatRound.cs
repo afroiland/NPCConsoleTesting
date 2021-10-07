@@ -54,7 +54,7 @@ namespace NPCConsoleTesting
                     ActionResults attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
 
                     //update target combatant
-                    CombatantUpdateResults updateResults = combatMethods.ApplyMeleeResultToCombatant(combatants[priorityIndex], combatants[targetIndex], attackResult, segment);
+                    CombatantUpdateResults updateResults = combatMethods.ApplyActionResultToCombatant(combatants[priorityIndex], combatants[targetIndex], attackResult, segment);
 
                     //update log
                     logResults.AddRange(updateResults.LogEntries);
@@ -67,7 +67,7 @@ namespace NPCConsoleTesting
                     ActionResults spellResults = SpellMethods.DoASpell(spellName, combatants[priorityIndex].Level);
 
                     //update combatants with spell results
-                    CombatantUpdateResults updateResults = combatMethods.ApplySpellResultToCombatant(combatants[priorityIndex], combatants[targetIndex], spellResults, segment);
+                    CombatantUpdateResults updateResults = combatMethods.ApplyActionResultToCombatant(combatants[priorityIndex], combatants[targetIndex], spellResults, segment);
 
                     //update log
                     logResults.AddRange(updateResults.LogEntries);

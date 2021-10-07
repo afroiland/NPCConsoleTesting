@@ -344,17 +344,23 @@ namespace NPCConsoleTesting
                 {
                     targeter.CurrentHP -= results.Damage;
                     entries.Add($"{targeter.Name} healed themself for {-(results.Damage)} hit points.");
-                }  
-                
-
+                }
             }
 
-            //else (dmg from spell or melee handled the same from here)
+            if (results.Damage > 0)
+            {
+                ApplyDamageToCombatant(targeter, target, results.Damage, entries, segment, opportunityForSimulAttack);
+            }
 
+            return new CombatantUpdateResults(entries, opportunityForSimulAttack);
+        }
+
+        public void ApplyDamageToCombatant(Combatant targeter, Combatant target, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
+        {
             //adjust target hp and GotHitThisRound status
-            target.CurrentHP -= spellResults.Damage;
+            target.CurrentHP -= damage;
             target.GotHitThisRound = true;
-            entries.Add($"{caster.Name} hit {target.Name} with a {spellName} effect for {spellResults.Damage} damage.");
+            entries.Add($"{targeter.Name} struck {target.Name} for {damage} damage.");
 
             if (target.CurrentHP < 1)
             {
@@ -372,8 +378,6 @@ namespace NPCConsoleTesting
                 entries.Add($"{target.Name} is no longer asleep.");
                 target.Statuses.RemoveAll(r => r.Name == "Asleep");
             }
-
-            return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
         public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, ActionResults attackResult, int segment)
