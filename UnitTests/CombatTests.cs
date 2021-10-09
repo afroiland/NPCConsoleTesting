@@ -260,8 +260,8 @@ namespace UnitTests
             //Arrange
             List<Combatant> twoCombatantTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 1, 0),
-                new Combatant("testChar2", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 1, 0)
+                new Combatant("testChar1", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20),
+                new Combatant("testChar2", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20)
             };
 
             int init1 = 0;

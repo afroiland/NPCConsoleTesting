@@ -349,13 +349,13 @@ namespace NPCConsoleTesting
 
             if (results.Damage > 0)
             {
-                ApplyDamageToCombatant(targeter, target, results.Damage, entries, segment, opportunityForSimulAttack);
+                opportunityForSimulAttack = ApplyDamageToCombatant(targeter, target, results.Damage, entries, segment, opportunityForSimulAttack);
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
-        public void ApplyDamageToCombatant(Combatant targeter, Combatant target, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
+        public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
         {
             //adjust target hp and GotHitThisRound status
             target.CurrentHP -= damage;
@@ -378,94 +378,8 @@ namespace NPCConsoleTesting
                 entries.Add($"{target.Name} is no longer asleep.");
                 target.Statuses.RemoveAll(r => r.Name == "Asleep");
             }
-        }
 
-        public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, ActionResults attackResult, int segment)
-        {
-            List<string> entries = new();
-            bool opportunityForSimulAttack = false;
-
-            if (attackResult.Damage > 0)
-            {
-                //adjust target hp and GotHitThisRound status
-                target.CurrentHP -= attackResult.Damage;
-                target.GotHitThisRound = true;
-                entries.Add($"{attacker.Name} struck {target.Name} for {attackResult.Damage} damage.");
-
-                if (target.CurrentHP < 1)
-                {
-                    entries.Add($"{target.Name} fell.");
-
-                    if (target.Init == segment)
-                    {
-                        opportunityForSimulAttack = true;
-                    }
-                }
-
-                //a sleeping character who takes damage (and survives) wakes up
-                if (target.Statuses.FindIndex(x => x.Name == "Asleep") >= 0)
-                {
-                    entries.Add($"{target.Name} is no longer asleep.");
-                    target.Statuses.RemoveAll(r => r.Name == "Asleep");
-                }
-            }
-
-            return new CombatantUpdateResults(entries, opportunityForSimulAttack);
-        }
-
-        public CombatantUpdateResults ApplySpellResultToCombatant(Combatant caster, Combatant target, ActionResults spellResults, int segment)
-        {
-            List<string> entries = new();
-            bool opportunityForSimulAttack = false;
-
-            //unless they have been hit this round, a combatant with a spell will cast it
-            if (!caster.GotHitThisRound)
-            {
-                if (spellResults.SpellAffectType == "damage")
-                {
-                    if (spellResults.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
-                    {
-                        caster.CurrentHP -= spellResults.Damage;
-                        entries.Add($"{caster.Name} healed themself for {-(spellResults.Damage)} hit points.");
-                    }
-                    else
-                    {
-                        //adjust target hp and GotHitThisRound status
-                        target.CurrentHP -= spellResults.Damage;
-                        target.GotHitThisRound = true;
-                        entries.Add($"{caster.Name} hit {target.Name} with a {spellResults.SpellName} effect for {spellResults.Damage} damage.");
-
-                        if (target.CurrentHP < 1)
-                        {
-                            entries.Add($"{target.Name} fell.");
-
-                            if (target.Init == segment)
-                            {
-                                opportunityForSimulAttack = true;
-                            }
-                        }
-
-                        //a sleeping character who takes damage (and survives) wakes up
-                        if (target.Statuses.FindIndex(x => x.Name == "Asleep") >= 0)
-                        {
-                            entries.Add($"{target.Name} is no longer asleep.");
-                            target.Statuses.RemoveAll(r => r.Name == "Asleep");
-                        }
-                    }
-                }
-
-                if (spellResults.SpellAffectType == "status")
-                {
-                    target.Statuses.Add(spellResults.Status);
-                    entries.Add($"{caster.Name} cast {spellResults.SpellName} on {target.Name}. {target.Name} is {spellResults.Status.Name} for {spellResults.Status.Duration} rounds.");
-                }
-            }
-            else
-            {
-                entries.Add($"{caster.Name}'s casting of {spellResults.SpellName} was interrupted.");
-            }
-
-            return new CombatantUpdateResults(entries, opportunityForSimulAttack);
+            return opportunityForSimulAttack;
         }
     }
 }
