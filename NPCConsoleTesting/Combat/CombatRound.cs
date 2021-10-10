@@ -13,8 +13,9 @@ namespace NPCConsoleTesting
             List<String> logResults = new();
 
             combatMethods.IncrementStatuses(combatants, logResults);
+            combatMethods.DetermineActions(combatants);
             combatMethods.DetermineTargets(combatants);
-            combatMethods.DetermineInit(combatants);
+            combatMethods.DetermineInits(combatants);
 
             //clear GotHitThisRound status for all combatants
             combatants.ForEach(x => x.GotHitThisRound = false);
@@ -44,11 +45,7 @@ namespace NPCConsoleTesting
                     break;
                 }
 
-                //check for spells
-                string spellName = SpellMethods.SelectFromCombatantsSpells(combatants[priorityIndex]);
-
-                //if spellName is an empty string, the combatant has no appropriate spell and does a melee attack
-                if (spellName == "")
+                if (combatants[priorityIndex].ActionForThisRound == "Melee Attack")
                 {
                     //priority combatant does a melee attack against target
                     ActionResults attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
@@ -63,8 +60,8 @@ namespace NPCConsoleTesting
                 }
                 else
                 {
-                    //do the spell effect
-                    ActionResults spellResults = SpellMethods.DoASpell(spellName, combatants[priorityIndex].Level);
+                    //priority combatant casts a spell
+                    ActionResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].ActionForThisRound, combatants[priorityIndex].Level);
 
                     //update combatants with spell results
                     CombatantUpdateResults updateResults = combatMethods.ApplyActionResultToCombatant(combatants[priorityIndex], combatants[targetIndex], spellResults, segment);
@@ -75,7 +72,7 @@ namespace NPCConsoleTesting
                     opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
 
                     //remove spell from list
-                    int index = combatants[priorityIndex].Spells.IndexOf(spellName);
+                    int index = combatants[priorityIndex].Spells.IndexOf(combatants[priorityIndex].ActionForThisRound);
                     combatants[priorityIndex].Spells.RemoveAt(index);
                 }
 

@@ -216,7 +216,6 @@ namespace UnitTests
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            //var result = combatMethods.DetermineTargets(testList);
             combatMethods.DetermineTargets(testList);
 
             //Assert
@@ -229,8 +228,13 @@ namespace UnitTests
             //Arrange
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
 
+            foreach (Combatant c in testList)
+            {
+                c.ActionForThisRound = "Melee Attack";
+            }
+
             //Act
-            combatMethods.DetermineInit(testList);
+            combatMethods.DetermineInits(testList);
 
             //Assert
             Assert.That(testList, Is.Ordered.By("Init"));
@@ -271,6 +275,7 @@ namespace UnitTests
             //Act
             while (!simultaneousInit)
             {
+
                 CombatRound.DoACombatRound(twoCombatantTestList);
                 
                 if (twoCombatantTestList[0].CurrentHP <= 0 && twoCombatantTestList[1].CurrentHP <= 0)

@@ -21,6 +21,7 @@ namespace NPCConsoleTesting
             set { if (value < 1) init = 1; else init = value; }
         }
         public string Target { get; set; }
+        public string ActionForThisRound { get; set; }
         public bool GotHitThisRound { get; set; }
         public List<string> Spells { get; set; }
 
@@ -48,6 +49,7 @@ namespace NPCConsoleTesting
             Spells = charSpells;
             Init = 0;
             Target = "";
+            ActionForThisRound = "";
             GotHitThisRound = false;
             Statuses = new List<Status>();
         }

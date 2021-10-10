@@ -261,6 +261,32 @@ namespace NPCConsoleTesting
             return result;
         }
 
+        public void IncrementStatuses(List<Combatant> chars, List<string> log)
+        {
+            foreach (Combatant x in chars)
+            {
+                foreach (Status y in x.Statuses)
+                {
+                    y.Duration--;
+                    if (y.Duration < 1)
+                    {
+                        log.Add($"{x.Name} is no longer {y.Name}.");
+                    }
+                }
+
+                x.Statuses.RemoveAll(z => z.Duration < 1);
+            }
+        }
+
+        public void DetermineActions(List<Combatant> chars)
+        {
+            foreach (Combatant ch in chars)
+            {
+                string spellName = SpellMethods.SelectFromCombatantsSpells(ch);
+                ch.ActionForThisRound = spellName == "" ? "Melee Attack" : spellName;
+            }
+        }
+
         public void DetermineTargets(List<Combatant> chars)
         {
             //set targets if needed
@@ -283,41 +309,24 @@ namespace NPCConsoleTesting
             //if (doReadLines) { Console.ReadLine(); }
         }
 
-        public void DetermineInit(List<Combatant> chars)
+        public void DetermineInits(List<Combatant> chars)
         {
             //set inits
             foreach (Combatant ch in chars)
             {
-                ch.Init = _random.Next(1, 11);
-                if (ch.Spells != null && ch.Spells.Count > 0)
+                if(ch.ActionForThisRound != "Melee Attack")
                 {
-                    ch.Init += GetCastingTime(ch.Spells[0]);
+                    //ch.Init = _random.Next(1, 11) + GetCastingTime(ch.Spells[0]) + ch.InitMod;
+                    ch.Init = GetCastingTime(ch.Spells[0]) + ch.InitMod;
                 }
                 else
                 {
-                    ch.Init += ch.InitMod + GetSpeedFactor(ch.Weapon);
+                    ch.Init = _random.Next(1, 11) + GetSpeedFactor(ch.Weapon) + ch.InitMod;
                 }
             }
 
             //order combatants by init
             chars.Sort((p, q) => p.Init.CompareTo(q.Init));
-        }
-
-        public void IncrementStatuses(List<Combatant> chars, List<string> log)
-        {
-            foreach (Combatant x in chars)
-            {
-                foreach (Status y in x.Statuses)
-                {
-                    y.Duration--;
-                    if (y.Duration < 1)
-                    {
-                        log.Add($"{x.Name} is no longer {y.Name}.");
-                    }
-                }
-
-                x.Statuses.RemoveAll(z => z.Duration < 1);
-            }
         }
 
         public CombatantUpdateResults ApplyActionResultToCombatant(Combatant targeter, Combatant target, ActionResults results, int segment)
@@ -342,7 +351,7 @@ namespace NPCConsoleTesting
                 if (results.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
                 {
                     targeter.CurrentHP -= results.Damage;
-                    entries.Add($"{targeter.Name} healed themself for {-(results.Damage)} hit points.");
+                    entries.Add($"{targeter.Name} healed themselves for {-(results.Damage)} hit points.");
                 }
             }
 

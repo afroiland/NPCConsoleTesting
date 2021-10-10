@@ -8,7 +8,8 @@ namespace NPCConsoleTesting
         ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender);
         int CalcMeleeDmg(string attackerClass, string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus = 0);
         void IncrementStatuses(List<Combatant> chars, List<string> log);
-        void DetermineInit(List<Combatant> chars);
+        void DetermineActions(List<Combatant> chars);
+        void DetermineInits(List<Combatant> chars);
         void DetermineTargets(List<Combatant> chars);
         CombatantUpdateResults ApplyActionResultToCombatant(Combatant attacker, Combatant defender, ActionResults results, int segment);
     }
