@@ -333,8 +333,7 @@ namespace NPCConsoleTesting
                     return new CombatantUpdateResults(entries, opportunityForSimulAttack);
                 }
 
-                if (results.Status != null)
-                //if (results.SpellAffectType == "Status")
+                if (results.SpellAffectType == "Status")
                 {
                     target.Statuses.Add(results.Status);
                     entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
