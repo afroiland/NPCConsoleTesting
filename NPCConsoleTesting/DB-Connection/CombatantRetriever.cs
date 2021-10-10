@@ -16,6 +16,7 @@ namespace NPCConsoleTesting
             string name = queryResult[0].Name;
             string charClass = queryResult[0].CharacterClass;
             int level = queryResult[0].Level;
+            string race = queryResult[0].Race;
             int str = queryResult[0].Str;
             int ex_str = queryResult[0].Ex_str;
             int dex = queryResult[0].Dex;
@@ -28,7 +29,7 @@ namespace NPCConsoleTesting
             bool hasShield = queryResult[0].HasShield;
             List<string> spells = SelectOnlyCombatSpells(queryResult[0].Memorized);
 
-            return new Combatant(name, charClass, level, str, dex, con, HP_By_Level, HP, ex_str, charArmor: armor, charWeapon: weapon,
+            return new Combatant(name, charClass, level, race, str, dex, con, HP_By_Level, HP, ex_str, charArmor: armor, charWeapon: weapon,
                 charHasShield: hasShield, charSpells: spells);
         }
 

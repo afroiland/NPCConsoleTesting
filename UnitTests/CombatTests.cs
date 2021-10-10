@@ -10,9 +10,9 @@ namespace UnitTests
     {
         //Arrange
         ICombatMethods combatMethods = new CombatMethods();
-        Combatant testChar = new("testChar", "Fighter", 10, 12, 12, 12, new List<int>() { 1 }, 10);
-        Combatant testCharPoorAC = new("testCharPoorAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -5);
-        Combatant testCharGoodAC = new("testCharGoodAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 25);
+        Combatant testChar = new("testChar", "Fighter", 10, "Human", 12, 12, 12, new List<int>() { 1 }, 10);
+        Combatant testCharPoorAC = new("testCharPoorAC", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -5);
+        Combatant testCharGoodAC = new("testCharGoodAC", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 25);
         
         const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
         const float ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE = .17F;
@@ -246,9 +246,9 @@ namespace UnitTests
             //Arrange
             List<Combatant> fullCombatTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0),
-                new Combatant("testChar2", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0),
-                new Combatant("testChar3", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0)
+                new Combatant("testChar1", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0),
+                new Combatant("testChar2", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0),
+                new Combatant("testChar3", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0)
             };
 
             //Act
@@ -264,8 +264,8 @@ namespace UnitTests
             //Arrange
             List<Combatant> twoCombatantTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20),
-                new Combatant("testChar2", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20)
+                new Combatant("testChar1", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20),
+                new Combatant("testChar2", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20)
             };
 
             int init1 = 0;
