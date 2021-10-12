@@ -206,22 +206,26 @@ namespace NPCConsoleTesting
 
         public int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus)
         {
-            int result = 0;
+            int result;
 
             if (weapon == "None")
             {
-                // monk open hand dmg
+                result = CalcMonkOpenHandDmg(level);
             }
             else
             {
                 WeaponInfo weaponInfo = GetWeaponInfo(weapon);
-                
-                for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
-                {
-                    result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
-                }
 
-                result += weaponInfo.DmgModifier;  // + monk dmg bonus
+                result = CalcWeaponDmg(weaponInfo);
+                //WeaponInfo weaponInfo = GetWeaponInfo(weapon);
+
+                //for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
+                //{
+                //    result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
+                //}
+
+                //add monk weapon damage bonus
+                result += level / 2;
             }
 
             result += magicalDmgBonus + otherDmgBonus;
@@ -229,42 +233,84 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        //CalcMonkOpenHandDmg()
+        private static int CalcMonkOpenHandDmg(int level)
+        {
+            WeaponInfo results = level switch
+            {
+                1 => new(1, 3, 0),
+                2 => new(1, 4, 0),
+                3 or 4 => new(1, 6, 0),
+                5 => new(1, 6, 1),
+                6 => new(2, 4, 0),
+                7 => new(2, 4, 1),
+                8 => new(2, 6, 0),
+                9 => new(3, 4, 0),
+                10 => new(2, 6, 1),
+                11 => new(3, 4, 1),
+                12 => new(4, 4, 0),
+                13 => new(4, 4, 1),
+                14 => new(5, 4, 0),
+                15 => new(6, 4, 0),
+                16 => new(5, 6, 0),
+                17 => new(8, 4, 0),
+                _ => new(1, 3, 0)
+            };
 
-        //CalcMonkDmgBonus()
+            return CalcWeaponDmg(results);
+        }
 
         public int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus)
         {
-            int result = 0;
             WeaponInfo weaponInfo = GetWeaponInfo(weapon);
+
+            //int result = CalcWeaponDmg(weaponInfo);
+
+            //result += CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
+
+            //return result;
+
+            return CalcWeaponDmg(weaponInfo) + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
+        }
+
+        private static int CalcWeaponDmg(WeaponInfo weaponInfo)
+        {
+            int result = 0;
+
+            //WeaponInfo weaponInfo = GetWeaponInfo(weapon);
 
             for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
             {
                 result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
             }
 
-            result += weaponInfo.DmgModifier + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
+            //result += weaponInfo.DmgModifier;
 
-            return result;
+            return result + weaponInfo.DmgModifier;
         }
 
         public static WeaponInfo GetWeaponInfo(string weapon)
         {
-            List<int> results = weapon switch
+            //List<int> results = weapon switch
+            WeaponInfo results = weapon switch
             {
-                "Darts" => new List<int> { 1, 3, 0 },
-                "Dagger" => new List<int> { 1, 4, 0 },
-                "Hammer" => new List<int> { 1, 4, 1 },
-                "Club" or "Flail" or "Mace" or "Shortsword" or "Spear" or "Staff" => new List<int> { 1, 6, 0 },
-                "Axe" or "Longsword" => new List<int> { 1, 8, 0 },
-                "Halberd" or "Two-Handed Sword" => new List<int> { 1, 10, 0 },
-                _ => new List<int> { 1, 3, 0 }
+                "Darts" => new(1, 3, 0),
+                "Dagger" => new(1, 4, 0),
+                "Hammer" => new(1, 4, 1),
+                "Club" or "Flail" or "Mace" or "Shortsword" or "Spear" or "Staff" => new(1, 6, 0),
+                "Axe" or "Longsword" => new(1, 8, 0 ),
+                "Halberd" or "Two-Handed Sword" => new(1, 10, 0),
+                _ => new(1, 3, 0 )
+                //"Dagger" => new List<int> { 1, 4, 0 },
+                //"Hammer" => new List<int> { 1, 4, 1 },
+                //"Club" or "Flail" or "Mace" or "Shortsword" or "Spear" or "Staff" => new List<int> { 1, 6, 0 },
+                //"Axe" or "Longsword" => new List<int> { 1, 8, 0 },
+                //"Halberd" or "Two-Handed Sword" => new List<int> { 1, 10, 0 },
+                //_ => new List<int> { 1, 3, 0 }
             };
 
-            return new WeaponInfo(results[0], results[1], results[2]);
+            //return new WeaponInfo(results[0], results[1], results[2]);
+            return results;
         }
-
-        //CalcWeaponDmg()
 
         private static int GetCastingTime(string spellName)
         {
