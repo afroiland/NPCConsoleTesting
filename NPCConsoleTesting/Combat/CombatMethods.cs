@@ -31,15 +31,6 @@ namespace NPCConsoleTesting
             //an attack roll of 20 always succeeds and a roll of 1 always fails
             if (attackRoll == 20 || (attackRoll >= targetNumber && attackRoll != 1))
             {
-                //if (attacker.CharacterClass == "Monk")
-                //{
-                //    result.Damage = CalcMonkMeleeDmg(attacker.Level, attacker.Weapon, attacker.MagicalBonus, attacker.OtherDmgBonus);
-                //}
-                //else
-                //{
-                //    result.Damage = CalcNonMonkMeleeDmg(attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
-                //}
-
                 result.Damage = attacker.CharacterClass == "Monk" ?
                     CalcMonkMeleeDmg(attacker.Level, attacker.Weapon, attacker.MagicalBonus, attacker.OtherDmgBonus) :
                     CalcNonMonkMeleeDmg(attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
@@ -215,14 +206,7 @@ namespace NPCConsoleTesting
             else
             {
                 WeaponInfo weaponInfo = GetWeaponInfo(weapon);
-
                 result = CalcWeaponDmg(weaponInfo);
-                //WeaponInfo weaponInfo = GetWeaponInfo(weapon);
-
-                //for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
-                //{
-                //    result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
-                //}
 
                 //add monk weapon damage bonus
                 result += level / 2;
@@ -263,12 +247,6 @@ namespace NPCConsoleTesting
         {
             WeaponInfo weaponInfo = GetWeaponInfo(weapon);
 
-            //int result = CalcWeaponDmg(weaponInfo);
-
-            //result += CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
-
-            //return result;
-
             return CalcWeaponDmg(weaponInfo) + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
         }
 
@@ -276,21 +254,16 @@ namespace NPCConsoleTesting
         {
             int result = 0;
 
-            //WeaponInfo weaponInfo = GetWeaponInfo(weapon);
-
             for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
             {
                 result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
             }
-
-            //result += weaponInfo.DmgModifier;
 
             return result + weaponInfo.DmgModifier;
         }
 
         public static WeaponInfo GetWeaponInfo(string weapon)
         {
-            //List<int> results = weapon switch
             WeaponInfo results = weapon switch
             {
                 "Darts" => new(1, 3, 0),
@@ -300,15 +273,8 @@ namespace NPCConsoleTesting
                 "Axe" or "Longsword" => new(1, 8, 0 ),
                 "Halberd" or "Two-Handed Sword" => new(1, 10, 0),
                 _ => new(1, 3, 0 )
-                //"Dagger" => new List<int> { 1, 4, 0 },
-                //"Hammer" => new List<int> { 1, 4, 1 },
-                //"Club" or "Flail" or "Mace" or "Shortsword" or "Spear" or "Staff" => new List<int> { 1, 6, 0 },
-                //"Axe" or "Longsword" => new List<int> { 1, 8, 0 },
-                //"Halberd" or "Two-Handed Sword" => new List<int> { 1, 10, 0 },
-                //_ => new List<int> { 1, 3, 0 }
             };
 
-            //return new WeaponInfo(results[0], results[1], results[2]);
             return results;
         }
 
