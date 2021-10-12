@@ -207,7 +207,7 @@ namespace UnitTests
             int level = 7;
             string weapon = "None";
             int magicalBonus = 0;
-            int otherDmgBonus = 1;
+            int otherDmgBonus = 0;
             List<int> resultsList = new();
 
             //Act
@@ -217,7 +217,7 @@ namespace UnitTests
             }
 
             //Assert
-            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(10) & Has.Member(3) & Has.Member(9));
         }
 
         [Test]
@@ -228,7 +228,7 @@ namespace UnitTests
             int level = 7;
             string weapon = "Dagger";
             int magicalBonus = 0;
-            int otherDmgBonus = 1;
+            int otherDmgBonus = 0;
             List<int> resultsList = new();
 
             //Act
@@ -238,7 +238,7 @@ namespace UnitTests
             }
 
             //Assert
-            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+            Assert.That(resultsList, Is.All.GreaterThan(3) & Is.All.LessThan(8) & Has.Member(4) & Has.Member(7));
         }
 
         [Test]

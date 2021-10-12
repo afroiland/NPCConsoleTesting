@@ -170,23 +170,28 @@ namespace NPCConsoleTesting
 
             Console.WriteLine($"Enter class for character {charNumber}");
             string charClass = Console.ReadLine();
+            string charClassCap = charClass[0].ToString().ToUpper() + charClass[1..];
 
             Console.WriteLine($"Enter level for character {charNumber}");
             int level = int.Parse(Console.ReadLine());
 
-            Console.WriteLine($"Enter HP for character {charNumber}");
-            int HP = int.Parse(Console.ReadLine());
+            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
+            int currentHP = HPByLevel.Sum();
 
-            Console.WriteLine($"Enter initMod for character {charNumber}");
-            int initMod = int.Parse(Console.ReadLine());
+            //Console.WriteLine($"Enter HP for character {charNumber}");
+            //int HP = int.Parse(Console.ReadLine());
+
+            //Console.WriteLine($"Enter initMod for character {charNumber}");
+            //int initMod = int.Parse(Console.ReadLine());
 
             Console.WriteLine($"Enter weapon for character {charNumber}");
             string weapon = Console.ReadLine();
+            string weaponCap = weapon[0].ToString().ToUpper() + weapon[1..];
 
             //TODO: spells?
 
             //TODO: figure out what we do for HP_By_Level here
-            return new Combatant(name, charClass, level, "Human", 12, 12, 12, new List<int>() { 1 }, HP, initMod, charWeapon:weapon);
+            return new Combatant(name, charClassCap, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weaponCap);
         }
 
         public static string GetNameFromUserInput(int charNumber)
