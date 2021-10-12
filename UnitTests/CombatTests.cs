@@ -181,19 +181,23 @@ namespace UnitTests
         public void CalcMeleeDmg_falls_within_range_for_non_monk()
         {
             //Arrange
-            int numOfAttackDice = 1;
-            int typeOfAttackDie = 6;
-            int dmgModifier = 2;
+            CombatMethods combatMethods = new();
+            string attackerClass = "Fighter";
+            string weapon = "Longsword";
+            int str = 17;
+            int ex_str = 0;
+            int magicalBonus = 0;
+            int otherDmgBonus = 1;
             List<int> resultsList = new();
 
             //Act
-            //for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
-            //{
-            //    resultsList.Add(combatMethods.CalcDmg(numOfAttackDice, typeOfAttackDie, dmgModifier));
-            //}
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
+            {
+                resultsList.Add(combatMethods.CalcMeleeDmg(attackerClass, weapon, str, ex_str, magicalBonus, otherDmgBonus));
+            }
 
-            ////Assert
-            //Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(9) & Has.Member(3) & Has.Member(8));
+            //Assert
+            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
         }
 
         [Test]

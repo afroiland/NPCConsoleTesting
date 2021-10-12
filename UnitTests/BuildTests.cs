@@ -30,11 +30,17 @@ namespace UnitTests
                     Assert.That(cmbt.Name, Is.Not.Null);
                     Assert.That(cmbt.CharacterClass, Is.Not.Null);
                     Assert.That(cmbt.Race, Is.Not.Null);
+                    Assert.That(cmbt.Level, Is.Not.Null);
+                    Assert.That(cmbt.Strength, Is.Not.Null);
+                    Assert.That(cmbt.Ex_Strength, Is.Not.Null);
+                    Assert.That(cmbt.Dexterity, Is.Not.Null);
+                    Assert.That(cmbt.Constitution, Is.Not.Null);
+                    Assert.That(cmbt.HP_By_Level, Is.Not.Null);
+                    Assert.That(cmbt.CurrentHP, Is.GreaterThan(3) & Is.LessThan(69));
+                    //Assert.That(cmbt.InitMod, Is.GreaterThan(-1) & Is.LessThan(6));
                     Assert.That(cmbt.Armor, Is.Not.Null);
-                    //Assert.That(cmbt.CurrentHP, Is.GreaterThan(0) & Is.LessThan(11));
-                    Assert.That(cmbt.InitMod, Is.GreaterThan(-1) & Is.LessThan(6));
-                    
-                    
+                    Assert.That(cmbt.Weapon, Is.Not.Null);
+                    Assert.That(cmbt.HasShield, Is.Not.Null);
                 }
             });
         }
@@ -55,10 +61,6 @@ namespace UnitTests
             Assert.That(resultsList, Is.All.Length.GreaterThan(2) & Is.All.Length.LessThan(16));
         }
 
-        //TODO:
-
-        //SelectRandomClass
-
         [Test]
         public void GenerateHPByLevelByCharClass_returns_values_within_range()
         {
@@ -69,7 +71,7 @@ namespace UnitTests
             List<int> thiefLvl3 = CombatantBuilder.GenerateHPByLevelByCharClass("Thief", 3);
             List<int> monkLvl5 = CombatantBuilder.GenerateHPByLevelByCharClass("Monk", 5);
 
-            //for testing the range of all values, exclude the first int for monks and rangers
+            //for testing the range of each values, the first int is excluded for monks and rangers
             List<int> rangerLvl7Copy = new(rangerLvl7);
             rangerLvl7Copy.RemoveAt(0);
             List<int> monkLvl5Copy = new(monkLvl5);
@@ -86,7 +88,21 @@ namespace UnitTests
             Assert.That(monkLvl5Copy, Is.All.GreaterThan(0) & Is.All.LessThan(5));
         }
 
-        //ConvertHPByLevelToMaxHP
+        //TODO:
+
+        //SelectRandomClass
+        [Test]
+        public void SelectRandomClass_returns_string()
+        {
+            //Arrange
+
+
+            //Act
+            //string result = CombatantBuilder.SelectRandomClass()
+
+            //Assert
+
+        }
 
         //SelectRandomArmor
 
