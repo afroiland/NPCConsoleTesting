@@ -31,7 +31,18 @@ namespace NPCConsoleTesting
             //an attack roll of 20 always succeeds and a roll of 1 always fails
             if (attackRoll == 20 || (attackRoll >= targetNumber && attackRoll != 1))
             {
-                result.Damage = CalcMeleeDmg(attacker.CharacterClass, attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
+                //if (attacker.CharacterClass == "Monk")
+                //{
+                //    result.Damage = CalcMonkMeleeDmg(attacker.Level, attacker.Weapon, attacker.MagicalBonus, attacker.OtherDmgBonus);
+                //}
+                //else
+                //{
+                //    result.Damage = CalcNonMonkMeleeDmg(attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
+                //}
+
+                result.Damage = attacker.CharacterClass == "Monk" ?
+                    CalcMonkMeleeDmg(attacker.Level, attacker.Weapon, attacker.MagicalBonus, attacker.OtherDmgBonus) :
+                    CalcNonMonkMeleeDmg(attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
             }
 
             return result;
@@ -193,22 +204,47 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public int CalcMeleeDmg(string attackerClass, string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus)
+        public int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus)
         {
-            WeaponInfo weaponInfo = GetWeaponInfo(weapon);
             int result = 0;
+
+            if (weapon == "None")
+            {
+                // monk open hand dmg
+            }
+            else
+            {
+                WeaponInfo weaponInfo = GetWeaponInfo(weapon);
+                
+                for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
+                {
+                    result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
+                }
+
+                result += weaponInfo.DmgModifier;  // + monk dmg bonus
+            }
+
+            result += magicalDmgBonus + otherDmgBonus;
+
+            return result;
+        }
+
+        //CalcMonkOpenHandDmg()
+
+        //CalcMonkDmgBonus()
+
+        public int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus)
+        {
+            int result = 0;
+            WeaponInfo weaponInfo = GetWeaponInfo(weapon);
 
             for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
             {
                 result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
             }
 
-            result += weaponInfo.DmgModifier + magicalBonus + otherDmgBonus;
-            if (attackerClass != "Monk")
-            {
-                result += CalcStrBonusToDmg(str, ex_str);
-            }
-            
+            result += weaponInfo.DmgModifier + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
+
             return result;
         }
 
@@ -227,6 +263,8 @@ namespace NPCConsoleTesting
 
             return new WeaponInfo(results[0], results[1], results[2]);
         }
+
+        //CalcWeaponDmg()
 
         private static int GetCastingTime(string spellName)
         {

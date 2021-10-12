@@ -178,11 +178,10 @@ namespace UnitTests
         //CalcMeleeDmg_falls_within_range_for_non_monk()
 
         [Test]
-        public void CalcMeleeDmg_falls_within_range_for_non_monk()
+        public void CalcNonMonkMeleeDmg_falls_within_range()
         {
             //Arrange
             CombatMethods combatMethods = new();
-            string attackerClass = "Fighter";
             string weapon = "Longsword";
             int str = 17;
             int ex_str = 0;
@@ -193,7 +192,49 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                resultsList.Add(combatMethods.CalcMeleeDmg(attackerClass, weapon, str, ex_str, magicalBonus, otherDmgBonus));
+                resultsList.Add(combatMethods.CalcNonMonkMeleeDmg(weapon, str, ex_str, magicalBonus, otherDmgBonus));
+            }
+
+            //Assert
+            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+        }
+
+        [Test]
+        public void CalcMonkMeleeDmg_without_weapon_falls_within_range()
+        {
+            //Arrange
+            CombatMethods combatMethods = new();
+            int level = 7;
+            string weapon = "None";
+            int magicalBonus = 0;
+            int otherDmgBonus = 1;
+            List<int> resultsList = new();
+
+            //Act
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
+            {
+                resultsList.Add(combatMethods.CalcMonkMeleeDmg(level, weapon, magicalBonus, otherDmgBonus));
+            }
+
+            //Assert
+            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+        }
+
+        [Test]
+        public void CalcMonkMeleeDmg_with_weapon_falls_within_range()
+        {
+            //Arrange
+            CombatMethods combatMethods = new();
+            int level = 7;
+            string weapon = "Dagger";
+            int magicalBonus = 0;
+            int otherDmgBonus = 1;
+            List<int> resultsList = new();
+
+            //Act
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
+            {
+                resultsList.Add(combatMethods.CalcMonkMeleeDmg(level, weapon, magicalBonus, otherDmgBonus));
             }
 
             //Assert

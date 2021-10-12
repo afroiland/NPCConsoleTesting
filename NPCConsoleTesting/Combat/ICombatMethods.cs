@@ -6,7 +6,8 @@ namespace NPCConsoleTesting
     public interface ICombatMethods
     {
         ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender);
-        int CalcMeleeDmg(string attackerClass, string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus = 0);
+        int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus = 0);
+        int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus = 0);
         void IncrementStatuses(List<Combatant> chars, List<string> log);
         void DetermineActions(List<Combatant> chars);
         void DetermineInits(List<Combatant> chars);
