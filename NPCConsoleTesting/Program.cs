@@ -1,35 +1,65 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using NPCConsoleTesting.DB_Connection;
+using System.IO;
+using Serilog;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using NPCConsoleTesting.Combat;
+using System.Collections.Generic;
+using System;
 
 namespace NPCConsoleTesting
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Build builder = new();
-            builder.BuildCharacter();
+            var builder = new ConfigurationBuilder();
+            BuildConfig(builder);
 
-            //do a fight
-            Combat combat = new();
-            combat.Fight();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Build())
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
 
-            //print results/combat log
+            //Log.Logger.Information("App Starting");
 
-            Console.ReadLine();
+            var host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+                    services.AddTransient<IConnectionStringService, ConnectionStringService>();
+                })
+                .UseSerilog()
+                .Build();
+
+            var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
+
+            bool weAreDone = false;
+            while (!weAreDone)
+            {
+                //build combatant list
+                CombatantBuilder combatantBuilder = new();
+                List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
+
+                //do a full combat
+                FullCombat.DoAFullCombat(combatants);
+
+                Console.WriteLine();
+                Console.WriteLine($"Go again? Y/N");
+                if (Console.ReadLine().ToUpper() != "Y")
+                {
+                    weAreDone = true;
+                }
+            }
         }
 
-        public int CalcDmg(int numberOfDice, int typeOfDie, int modifier)
+        static void BuildConfig(IConfigurationBuilder builder)
         {
-            Random _random = new Random();
-            int result = 0;
-
-            for (int i = 0; i < numberOfDice; i++)
-            {
-                result += _random.Next(1, typeOfDie);
-            }
-
-            return result + modifier;
-
+            builder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                //.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("")}")
+                .AddEnvironmentVariables();
         }
     }
 }
