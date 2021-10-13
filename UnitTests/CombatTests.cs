@@ -255,7 +255,7 @@ namespace UnitTests
         }
 
         [Test]
-        public void Targets_get_set_for_all_chars()
+        public void Targets_get_set_for_all_combatants()
         {
             //Arrange
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
@@ -268,7 +268,7 @@ namespace UnitTests
         }
 
         [Test]
-        public void Inits_get_set_for_all_chars()
+        public void Inits_get_set_for_all_combatants()
         {
             //Arrange
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };

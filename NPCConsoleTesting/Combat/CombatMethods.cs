@@ -311,9 +311,9 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public void IncrementStatuses(List<Combatant> chars, List<string> log)
+        public void IncrementStatuses(List<Combatant> combatants, List<string> log)
         {
-            foreach (Combatant x in chars)
+            foreach (Combatant x in combatants)
             {
                 foreach (Status y in x.Statuses)
                 {
@@ -324,45 +324,42 @@ namespace NPCConsoleTesting
                     }
                 }
 
+                //when the duration of a status reaches zero, that status is removed
                 x.Statuses.RemoveAll(z => z.Duration < 1);
             }
         }
 
-        public void DetermineActions(List<Combatant> chars)
+        public void DetermineActions(List<Combatant> combatants)
         {
-            foreach (Combatant ch in chars)
+            foreach (Combatant ch in combatants)
             {
                 string spellName = SpellMethods.SelectFromCombatantsSpells(ch);
                 ch.ActionForThisRound = spellName == "" ? "Melee Attack" : spellName;
             }
         }
 
-        public void DetermineTargets(List<Combatant> chars)
+        public void DetermineTargets(List<Combatant> combatants)
         {
             //set targets if needed
-            foreach (Combatant ch in chars)
+            foreach (Combatant ch in combatants)
             {
-                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Count() == 0)
+                if (ch.Target == "" || combatants.Where(x => x.Name == ch.Target).Count() == 0)
                 {
-                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name).Select(x => x.Name).ToList();
-                    ch.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
+                    DetermineTargetForOneCombatant(combatants, ch);
                 }
             }
-            //show targets
-            //for (int i = 0; i < chars.Count; i++)
-            //{
-            //    if (chars[i].hp > 0)
-            //    {
-            //        Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
-            //    }
-            //}
-            //if (doReadLines) { Console.ReadLine(); }
         }
 
-        public void DetermineInits(List<Combatant> chars)
+        public void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC)
+        {
+            List<string> potentialTargets = combatants.Where(x => priorityC.Name != x.Name && x.CurrentHP > 0).Select(x => x.Name).ToList();
+            priorityC.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
+        }
+
+        public void DetermineInits(List<Combatant> combatants)
         {
             //set inits
-            foreach (Combatant ch in chars)
+            foreach (Combatant ch in combatants)
             {
                 if(ch.ActionForThisRound != "Melee Attack")
                 {
@@ -376,7 +373,7 @@ namespace NPCConsoleTesting
             }
 
             //order combatants by init
-            chars.Sort((p, q) => p.Init.CompareTo(q.Init));
+            combatants.Sort((p, q) => p.Init.CompareTo(q.Init));
         }
 
         public CombatantUpdateResults ApplyActionResultToCombatant(Combatant targeter, Combatant target, ActionResults results, int segment)
