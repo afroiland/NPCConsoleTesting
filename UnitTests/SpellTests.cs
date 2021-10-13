@@ -20,7 +20,7 @@ namespace UnitTests
             var results = SpellMethods.DoASpell(damageSpellName, casterLevel);
 
             //Assert
-            Assert.That(results, Is.InstanceOf<SpellResults>());
+            Assert.That(results, Is.InstanceOf<ActionResults>());
         }
 
         [Test]
@@ -30,7 +30,7 @@ namespace UnitTests
             var results = SpellMethods.DoASpell(statusSpellName, casterLevel);
 
             //Assert
-            Assert.That(results, Is.InstanceOf<SpellResults>());
+            Assert.That(results, Is.InstanceOf<ActionResults>());
         }
 
         [Test]
@@ -50,10 +50,10 @@ namespace UnitTests
         }
 
         [Test]
-        public void GetSpellStatusEffect_returns_correct_value()
+        public void GetStatusName_returns_correct_value()
         {
             //Act
-            var results = SpellMethods.GetSpellStatusEffect(statusSpellName);
+            var results = SpellMethods.GetStatusName(statusSpellName);
 
             //Assert
             Assert.That(results, Is.EqualTo("Asleep"));

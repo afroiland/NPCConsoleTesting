@@ -1,4 +1,5 @@
-﻿using NPCConsoleTesting.Combat;
+﻿using NPCConsoleTesting.Characters;
+using NPCConsoleTesting.Combat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,24 +10,30 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        //TODO: Lots of refactoring to be done here
+        //TODO: Lots of refactoring to be done in this file
 
-        public int DoAMeleeAttack(IAttacker attacker, IDefender defender)
+        public ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
-            int result = 0;
+            ActionResults result = new(0);
             int attackRoll = _random.Next(1, 21);
+
+            //calculate defender's armor class
             int armorClass = defender.CharacterClass != "Monk" ? CalcNonMonkAC(defender.Armor, defender.HasShield, defender.Dexterity, defender.OtherACBonus) :
                 CalcMonkAC(defender.Level, defender.OtherACBonus);
 
+            //calculate number needed for successful attack roll
             int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus;
             if (attacker.CharacterClass != "Monk")
             {
                 targetNumber -= CalcStrBonusToHit(attacker.Strength, attacker.Ex_Strength);
             }
-            //An attack roll of 20 always suceeds and a roll of 1 always fails
-            if (attackRoll == 20 || (targetNumber <= attackRoll && attackRoll != 1))
+
+            //an attack roll of 20 always succeeds and a roll of 1 always fails
+            if (attackRoll == 20 || (attackRoll >= targetNumber && attackRoll != 1))
             {
-                result = CalcMeleeDmg(attacker.CharacterClass, attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
+                result.Damage = attacker.CharacterClass == "Monk" ?
+                    CalcMonkMeleeDmg(attacker.Level, attacker.Weapon, attacker.MagicalBonus, attacker.OtherDmgBonus) :
+                    CalcNonMonkMeleeDmg(attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
             }
 
             return result;
@@ -188,9 +195,63 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public int CalcMeleeDmg(string attackerClass, string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus)
+        public int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus)
+        {
+            int result;
+
+            if (weapon == "None")
+            {
+                result = CalcMonkOpenHandDmg(level);
+            }
+            else
+            {
+                WeaponInfo weaponInfo = GetWeaponInfo(weapon);
+                result = CalcWeaponDmg(weaponInfo);
+
+                //add monk weapon damage bonus
+                result += level / 2;
+            }
+
+            result += magicalDmgBonus + otherDmgBonus;
+
+            return result;
+        }
+
+        private static int CalcMonkOpenHandDmg(int level)
+        {
+            WeaponInfo results = level switch
+            {
+                1 => new(1, 3, 0),
+                2 => new(1, 4, 0),
+                3 or 4 => new(1, 6, 0),
+                5 => new(1, 6, 1),
+                6 => new(2, 4, 0),
+                7 => new(2, 4, 1),
+                8 => new(2, 6, 0),
+                9 => new(3, 4, 0),
+                10 => new(2, 6, 1),
+                11 => new(3, 4, 1),
+                12 => new(4, 4, 0),
+                13 => new(4, 4, 1),
+                14 => new(5, 4, 0),
+                15 => new(6, 4, 0),
+                16 => new(5, 6, 0),
+                17 => new(8, 4, 0),
+                _ => new(1, 3, 0)
+            };
+
+            return CalcWeaponDmg(results);
+        }
+
+        public int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus)
         {
             WeaponInfo weaponInfo = GetWeaponInfo(weapon);
+
+            return CalcWeaponDmg(weaponInfo) + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
+        }
+
+        private static int CalcWeaponDmg(WeaponInfo weaponInfo)
+        {
             int result = 0;
 
             for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
@@ -198,29 +259,23 @@ namespace NPCConsoleTesting
                 result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
             }
 
-            result += weaponInfo.DmgModifier + magicalBonus + otherDmgBonus;
-            if (attackerClass != "Monk")
-            {
-                result += CalcStrBonusToDmg(str, ex_str);
-            }
-            
-            return result;
+            return result + weaponInfo.DmgModifier;
         }
 
         public static WeaponInfo GetWeaponInfo(string weapon)
         {
-            List<int> results = weapon switch
+            WeaponInfo results = weapon switch
             {
-                "Darts" => new List<int> { 1, 3, 0 },
-                "Dagger" => new List<int> { 1, 4, 0 },
-                "Hammer" => new List<int> { 1, 4, 1 },
-                "Club" or "Flail" or "Mace" or "Shortsword" or "Spear" or "Staff" => new List<int> { 1, 6, 0 },
-                "Axe" or "Longsword" => new List<int> { 1, 8, 0 },
-                "Halberd" or "Two-Handed Sword" => new List<int> { 1, 10, 0 },
-                _ => new List<int> { 1, 3, 0 }
+                "Darts" => new(1, 3, 0),
+                "Dagger" => new(1, 4, 0),
+                "Hammer" => new(1, 4, 1),
+                "Club" or "Flail" or "Mace" or "Shortsword" or "Spear" or "Staff" => new(1, 6, 0),
+                "Axe" or "Longsword" => new(1, 8, 0 ),
+                "Halberd" or "Two-Handed Sword" => new(1, 10, 0),
+                _ => new(1, 3, 0 )
             };
 
-            return new WeaponInfo(results[0], results[1], results[2]);
+            return results;
         }
 
         private static int GetCastingTime(string spellName)
@@ -256,36 +311,40 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public List<Combatant> DetermineInit(List<Combatant> chars)
+        public void IncrementStatuses(List<Combatant> chars, List<string> log)
         {
-            //set inits
-            foreach (Combatant ch in chars)
+            foreach (Combatant x in chars)
             {
-                ch.Init = _random.Next(1, 11);
-                if (ch.Spells != null && ch.Spells.Count > 0)
+                foreach (Status y in x.Statuses)
                 {
-                    ch.Init += GetCastingTime(ch.Spells[0]);
+                    y.Duration--;
+                    if (y.Duration < 1)
+                    {
+                        log.Add($"{x.Name} is no longer {y.Name}.");
+                    }
                 }
-                else
-                {
-                    ch.Init += ch.InitMod + GetSpeedFactor(ch.Weapon);
-                }
+
+                x.Statuses.RemoveAll(z => z.Duration < 1);
             }
-
-            //order chars with hp > 0 by init
-            chars = chars.Where(x => x.CurrentHP > 0).OrderBy(x => x.Init).ToList();
-
-            return chars;
         }
 
-        public List<Combatant> DetermineTargets(List<Combatant> chars)
+        public void DetermineActions(List<Combatant> chars)
+        {
+            foreach (Combatant ch in chars)
+            {
+                string spellName = SpellMethods.SelectFromCombatantsSpells(ch);
+                ch.ActionForThisRound = spellName == "" ? "Melee Attack" : spellName;
+            }
+        }
+
+        public void DetermineTargets(List<Combatant> chars)
         {
             //set targets if needed
             foreach (Combatant ch in chars)
             {
-                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Select(x => x.CurrentHP).ToList()[0] <= 0)
+                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Count() == 0)
                 {
-                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name && x.CurrentHP > 0).Select(x => x.Name).ToList();
+                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name).Select(x => x.Name).ToList();
                     ch.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
                 }
             }
@@ -298,87 +357,87 @@ namespace NPCConsoleTesting
             //    }
             //}
             //if (doReadLines) { Console.ReadLine(); }
-
-            return chars;
         }
 
-        public CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant target, int attackResult, int segment)
+        public void DetermineInits(List<Combatant> chars)
+        {
+            //set inits
+            foreach (Combatant ch in chars)
+            {
+                if(ch.ActionForThisRound != "Melee Attack")
+                {
+                    //ch.Init = _random.Next(1, 11) + GetCastingTime(ch.Spells[0]) + ch.InitMod;
+                    ch.Init = GetCastingTime(ch.Spells[0]) + ch.InitMod;
+                }
+                else
+                {
+                    ch.Init = _random.Next(1, 11) + GetSpeedFactor(ch.Weapon) + ch.InitMod;
+                }
+            }
+
+            //order combatants by init
+            chars.Sort((p, q) => p.Init.CompareTo(q.Init));
+        }
+
+        public CombatantUpdateResults ApplyActionResultToCombatant(Combatant targeter, Combatant target, ActionResults results, int segment)
         {
             List<string> entries = new();
             bool opportunityForSimulAttack = false;
 
-            if (attackResult > 0)
+            if (results.SpellName != null)
             {
-                entries.Add($"{attacker.Name} struck {target.Name} for {attackResult} damage.");
-
-                //adjust target hp and GotHitThisRound status
-                target.CurrentHP -= attackResult;
-                target.GotHitThisRound = true;
-
-                if (target.CurrentHP <= 0)
+                if (targeter.GotHitThisRound)
                 {
-                    entries.Add($"{target.Name} fell.");
+                    entries.Add($"{targeter.Name}'s casting of {results.SpellName} was interrupted.");
+                    return new CombatantUpdateResults(entries, opportunityForSimulAttack);
+                }
 
-                    if (target.Init == segment)
-                    {
-                        opportunityForSimulAttack = true;
-                    }
-                }
-                //a sleeping character who gets hit (and survives) wakes up
-                else if (target.Statuses.Contains("Asleep"))
+                if (results.SpellAffectType == "Status")
                 {
-                    target.Statuses.RemoveAll(r => r == "Asleep");
+                    target.Statuses.Add(results.Status);
+                    entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
                 }
+
+                if (results.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
+                {
+                    targeter.CurrentHP -= results.Damage;
+                    entries.Add($"{targeter.Name} healed themselves for {-(results.Damage)} hit points.");
+                }
+            }
+
+            if (results.Damage > 0)
+            {
+                opportunityForSimulAttack = ApplyDamageToCombatant(targeter, target, results.Damage, entries, segment, opportunityForSimulAttack);
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
-        public CombatantUpdateResults ApplySpellResultToCombatant(Combatant caster, Combatant target, string spellName, SpellResults spellResults, int segment)
+        public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
         {
-            List<string> entries = new();
-            bool opportunityForSimulAttack = false;
+            //adjust target hp and GotHitThisRound status
+            target.CurrentHP -= damage;
+            target.GotHitThisRound = true;
+            entries.Add($"{targeter.Name} struck {target.Name} for {damage} damage.");
 
-            //unless they have been hit this round, a combatant with a spell will cast it
-            if (!caster.GotHitThisRound)
+            if (target.CurrentHP < 1)
             {
-                if (spellResults.AffectType == "damage")
+                entries.Add($"{target.Name} fell.");
+
+                if (target.Init == segment)
                 {
-                    if (spellResults.Damage < 0)   //a negative result indicates cure light wounds, which gets applied to caster
-                    {
-                        caster.CurrentHP -= spellResults.Damage;
-                        entries.Add($"{caster.Name} healed themself for {-(spellResults.Damage)} hit points.");
-                    }
-                    else
-                    {
-
-                        target.CurrentHP -= spellResults.Damage;
-                        target.GotHitThisRound = true;
-                        entries.Add($"{caster.Name} hit {target.Name} with a {spellName} effect for {spellResults.Damage} damage.");
-                        if (target.CurrentHP < 1)
-                        {
-                            entries.Add($"{target.Name} fell.");
-
-                            if (target.Init == segment)
-                            {
-                                opportunityForSimulAttack = true;
-                            }
-                        }
-                    }
-                }
-
-                if (spellResults.AffectType == "status")
-                {
-                    target.Statuses.Add(spellResults.Status);
-                    entries.Add($"{caster.Name} cast {spellName} on {target.Name}. {target.Name} is {spellResults.Status}.");
+                    opportunityForSimulAttack = true;
                 }
             }
-            else
+
+            //a sleeping character who takes damage (and survives) wakes up
+            if (target.Statuses.FindIndex(x => x.Name == "Asleep") >= 0)
             {
-                entries.Add($"{caster.Name}'s casting of {spellName} was interrupted.");
+                entries.Add($"{target.Name} is no longer asleep.");
+                target.Statuses.RemoveAll(r => r.Name == "Asleep");
             }
 
-            return new CombatantUpdateResults(entries, opportunityForSimulAttack);
+            return opportunityForSimulAttack;
         }
     }
 }

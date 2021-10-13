@@ -10,12 +10,14 @@ namespace NPCConsoleTesting.Combat
         {
             //combatants fight until only one* remains.  (*in rare cases, zero)
             List<string> wholeFightLog = new() { " ", "Here's what happened:" };
-            bool downToOne = false;
             int roundNumber = 0;
 
-            while (!downToOne)
+            while(combatants.Count > 1)
             {
                 List<string> logResults = CombatRound.DoACombatRound(combatants);
+
+                //Remove fallen combatants from list
+                combatants.RemoveAll(x => x.CurrentHP < 1);
 
                 roundNumber++;
                 wholeFightLog.Add($"------Round {roundNumber}------");
@@ -23,29 +25,16 @@ namespace NPCConsoleTesting.Combat
                 //add roundLog to wholeFightLog
                 wholeFightLog.AddRange(logResults);
 
-                //TODO: clean this up, likely using LINQ
-                //check if we're down to one
-                int numberOfSurvivors = 0;
-                foreach (Combatant ch in combatants)
-                {
-                    if (ch.CurrentHP > 0)
-                    {
-                        numberOfSurvivors++;
-                    }
-                }
-                if (numberOfSurvivors == 1)
+                //check if only one combatant remains
+                if (combatants.Count == 1)
                 {
                     //the fight has ended
-                    downToOne = true;
-
-                    List<string> winner = combatants.Where(x => x.CurrentHP > 0).Select(x => x.Name).ToList();
-                    wholeFightLog.Add($"{winner[0]} won.");
-
+                    wholeFightLog.Add($"{combatants[0].Name} won.");
                     wholeFightLog.ForEach(i => Console.WriteLine(i));
                 }
 
                 //lol
-                if (numberOfSurvivors < 1)
+                if (combatants.Count < 1)
                 {
                     Console.WriteLine("lol");
                     break;

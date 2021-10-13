@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPCConsoleTesting.Characters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,10 +29,10 @@ namespace NPCConsoleTesting
             "Web"
         };
 
-        public static SpellResults DoASpell(string spellName, int casterLevel, int bonus = 0)
+        public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
             string affectType = DamageSpells.Contains(spellName) ? "damage" : "status";
-            string status = "";
+            Status status = new("", 0);
             int dmg = 0;
 
             //TODO: somewhere in here we need to check if a saving throw is called for
@@ -43,10 +44,11 @@ namespace NPCConsoleTesting
             }
             else
             {
-                status = GetSpellStatusEffect(spellName);
+                status.Name = GetStatusName(spellName);
+                status.Duration = GetStatusDuration(spellName, casterLevel);
             }
 
-            return new SpellResults(affectType, status, dmg);
+            return new ActionResults(dmg, spellName, affectType, status);
         }
 
         public static int GetSpellDamage(string spellName, int casterLevel)
@@ -65,7 +67,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public static string GetSpellStatusEffect(string spellName)
+        public static string GetStatusName(string spellName)
         {
             string result = spellName switch
             {
@@ -76,6 +78,22 @@ namespace NPCConsoleTesting
                 "Ray of Enfeeblement" => "Weakened",
                 "Sleep" => "Asleep",
                 _ => ""
+            };
+
+            return result;
+        }
+
+        public static int GetStatusDuration(string spellName, int casterLevel)
+        {
+            int result = spellName switch
+            {
+                "Haste" => 3 + casterLevel,
+                "Hold Person" => 4 + casterLevel,
+                "Slow" => 3 + casterLevel,
+                "Strength" => 60 * casterLevel,
+                "Ray of Enfeeblement" => casterLevel,
+                "Sleep" => 5 * casterLevel,
+                _ => 0
             };
 
             return result;

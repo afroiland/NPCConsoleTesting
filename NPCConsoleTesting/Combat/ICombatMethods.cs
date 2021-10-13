@@ -5,11 +5,13 @@ namespace NPCConsoleTesting
 {
     public interface ICombatMethods
     {
-        int DoAMeleeAttack(IAttacker attacker, IDefender defender);
-        int CalcMeleeDmg(string attackerClass, string weapon, int str, int ex_str, int magicalBonus, int otherDmgBonus = 0);
-        List<Combatant> DetermineInit(List<Combatant> chars);
-        List<Combatant> DetermineTargets(List<Combatant> chars);
-        CombatantUpdateResults ApplyMeleeResultToCombatant(Combatant attacker, Combatant defender, int attackResult, int segment);
-        CombatantUpdateResults ApplySpellResultToCombatant(Combatant caster, Combatant target, string spellName, SpellResults spellResults, int segment);
+        ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender);
+        int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus = 0);
+        int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus = 0);
+        void IncrementStatuses(List<Combatant> chars, List<string> log);
+        void DetermineActions(List<Combatant> chars);
+        void DetermineInits(List<Combatant> chars);
+        void DetermineTargets(List<Combatant> chars);
+        CombatantUpdateResults ApplyActionResultToCombatant(Combatant attacker, Combatant defender, ActionResults results, int segment);
     }
 }

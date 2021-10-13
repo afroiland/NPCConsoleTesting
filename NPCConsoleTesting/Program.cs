@@ -39,8 +39,8 @@ namespace NPCConsoleTesting
             while (!weAreDone)
             {
                 //build combatant list
-                CombatantBuilder cbtBuilder = new();
-                List<Combatant> combatants = cbtBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
+                CombatantBuilder combatantBuilder = new();
+                List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
 
                 //do a full combat
                 FullCombat.DoAFullCombat(combatants);

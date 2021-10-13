@@ -11,9 +11,11 @@ namespace NPCConsoleTesting
         {
             ICombatMethods combatMethods = new CombatMethods();
             List<String> logResults = new();
-            
-            combatants = combatMethods.DetermineTargets(combatants);
-            combatants = combatMethods.DetermineInit(combatants);
+
+            combatMethods.IncrementStatuses(combatants, logResults);
+            combatMethods.DetermineActions(combatants);
+            combatMethods.DetermineTargets(combatants);
+            combatMethods.DetermineInits(combatants);
 
             //clear GotHitThisRound status for all combatants
             combatants.ForEach(x => x.GotHitThisRound = false);
@@ -37,51 +39,72 @@ namespace NPCConsoleTesting
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
                 //TODO: if target is at <0 hp, allow priority char to switch to a new target (if not using spell)?
                 if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 ||
-                    combatants[priorityIndex].Statuses.Any(x => x == "Held" || x == "Asleep"))
+                    combatants[priorityIndex].Statuses.Any(x => x.Name == "Held" || x.Name == "Asleep"))
                 {
                     priorityIndex++;
                     break;
                 }
 
-                //check for spells
-                string spellName = SpellMethods.SelectFromCombatantsSpells(combatants[priorityIndex]);
+                //if (combatants[priorityIndex].ActionForThisRound == "Melee Attack")
+                //{
+                //    //priority combatant does a melee attack against target
+                //    ActionResults attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
 
-                //if spellName is an empty string, the combatant has no appropriate spell and does a melee attack
-                if (spellName == "")
-                {
-                    //priority combatant does an attack against target
-                    int attackResult = combatMethods.DoAMeleeAttack(combatants[priorityIndex], combatants[targetIndex]);
+                //    //update target combatant
+                //    CombatantUpdateResults updateResults = combatMethods.ApplyActionResultToCombatant(combatants[priorityIndex], combatants[targetIndex], attackResult, segment);
 
-                    //update target combatant
-                    CombatantUpdateResults updateResults = combatMethods.ApplyMeleeResultToCombatant(combatants[priorityIndex], combatants[targetIndex], attackResult, segment);
+                //    //update log
+                //    logResults.AddRange(updateResults.LogEntries);
 
-                    //update log
-                    logResults.AddRange(updateResults.LogEntries);
+                //    opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
+                //}
+                //else
+                //{
+                //    //priority combatant casts a spell
+                //    ActionResults spellResults = SpellMethods.DoASpell(combatants[priorityIndex].ActionForThisRound, combatants[priorityIndex].Level);
 
-                    opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
-                }
-                else
-                {
-                    //do the spell effect
-                    SpellResults spellResults = SpellMethods.DoASpell(spellName, combatants[priorityIndex].Level);
+                //    //update combatants with spell results
+                //    CombatantUpdateResults updateResults = combatMethods.ApplyActionResultToCombatant(combatants[priorityIndex], combatants[targetIndex], spellResults, segment);
 
-                    //update combatants with spell results
-                    CombatantUpdateResults updateResults = combatMethods.ApplySpellResultToCombatant(combatants[priorityIndex], combatants[targetIndex], spellName, spellResults, segment);
+                //    //update log
+                //    logResults.AddRange(updateResults.LogEntries);
 
-                    //update log
-                    logResults.AddRange(updateResults.LogEntries);
+                //    opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
 
-                    opportunityForSimulAttack = updateResults.OpportunityForSimulAttack;
+                //    //remove spell from list
+                //    int index = combatants[priorityIndex].Spells.IndexOf(combatants[priorityIndex].ActionForThisRound);
+                //    combatants[priorityIndex].Spells.RemoveAt(index);
+                //}
 
-                    //remove spell from list
-                    int index = combatants[priorityIndex].Spells.IndexOf(spellName);
-                    combatants[priorityIndex].Spells.RemoveAt(index);
-                }
+                opportunityForSimulAttack = DoTheThing(combatMethods, combatants[priorityIndex], combatants[targetIndex], segment, logResults);
 
                 priorityIndex++;
             }
 
             return logResults;
+        }
+
+        private static bool DoTheThing(ICombatMethods combatMethods, Combatant priorityC, Combatant targetC, int segment, List<String> logResults)
+        {
+            //priority combatant does an action
+            ActionResults actionResults = priorityC.ActionForThisRound == "Melee Attack" ?
+                combatMethods.DoAMeleeAttack(priorityC, targetC) :
+                SpellMethods.DoASpell(priorityC.ActionForThisRound, priorityC.Level);
+
+            //update combatants with action results
+            CombatantUpdateResults updateResults = combatMethods.ApplyActionResultToCombatant(priorityC, targetC, actionResults, segment);
+
+            //update log
+            logResults.AddRange(updateResults.LogEntries);
+
+            //if a spell was cast, remove it from the combatant's spell list
+            if (priorityC.ActionForThisRound != "Melee Attack")
+            {
+                int index = priorityC.Spells.IndexOf(priorityC.ActionForThisRound);
+                priorityC.Spells.RemoveAt(index);
+            }
+
+            return updateResults.OpportunityForSimulAttack;
         }
     }
 }

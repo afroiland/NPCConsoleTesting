@@ -10,9 +10,9 @@ namespace UnitTests
     {
         //Arrange
         ICombatMethods combatMethods = new CombatMethods();
-        Combatant testChar = new("testChar", "Fighter", 10, 12, 12, 12, new List<int>() { 1 }, 10);
-        Combatant testCharPoorAC = new("testCharPoorAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -5);
-        Combatant testCharGoodAC = new("testCharGoodAC", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 25);
+        Combatant testChar = new("testChar", "Fighter", 10, "Human", 12, 12, 12, new List<int>() { 1 }, 10);
+        Combatant testCharPoorAC = new("testCharPoorAC", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -5);
+        Combatant testCharGoodAC = new("testCharGoodAC", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 25);
         
         const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
         const float ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE = .17F;
@@ -27,8 +27,8 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                if (combatMethods.DoAMeleeAttack(testChar, testCharPoorAC) == 0) { missesAgainstPoorAC++; }
-                if (combatMethods.DoAMeleeAttack(testChar, testCharGoodAC) != 0) { hitsAgainstGoodAC++; }
+                if (combatMethods.DoAMeleeAttack(testChar, testCharPoorAC).Damage == 0) { missesAgainstPoorAC++; }
+                if (combatMethods.DoAMeleeAttack(testChar, testCharGoodAC).Damage != 0) { hitsAgainstGoodAC++; }
             }
 
             ////Assert
@@ -178,22 +178,67 @@ namespace UnitTests
         //CalcMeleeDmg_falls_within_range_for_non_monk()
 
         [Test]
-        public void CalcMeleeDmg_falls_within_range_for_non_monk()
+        public void CalcNonMonkMeleeDmg_falls_within_range()
         {
             //Arrange
-            int numOfAttackDice = 1;
-            int typeOfAttackDie = 6;
-            int dmgModifier = 2;
+            CombatMethods combatMethods = new();
+            string weapon = "Longsword";
+            int str = 17;
+            int ex_str = 0;
+            int magicalBonus = 0;
+            int otherDmgBonus = 1;
             List<int> resultsList = new();
 
             //Act
-            //for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
-            //{
-            //    resultsList.Add(combatMethods.CalcDmg(numOfAttackDice, typeOfAttackDie, dmgModifier));
-            //}
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
+            {
+                resultsList.Add(combatMethods.CalcNonMonkMeleeDmg(weapon, str, ex_str, magicalBonus, otherDmgBonus));
+            }
 
-            ////Assert
-            //Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(9) & Has.Member(3) & Has.Member(8));
+            //Assert
+            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+        }
+
+        [Test]
+        public void CalcMonkMeleeDmg_without_weapon_falls_within_range()
+        {
+            //Arrange
+            CombatMethods combatMethods = new();
+            int level = 7;
+            string weapon = "None";
+            int magicalBonus = 0;
+            int otherDmgBonus = 0;
+            List<int> resultsList = new();
+
+            //Act
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
+            {
+                resultsList.Add(combatMethods.CalcMonkMeleeDmg(level, weapon, magicalBonus, otherDmgBonus));
+            }
+
+            //Assert
+            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(10) & Has.Member(3) & Has.Member(9));
+        }
+
+        [Test]
+        public void CalcMonkMeleeDmg_with_weapon_falls_within_range()
+        {
+            //Arrange
+            CombatMethods combatMethods = new();
+            int level = 7;
+            string weapon = "Dagger";
+            int magicalBonus = 0;
+            int otherDmgBonus = 0;
+            List<int> resultsList = new();
+
+            //Act
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
+            {
+                resultsList.Add(combatMethods.CalcMonkMeleeDmg(level, weapon, magicalBonus, otherDmgBonus));
+            }
+
+            //Assert
+            Assert.That(resultsList, Is.All.GreaterThan(3) & Is.All.LessThan(8) & Has.Member(4) & Has.Member(7));
         }
 
         [Test]
@@ -210,16 +255,34 @@ namespace UnitTests
         }
 
         [Test]
-        public void Inits_get_set_for_all_chars()
+        public void Targets_get_set_for_all_chars()
         {
             //Arrange
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            var result = combatMethods.DetermineInit(testList);
+            combatMethods.DetermineTargets(testList);
 
             //Assert
-            Assert.That(result, Is.Ordered.By("Init"));
+            CollectionAssert.DoesNotContain(testList.Select(x => x.Target), "");
+        }
+
+        [Test]
+        public void Inits_get_set_for_all_chars()
+        {
+            //Arrange
+            List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
+
+            foreach (Combatant c in testList)
+            {
+                c.ActionForThisRound = "Melee Attack";
+            }
+
+            //Act
+            combatMethods.DetermineInits(testList);
+
+            //Assert
+            Assert.That(testList, Is.Ordered.By("Init"));
         }
 
         [Test]
@@ -228,16 +291,16 @@ namespace UnitTests
             //Arrange
             List<Combatant> fullCombatTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0),
-                new Combatant("testChar2", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0),
-                new Combatant("testChar3", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 10, 0)
+                new Combatant("testChar1", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0),
+                new Combatant("testChar2", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0),
+                new Combatant("testChar3", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0)
             };
 
             //Act
             FullCombat.DoAFullCombat(fullCombatTestList);
 
             //Assert
-            Assert.Less(fullCombatTestList.Where(x => x.CurrentHP > 0).Count(), 2);
+            Assert.AreEqual(fullCombatTestList.Count, 1);
         }
 
         [Test]
@@ -246,8 +309,8 @@ namespace UnitTests
             //Arrange
             List<Combatant> twoCombatantTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 1, 0),
-                new Combatant("testChar2", "Fighter", 1, 12, 12, 12, new List<int>() { 1 }, 1, 0)
+                new Combatant("testChar1", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20),
+                new Combatant("testChar2", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20)
             };
 
             int init1 = 0;
@@ -257,6 +320,7 @@ namespace UnitTests
             //Act
             while (!simultaneousInit)
             {
+
                 CombatRound.DoACombatRound(twoCombatantTestList);
                 
                 if (twoCombatantTestList[0].CurrentHP <= 0 && twoCombatantTestList[1].CurrentHP <= 0)
@@ -278,19 +342,6 @@ namespace UnitTests
                 Assert.AreEqual(init1, init2);
                 Assert.That(twoCombatantTestList.Select(x => x.CurrentHP), Is.All.LessThanOrEqualTo(0));
             });
-        }
-
-        [Test]
-        public void Targets_get_set_for_all_chars()
-        {
-            //Arrange
-            List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
-
-            //Act
-            var result = combatMethods.DetermineTargets(testList);
-
-            //Assert
-            CollectionAssert.DoesNotContain(result.Select(x => x.Target), "");
         }
     }
 }
