@@ -10,8 +10,6 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        //TODO: Lots of refactoring to be done in this file
-
         public ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
             ActionResults result = new(0);
@@ -114,18 +112,13 @@ namespace NPCConsoleTesting
 
             if (str >= 17)
             {
-                if (0 <= ex_str && ex_str <= 50)
+                result = ex_str switch
                 {
-                    result++;
-                }
-                else if (51 <= ex_str && ex_str <= 99)
-                {
-                    result += 2;
-                }
-                else if (ex_str == 100)
-                {
-                    result += 3;
-                }
+                    < 51 => 1,
+                    < 100 => 2,
+                    100 => 3,
+                    _ => 0
+                };
             }
 
             return result;
@@ -137,31 +130,22 @@ namespace NPCConsoleTesting
 
             if (15 < str && str < 18)
             {
-                result++;
+                result = 1;
             }
 
             if (str == 18)
             {
-                if (ex_str == 0)
+                int tempResult = ex_str switch
                 {
-                    result += 2;
-                }
-                else if (1 <= ex_str && ex_str <= 75)
-                {
-                    result += 3;
-                }
-                else if (76 <= ex_str && ex_str <= 90)
-                {
-                    result += 4;
-                }
-                else if (91 <= ex_str && ex_str <= 99)
-                {
-                    result += 5;
-                }
-                else if (ex_str == 100)
-                {
-                    result += 6;
-                }
+                    0 => 2,
+                    <76 => 3,
+                    <91 => 4,
+                    <100 => 5,
+                    100 => 6,
+                    _ => 2
+                };
+
+                result = tempResult;
             }
 
             return result;
@@ -262,7 +246,7 @@ namespace NPCConsoleTesting
             return result + weaponInfo.DmgModifier;
         }
 
-        public static WeaponInfo GetWeaponInfo(string weapon)
+        private static WeaponInfo GetWeaponInfo(string weapon)
         {
             WeaponInfo results = weapon switch
             {

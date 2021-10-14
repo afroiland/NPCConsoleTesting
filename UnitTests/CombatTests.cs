@@ -169,34 +169,30 @@ namespace UnitTests
             });
         }
 
-        //GetWeaponInfo
-
-        //GetCastingTime
-
-        //GetSpeedFactor
-
-        //CalcMeleeDmg_falls_within_range_for_non_monk()
-
         [Test]
         public void CalcNonMonkMeleeDmg_falls_within_range()
         {
             //Arrange
             CombatMethods combatMethods = new();
-            string weapon = "Longsword";
-            int str = 17;
-            int ex_str = 0;
-            int magicalBonus = 0;
-            int otherDmgBonus = 1;
-            List<int> resultsList = new();
+            List<int> longSwordResultsList = new();
+            List<int> dartsResultsList = new();
+            List<int> hammerResultsList = new();
 
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                resultsList.Add(combatMethods.CalcNonMonkMeleeDmg(weapon, str, ex_str, magicalBonus, otherDmgBonus));
+                longSwordResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("Longsword", 17, 0, 0, 1));
+                dartsResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("Darts", 12, 0, 0, 0));
+                hammerResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("Hammer", 12, 0, 2, 0));
             }
 
             //Assert
-            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+            Assert.Multiple(() =>
+            {
+                Assert.That(longSwordResultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+                Assert.That(dartsResultsList, Is.All.GreaterThan(0) & Is.All.LessThan(4) & Has.Member(1) & Has.Member(3));
+                Assert.That(hammerResultsList, Is.All.GreaterThan(3) & Is.All.LessThan(8) & Has.Member(4) & Has.Member(7));
+            });
         }
 
         [Test]
@@ -268,21 +264,37 @@ namespace UnitTests
         }
 
         [Test]
-        public void Inits_get_set_for_all_combatants()
+        public void DetermineInits_sets_inits_correctly()
         {
             //Arrange
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
+            testChar.ActionForThisRound = "Melee Attack";
+            testChar.Weapon = "Two-Handed Sword";
+            testChar.InitMod = -1;
+            testCharGoodAC.Spells = new List<string>() { "Web" };
+            testCharPoorAC.Spells = new List<string>() { "Hold Person" };
 
-            foreach (Combatant c in testList)
+            List<int> inits2hsword = new();
+            List<int> initsWeb = new();
+            List<int> initsHoldPerson = new();
+            
+            //Act
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                c.ActionForThisRound = "Melee Attack";
+                combatMethods.DetermineInits(testList);
+                inits2hsword.Add(testList.Where(x => x.Name == "testChar").Select(c => c.Init).ToList()[0]);
+                initsWeb.Add(testList.Where(x => x.Name == "testCharGoodAC").Select(c => c.Init).ToList()[0]);
+                initsHoldPerson.Add(testList.Where(x => x.Name == "testCharPoorAC").Select(c => c.Init).ToList()[0]);
             }
 
-            //Act
-            combatMethods.DetermineInits(testList);
-
             //Assert
-            Assert.That(testList, Is.Ordered.By("Init"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(testList, Is.Ordered.By("Init"));
+                Assert.That(inits2hsword, Is.All.GreaterThan(9) & Is.All.LessThan(20) & Has.Member(10) & Has.Member(19));
+                Assert.That(initsWeb, Is.All.EqualTo(2));
+                Assert.That(initsHoldPerson, Is.All.EqualTo(5));
+            });
         }
 
         [Test]
@@ -300,7 +312,7 @@ namespace UnitTests
             FullCombat.DoAFullCombat(fullCombatTestList);
 
             //Assert
-            Assert.AreEqual(fullCombatTestList.Count, 1);
+            Assert.LessOrEqual(fullCombatTestList.Count, 1);
         }
 
         [Test]
