@@ -196,7 +196,6 @@ namespace NPCConsoleTesting
 
         public static string GetNameFromUserInput(int charNumber)
         {
-            //Console.WriteLine($"Enter the character's name.");
             Console.WriteLine($"Enter name for character {charNumber}");
             return Console.ReadLine();
         }
@@ -402,7 +401,7 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomArmor(string charClass)
         {
-            List<string> armorList = new() { "Leather", "Studded Leather", "Scale Mail", "Chain Mail", "Banded Mail", "Plate Mail" };
+            List<string> armorList = new() { "Leather", "Studded Leather", "Scale", "Chain", "Banded", "Plate" };
 
             string result = charClass switch
             {
@@ -416,6 +415,7 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomWeapon(string charClass)
         {
+            //TODO:
             List<string> weaponList = new() { };
 
             return "Dagger";

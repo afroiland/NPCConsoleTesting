@@ -12,14 +12,23 @@ namespace UnitTests
         [Test]
         public void BuildCombatantRandomly_returns_combatant_within_ranges()
         {
+
             //Arrange
             CombatantBuilder cBuilder = new();
             List<Combatant> resultsList = new();
+            List<string> resultsListClass = new();
+            List<string> resultsListRace = new();
+            List<string> resultsListArmor = new();
+            List<string> resultsListWeapon = new();
 
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
                 resultsList.Add(cBuilder.BuildCombatantRandomly());
+                resultsListClass.Add(resultsList[i].CharacterClass);
+                resultsListRace.Add(resultsList[i].Race);
+                resultsListArmor.Add(resultsList[i].Armor);
+                resultsListWeapon.Add(resultsList[i].Weapon);
             }
 
             //Assert
@@ -30,18 +39,36 @@ namespace UnitTests
                     Assert.That(cmbt.Name, Is.Not.Null);
                     Assert.That(cmbt.CharacterClass, Is.Not.Null);
                     Assert.That(cmbt.Race, Is.Not.Null);
-                    Assert.That(cmbt.Level, Is.Not.Null);
+                    Assert.That(cmbt.Level, Is.Not.Null & Is.GreaterThan(0) & Is.LessThan(6));
                     Assert.That(cmbt.Strength, Is.Not.Null);
                     Assert.That(cmbt.Ex_Strength, Is.Not.Null);
                     Assert.That(cmbt.Dexterity, Is.Not.Null);
                     Assert.That(cmbt.Constitution, Is.Not.Null);
                     Assert.That(cmbt.HP_By_Level, Is.Not.Null);
-                    Assert.That(cmbt.CurrentHP, Is.GreaterThan(3) & Is.LessThan(69));
+                    //Assert.That(cmbt.CurrentHP, Is.GreaterThan(3) & Is.LessThan(69));
                     //Assert.That(cmbt.InitMod, Is.GreaterThan(-1) & Is.LessThan(6));
                     Assert.That(cmbt.Armor, Is.Not.Null);
                     Assert.That(cmbt.Weapon, Is.Not.Null);
                     Assert.That(cmbt.HasShield, Is.Not.Null);
                 }
+
+                CollectionAssert.Contains(resultsListClass, "Fighter");
+                CollectionAssert.Contains(resultsListClass, "Magic-User");
+                CollectionAssert.Contains(resultsListClass, "Monk");
+                CollectionAssert.Contains(resultsListClass, "Assassin");
+
+                CollectionAssert.Contains(resultsListRace, "Human");
+                CollectionAssert.Contains(resultsListRace, "Elf");
+                CollectionAssert.Contains(resultsListRace, "Dwarf");
+                CollectionAssert.Contains(resultsListRace, "Halfling");
+
+                CollectionAssert.Contains(resultsListArmor, "Leather");
+                CollectionAssert.Contains(resultsListArmor, "Scale");
+                CollectionAssert.Contains(resultsListArmor, "Chain");
+                CollectionAssert.Contains(resultsListArmor, "Plate");
+
+                //TODO: add assertions once SelectRandomWeapon() gets built out
+                CollectionAssert.Contains(resultsListWeapon, "Dagger");
             });
         }
 
@@ -88,30 +115,8 @@ namespace UnitTests
             Assert.That(monkLvl5Copy, Is.All.GreaterThan(0) & Is.All.LessThan(5));
         }
 
-        //TODO:
-
-        //SelectRandomClass
-        [Test]
-        public void SelectRandomClass_returns_string()
-        {
-            //Arrange
-
-
-            //Act
-            //string result = CombatantBuilder.SelectRandomClass()
-
-            //Assert
-
-        }
-
-        //SelectRandomArmor
-
-        //SelectRandomWeapon
-
-        //DetermineShieldPresence
+        //GenerateAttributes (including racial mods)
 
         //GenerateSpellList    (for five classes; maybe break this out into 5 separate tests)
-
-
     }
 }
