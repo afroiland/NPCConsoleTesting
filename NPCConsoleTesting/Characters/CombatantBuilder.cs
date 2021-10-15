@@ -290,42 +290,32 @@ namespace NPCConsoleTesting
         public static Attributes GenerateAttributes(string charClass, string race)
         {
             Attributes mins = GetAttributeMins(charClass);
-            Attributes attributes = new();
-
-            do
+            Attributes attributes = new()
             {
-                attributes.Strength = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Strength", race);
-            } while (attributes.Strength < mins.Strength);
-            
-            do
-            {
-                attributes.Intelligence = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-            } while (attributes.Intelligence < mins.Intelligence);
-
-            do
-            {
-                attributes.Constitution = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Constitution", race);
-            } while (attributes.Constitution < mins.Constitution);
-
-            do
-            {
-                attributes.Wisdom = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-            } while (attributes.Wisdom < mins.Wisdom);
-
-            do
-            {
-                attributes.Dexterity = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Dexterity", race);
-            } while (attributes.Dexterity < mins.Dexterity);
-
-            do
-            {
-                attributes.Charisma = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Charisma", race);
-            } while (attributes.Charisma < mins.Charisma);
+                Strength = AssignAttribute("Strength", race, mins.Strength),
+                Intelligence = AssignAttribute("Intelligence", race, mins.Intelligence),
+                Wisdom = AssignAttribute("Wisdom", race, mins.Wisdom),
+                Dexterity = AssignAttribute("Dexterity", race, mins.Dexterity),
+                Constitution = AssignAttribute("Constitution", race, mins.Constitution),
+                Charisma = AssignAttribute("Charisma", race, mins.Charisma)
+            };
 
             //Fighters with 18 strength get Ex_Strength
             attributes.Ex_Strength = charClass == "Fighter" && attributes.Strength == 18 ? _random.Next(1, 101) : 0;
 
             return attributes;
+        }
+
+        private static int AssignAttribute(string attribute, string race, int min)
+        {
+            int result;
+
+            do
+            {
+                result = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier(attribute, race);
+            } while (result < min);
+
+            return result;
         }
 
         private static int GetRacialAttributeModifier(string attribute, string race)

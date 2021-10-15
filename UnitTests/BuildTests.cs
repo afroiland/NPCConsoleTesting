@@ -7,7 +7,7 @@ namespace UnitTests
 {
     class BuildTests
     {
-        const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 50;
+        const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
 
         [Test]
         public void BuildCombatantRandomly_returns_combatant_within_ranges()
