@@ -68,6 +68,20 @@ namespace NPCConsoleTesting
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
         {
+            int numberBattling = DetermineNumberBattling();
+            int retrievalMethod = DetermineRetrievalMethod();
+
+            List<Combatant> combatants = new();
+            while (combatants.Count < numberBattling)
+            {
+                combatants.Add(GetCombatant(retrievalMethod, combatants.Count, connectionString));
+            }
+
+            return combatants;
+        }
+
+        private int DetermineNumberBattling()
+        {
             int numberBattling = 0;
             while (numberBattling < 2)
             {
@@ -86,16 +100,18 @@ namespace NPCConsoleTesting
                 }
             }
 
-            //Set the retrieval method to be used for all characters
+            return numberBattling;
+        }
+
+        private int DetermineRetrievalMethod()
+        {
             Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
             int retrievalMethod = 0;
-            bool intEntered = false;
-            while (!intEntered)
+            while (retrievalMethod == 0)
             {
                 try
                 {
                     retrievalMethod = int.Parse(Console.ReadLine());
-                    intEntered = true;
                 }
                 catch (Exception)
                 {
@@ -103,43 +119,7 @@ namespace NPCConsoleTesting
                 }
             }
 
-            List<Combatant> combatants = new();
-
-            while (combatants.Count < numberBattling)
-            {
-                combatants.Add(GetCombatant(retrievalMethod, combatants.Count, connectionString));
-
-                //if (retrievalMethod == 2)
-                //{
-                //    try
-                //    {
-                //        combatants.Add(BuildCombatantViaConsole(combatants.Count + 1));
-                //    }
-                //    catch (Exception)
-                //    {
-                //        Console.WriteLine("That didn't work. Try again.");
-                //    }
-
-                //}
-                //else if (retrievalMethod == 3)
-                //{
-                //    string name = GetNameFromUserInput(combatants.Count + 1);
-                //    try
-                //    {
-                //        combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
-                //    }
-                //    catch (Exception)
-                //    {
-                //        Console.WriteLine("That didn't work. Try again.");
-                //    }
-                //}
-                //else
-                //{
-                //    combatants.Add(BuildCombatantRandomly());
-                //}
-            }
-
-            return combatants;
+            return retrievalMethod;
         }
 
         private static Combatant GetCombatant(int retrievalMethod, int numberOfCombatants, string connectionString)
@@ -150,7 +130,6 @@ namespace NPCConsoleTesting
             {
                 try
                 {
-                    //return BuildCombatantViaConsole(numberOfCombatants + 1);
                     result.Add(BuildCombatantViaConsole(numberOfCombatants + 1));
                 }
                 catch (Exception)
@@ -164,7 +143,6 @@ namespace NPCConsoleTesting
                 string name = GetNameFromUserInput(numberOfCombatants + 1);
                 try
                 {
-                    //return CombatantRetriever.GetCombatantByName(connectionString, name);
                     result.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
                 }
                 catch (Exception)
@@ -175,8 +153,6 @@ namespace NPCConsoleTesting
             else
             {
                 CombatantBuilder cb = new();
-                //return cb.BuildCombatantRandomly();
-                //return BuildCombatantRandomly();
                 result.Add(cb.BuildCombatantRandomly());
             }
 
@@ -218,7 +194,7 @@ namespace NPCConsoleTesting
             Console.WriteLine($"Enter level for character {charNumber}");
             int level = int.Parse(Console.ReadLine());
 
-            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
+            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClassCap, level);
             int currentHP = HPByLevel.Sum();
 
             //Console.WriteLine($"Enter HP for character {charNumber}");
@@ -233,7 +209,6 @@ namespace NPCConsoleTesting
 
             //TODO: spells?
 
-            //TODO: figure out what we do for HP_By_Level here
             return new Combatant(name, charClassCap, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weaponCap);
         }
 
