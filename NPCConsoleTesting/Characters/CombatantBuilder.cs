@@ -13,14 +13,6 @@ namespace NPCConsoleTesting
         private int _MaxInitMod;
         private int _MinAC;
         private int _MaxAC;
-        private int _MinThac0;
-        private int _MaxThac0;
-        private int _MinNumberOfAttackDice;
-        private int _MaxNumberOfAttackDice;
-        private int _MinTypeOfAttackDie;
-        private int _MaxTypeOfAttackDie;
-        private int _MinDmgModifier;
-        private int _MaxDmgModifier;
         private int _MinLevel;
         private int _MaxLevel;
 
@@ -30,14 +22,6 @@ namespace NPCConsoleTesting
         public int MaxInitMod { get => _MaxInitMod; set => _MaxInitMod = value; }
         public int MinAC { get => _MinAC; set => _MinAC = value; }
         public int MaxAC { get => _MaxAC; set => _MaxAC = value; }
-        public int MinThac0 { get => _MinThac0; set => _MinThac0 = value; }
-        public int MaxThac0 { get => _MaxThac0; set => _MaxThac0 = value; }
-        public int MinNumberOfAttackDice { get => _MinNumberOfAttackDice; set => _MinNumberOfAttackDice = value; }
-        public int MaxNumberOfAttackDice { get => _MaxNumberOfAttackDice; set => _MaxNumberOfAttackDice = value; }
-        public int MinTypeOfAttackDie { get => _MinTypeOfAttackDie; set => _MinTypeOfAttackDie = value; }
-        public int MaxTypeOfAttackDie { get => _MaxTypeOfAttackDie; set => _MaxTypeOfAttackDie = value; }
-        public int MinDmgModifier { get => _MinDmgModifier; set => _MinDmgModifier = value; }
-        public int MaxDmgModifier { get => _MaxDmgModifier; set => _MaxDmgModifier = value; }
         public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
         public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
 
@@ -49,14 +33,6 @@ namespace NPCConsoleTesting
             MaxInitMod = 5;
             MinAC = 3;
             MaxAC = 10;
-            MinThac0 = 1;
-            MaxThac0 = 20;
-            MinNumberOfAttackDice = 1;
-            MaxNumberOfAttackDice = 2;
-            MinTypeOfAttackDie = 1;
-            MaxTypeOfAttackDie = 6;
-            MinDmgModifier = 0;
-            MaxDmgModifier = 2;
             MinLevel = 1;
             MaxLevel = 5;
         }
@@ -171,8 +147,7 @@ namespace NPCConsoleTesting
             int dex = attributes.Dexterity;
             int con = attributes.Constitution;
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
-            //set currentHP to maxHP (sum of HPByLevel values + con bonus)
-            int currentHP = HPByLevel.Sum() + CombatMethods.CalcConBonusToHP(con, charClass);
+            int currentHP = CalcMaxHP(HPByLevel, con, charClass);
             //int initMod = 0;
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass);
@@ -402,6 +377,39 @@ namespace NPCConsoleTesting
             for (int i = 1; i < level; i++)
             {
                 result.Add(_random.Next(1, dieType + 1));
+            }
+
+            return result;
+        }
+
+        public static int CalcMaxHP(List<int> HPByLevel, int con, string charClass)
+        {
+            return HPByLevel.Sum() + CalcConBonusToHP(con, charClass);
+        }
+
+        public static int CalcConBonusToHP(int con, string charClass)
+        {
+            int result;
+
+            if (charClass == "Fighter" || charClass == "Ranger" || charClass == "Paladin")
+            {
+                result = con switch
+                {
+                    < 15 => 0,
+                    15 => 1,
+                    16 => 2,
+                    17 => 3,
+                    > 17 => 4
+                };
+            }
+            else
+            {
+                result = con switch
+                {
+                    < 15 => 0,
+                    15 => 1,
+                    > 15 => 2
+                };
             }
 
             return result;

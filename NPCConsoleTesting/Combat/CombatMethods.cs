@@ -151,34 +151,6 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public static int CalcConBonusToHP(int con, string charClass)
-        {
-            int result;
-
-            if (charClass == "Fighter" || charClass == "Ranger" || charClass == "Paladin")
-            {
-                result = con switch
-                {
-                    <15 => 0,
-                    15 => 1,
-                    16 => 2,
-                    17 => 3,
-                    >17 => 4
-                };
-            }
-            else
-            {
-                result = con switch
-                {
-                    < 15 => 0,
-                    15 => 1,
-                    >15 => 2
-                };
-            }
-
-            return result;
-        }
-
         public int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus)
         {
             int result;
