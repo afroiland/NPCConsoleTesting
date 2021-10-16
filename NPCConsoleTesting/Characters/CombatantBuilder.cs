@@ -86,15 +86,15 @@ namespace NPCConsoleTesting
                 }
             }
 
-            //Set the source for all characters
+            //Set the retrieval method to be used for all characters
             Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
-            int charOrigin = 0;
+            int retrievalMethod = 0;
             bool intEntered = false;
             while (!intEntered)
             {
                 try
                 {
-                    charOrigin = int.Parse(Console.ReadLine());
+                    retrievalMethod = int.Parse(Console.ReadLine());
                     intEntered = true;
                 }
                 catch (Exception)
@@ -107,37 +107,80 @@ namespace NPCConsoleTesting
 
             while (combatants.Count < numberBattling)
             {
-                if (charOrigin == 2)
-                {
-                    try
-                    {
-                        combatants.Add(BuildCombatantViaConsole(combatants.Count + 1));
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
+                combatants.Add(GetCombatant(retrievalMethod, combatants.Count, connectionString));
 
-                }
-                else if (charOrigin == 3)
-                {
-                    string name = GetNameFromUserInput(combatants.Count + 1);
-                    try
-                    {
-                        combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
-                }
-                else
-                {
-                    combatants.Add(BuildCombatantRandomly());
-                }
+                //if (retrievalMethod == 2)
+                //{
+                //    try
+                //    {
+                //        combatants.Add(BuildCombatantViaConsole(combatants.Count + 1));
+                //    }
+                //    catch (Exception)
+                //    {
+                //        Console.WriteLine("That didn't work. Try again.");
+                //    }
+
+                //}
+                //else if (retrievalMethod == 3)
+                //{
+                //    string name = GetNameFromUserInput(combatants.Count + 1);
+                //    try
+                //    {
+                //        combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                //    }
+                //    catch (Exception)
+                //    {
+                //        Console.WriteLine("That didn't work. Try again.");
+                //    }
+                //}
+                //else
+                //{
+                //    combatants.Add(BuildCombatantRandomly());
+                //}
             }
 
             return combatants;
+        }
+
+        private static Combatant GetCombatant(int retrievalMethod, int numberOfCombatants, string connectionString)
+        {
+            List<Combatant> result = new();
+
+            if (retrievalMethod == 2)
+            {
+                try
+                {
+                    //return BuildCombatantViaConsole(numberOfCombatants + 1);
+                    result.Add(BuildCombatantViaConsole(numberOfCombatants + 1));
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("That didn't work. Try again.");
+                }
+
+            }
+            else if (retrievalMethod == 3)
+            {
+                string name = GetNameFromUserInput(numberOfCombatants + 1);
+                try
+                {
+                    //return CombatantRetriever.GetCombatantByName(connectionString, name);
+                    result.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("That didn't work. Try again.");
+                }
+            }
+            else
+            {
+                CombatantBuilder cb = new();
+                //return cb.BuildCombatantRandomly();
+                //return BuildCombatantRandomly();
+                result.Add(cb.BuildCombatantRandomly());
+            }
+
+            return result[0];
         }
 
         public Combatant BuildCombatantRandomly()
@@ -405,10 +448,24 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomWeapon(string charClass)
         {
-            //TODO:
-            List<string> weaponList = new() { };
+            List<string> MUList = new() { "Dagger", "Darts", "Staff" };
+            List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
+            List<string> DruidList = new() { "Club", "Dagger", "Darts", "Hammer", "Spear", "Staff" };
+            List<string> ThiefList = new() { "Club", "Dagger", "Darts", "Longsword", "Shortsword" };
+            List<string> MonkList = new() { "Club", "Darts", "Dagger", "Staff", "None" };
+            List<string> FighterList = new() { "Axe", "Halberd", "Longsword", "Shortsword", "Spear", "Two-Handed Sword"};
 
-            return "Dagger";
+            return charClass switch
+            {
+                "Magic-User" or "Illusionist" => MUList[_random.Next(0, MUList.Count)],
+                "Cleric" => ClericList[_random.Next(0, ClericList.Count)],
+                "Druid" => DruidList[_random.Next(0, DruidList.Count)],
+                "Thief" => ThiefList[_random.Next(0, ThiefList.Count)],
+                "Monk" => MonkList[_random.Next(0, MonkList.Count)],
+                "Fighter" or "Paladin" or "Ranger" => FighterList[_random.Next(0, FighterList.Count)],
+                
+                _ => "None"
+            };
         }
 
         private static bool DetermineShieldPresence(string charClass, string weapon)
