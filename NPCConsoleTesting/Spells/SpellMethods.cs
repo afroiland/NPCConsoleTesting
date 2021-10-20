@@ -31,14 +31,12 @@ namespace NPCConsoleTesting
 
         public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
-            string affectType = DamageSpells.Contains(spellName) ? "damage" : "status";
+            string effectType = DamageSpells.Contains(spellName) ? "damage" : "status";
             Status status = new("", 0);
             int dmg = 0;
 
-            //TODO: somewhere in here we need to check if a saving throw is called for
-
             //TODO: add checks for input not in either list
-            if (affectType == "damage")
+            if (effectType == "damage")
             {
                 dmg = GetSpellDamage(spellName, casterLevel) + bonus;
             }
@@ -48,7 +46,9 @@ namespace NPCConsoleTesting
                 status.Duration = GetStatusDuration(spellName, casterLevel);
             }
 
-            return new ActionResults(dmg, spellName, affectType, status);
+            string savingThrow = GetSavingThrowType(spellName);
+
+            return new ActionResults(dmg, spellName, effectType, status);
         }
 
         public static int GetSpellDamage(string spellName, int casterLevel)
@@ -97,6 +97,14 @@ namespace NPCConsoleTesting
             };
 
             return result;
+        }
+
+        public static string GetSavingThrowType(string spellName)
+        {
+            return spellName switch
+            {
+
+            };
         }
 
         public static string SelectFromCombatantsSpells(Combatant combatant)

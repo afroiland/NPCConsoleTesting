@@ -345,10 +345,18 @@ namespace NPCConsoleTesting
                     return new CombatantUpdateResults(entries, opportunityForSimulAttack);
                 }
 
-                if (results.SpellAffectType == "Status")
+                if (results.SpellEffectType == "Status")
                 {
+                    //TODO:
+                    //if(DoASavingThrow(target, results) == "Failure")
+                    //{
                     target.Statuses.Add(results.Status);
                     entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+                    //}
+                    //else
+                    //{
+                    //    entries.Add($"{targeter.Name} attempted to cast {results.SpellName} on {target.Name}, but {target.Name}'s saving throw was successful.");
+                    //}
                 }
 
                 if (results.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
@@ -360,10 +368,28 @@ namespace NPCConsoleTesting
 
             if (results.Damage > 0)
             {
+                //TODO:
+                //if (results.SpellName != null)
+                //{
+                //     if(DoASavingThrow(target, results) == "Failure")
+                //}
+                //else
+                //{
                 opportunityForSimulAttack = ApplyDamageToCombatant(targeter, target, results.Damage, entries, segment, opportunityForSimulAttack);
+                //}
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
+        }
+
+        private string DoASavingThrow(Combatant target, ActionResults results)
+        {
+            int targetNumber = GetSavingThrowTargetNumber(target);
+        }
+
+        private int GetSavingThrowTargetNumber(Combatant target)
+        {
+
         }
 
         public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
