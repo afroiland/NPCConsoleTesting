@@ -48,7 +48,7 @@ namespace NPCConsoleTesting
 
             string savingThrow = GetSavingThrowType(spellName);
 
-            return new ActionResults(dmg, spellName, effectType, status);
+            return new ActionResults(dmg, spellName, effectType, savingThrow, status);
         }
 
         public static int GetSpellDamage(string spellName, int casterLevel)
@@ -103,7 +103,17 @@ namespace NPCConsoleTesting
         {
             return spellName switch
             {
-
+                //"Burning Hands" => "",
+                //"Cure Light Wounds",
+                //"Magic Missile",
+                //"Shocking Grasp",
+                //"Haste",
+                //"Slow",
+                //"Strength",
+                //"Sleep",
+                "Fireball" or "Lightning Bolt" => "Half",
+                "Hold Person" or "Ray of Enfeeblement" or "Web" => "Negate",
+                _ => "None"
             };
         }
 
