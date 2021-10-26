@@ -271,6 +271,8 @@ namespace NPCConsoleTesting
         {
             foreach (Combatant x in combatants)
             {
+                //TODO: possible check here for haste and slow effets canceling each other out
+
                 foreach (Status y in x.Statuses)
                 {
                     y.Duration--;
@@ -376,15 +378,16 @@ namespace NPCConsoleTesting
 
             if (results.Damage > 0)
             {
-                //TODO: fix / refactor this
                 if (results.SpellSavingThrowType == "Half")
                 {
                     if (DoASavingThrow(target) == "Success")
                     {
+                        entries.Add($"{target.Name}'s saving throw was successful, reducing damage by half.");
                         results.Damage /= 2;
                     }
                 }
-                opportunityForSimulAttack = ApplyDamageToCombatant(targeter, target, results.Damage, entries, segment, opportunityForSimulAttack);
+
+                opportunityForSimulAttack = ApplyDamageToCombatant(targeter, target, results.SpellName, results.Damage, entries, segment, opportunityForSimulAttack);
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
@@ -457,12 +460,20 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
+        public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, string spellName, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
         {
             //adjust target hp and GotHitThisRound status
             target.CurrentHP -= damage;
             target.GotHitThisRound = true;
-            entries.Add($"{targeter.Name} struck {target.Name} for {damage} damage.");
+
+            if (spellName != null)
+            {
+                entries.Add($"{targeter.Name} cast a {spellName} spell, doing {damage} damage to {target.Name}.");
+            }
+            else
+            {
+                entries.Add($"{targeter.Name} struck {target.Name} for {damage} damage.");
+            }
 
             if (target.CurrentHP < 1)
             {
