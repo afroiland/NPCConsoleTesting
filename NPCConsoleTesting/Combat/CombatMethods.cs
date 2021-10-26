@@ -339,8 +339,10 @@ namespace NPCConsoleTesting
             List<string> entries = new();
             bool opportunityForSimulAttack = false;
 
+            //handle spell actions
             if (results.SpellName != null)
             {
+                //if a combatant whose round action is a spell takes damage before their turn, they take no action this round 
                 if (targeter.GotHitThisRound)
                 {
                     entries.Add($"{targeter.Name}'s casting of {results.SpellName} was interrupted.");
@@ -376,13 +378,14 @@ namespace NPCConsoleTesting
                 }
             }
 
+            //apply damage from spell or melee attack
             if (results.Damage > 0)
             {
                 if (results.SpellSavingThrowType == "Half")
                 {
                     if (DoASavingThrow(target) == "Success")
                     {
-                        entries.Add($"{target.Name}'s saving throw was successful, reducing damage by half.");
+                        entries.Add($"{target.Name}'s saving throw was successful; damage reduced by half.");
                         results.Damage /= 2;
                     }
                 }
