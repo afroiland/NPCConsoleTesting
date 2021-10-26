@@ -345,18 +345,26 @@ namespace NPCConsoleTesting
                     return new CombatantUpdateResults(entries, opportunityForSimulAttack);
                 }
 
+                //TODO: fix / refactor this
                 if (results.SpellEffectType == "Status")
                 {
-                    //TODO:
-                    //if(DoASavingThrow(target, results) == "Failure")
-                    //{
-                    target.Statuses.Add(results.Status);
-                    entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
-                    //}
-                    //else
-                    //{
-                    //    entries.Add($"{targeter.Name} attempted to cast {results.SpellName} on {target.Name}, but {target.Name}'s saving throw was successful.");
-                    //}
+                    if (results.SpellSavingThrowType == "Negate")
+                    {
+                        if (DoASavingThrow(target) == "Failure")
+                        {
+                            target.Statuses.Add(results.Status);
+                            entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+                        }
+                        else if (DoASavingThrow(target) == "Success")
+                        {
+                            entries.Add($"{targeter.Name} attempted to cast {results.SpellName} on {target.Name}, but {target.Name}'s saving throw was successful.");
+                        }
+                    }
+                    else
+                    {
+                        target.Statuses.Add(results.Status);
+                        entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+                    }
                 }
 
                 if (results.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
@@ -368,28 +376,85 @@ namespace NPCConsoleTesting
 
             if (results.Damage > 0)
             {
-                //TODO:
-                //if (results.SpellName != null)
-                //{
-                //     if(DoASavingThrow(target, results) == "Failure")
-                //}
-                //else
-                //{
+                //TODO: fix / refactor this
+                if (results.SpellSavingThrowType == "Half")
+                {
+                    if (DoASavingThrow(target) == "Success")
+                    {
+                        results.Damage /= 2;
+                    }
+                }
                 opportunityForSimulAttack = ApplyDamageToCombatant(targeter, target, results.Damage, entries, segment, opportunityForSimulAttack);
-                //}
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
-        private string DoASavingThrow(Combatant target, ActionResults results)
+        private string DoASavingThrow(Combatant target)
         {
             int targetNumber = GetSavingThrowTargetNumber(target);
+
+            return _random.Next(1, 21) < targetNumber ? "Failure" : "Success";
         }
 
         private int GetSavingThrowTargetNumber(Combatant target)
         {
+            int result;
 
+            if (target.CharacterClass == "Magic-User" || target.CharacterClass == "Illusionist")
+            {
+                result = target.Level switch
+                {
+                    < 6 => 12,
+                    6 or 7 or 8 or 9 or 10 => 10,
+                    11 or 12 or 13 or 14 or 15 => 8,
+                    16 or 17 or 18 or 19 or 20 => 6,
+                    > 20 => 4
+                };
+            }
+            else if (target.CharacterClass == "Cleric" || target.CharacterClass == "Druid")
+            {
+                result = target.Level switch
+                {
+                    < 4 => 15,
+                    4 or 5 or 6 => 14,
+                    7 or 8 or 9 => 12,
+                    10 or 11 or 12 => 11,
+                    13 or 14 or 15 => 10,
+                    16 or 17 or 18 => 9,
+                    > 18 => 7
+                };
+            }
+            else if (target.CharacterClass == "Thief" || target.CharacterClass == "Assassin" || target.CharacterClass == "Monk")
+            {
+                result = target.Level switch
+                {
+                    < 5 => 15,
+                    5 or 6 or 7 or 8 => 13,
+                    9 or 10 or 11 or 12 => 11,
+                    13 or 14 or 15 or 16 => 9,
+                    17 or 18 or 19 or 20 => 7,
+                    > 20 => 5
+                };
+            }
+            else
+            {
+                result = target.Level switch
+                {
+                    < 1 => 19,
+                    1 or 2 => 17,
+                    3 or 4 => 16,
+                    5 or 6 => 14,
+                    7 or 8 => 13,
+                    9 or 10 => 11,
+                    11 or 12 => 10,
+                    13 or 14 => 8,
+                    15 or 16 => 7,
+                    > 16 => 6
+                };
+            }
+
+            return result;
         }
 
         public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)

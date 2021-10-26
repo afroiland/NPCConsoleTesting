@@ -31,12 +31,12 @@ namespace NPCConsoleTesting
 
         public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
-            string effectType = DamageSpells.Contains(spellName) ? "damage" : "status";
+            string effectType = DamageSpells.Contains(spellName) ? "Damage" : "Status";
             Status status = new("", 0);
             int dmg = 0;
 
             //TODO: add checks for input not in either list
-            if (effectType == "damage")
+            if (effectType == "Damage")
             {
                 dmg = GetSpellDamage(spellName, casterLevel) + bonus;
             }
@@ -46,9 +46,9 @@ namespace NPCConsoleTesting
                 status.Duration = GetStatusDuration(spellName, casterLevel);
             }
 
-            string savingThrow = GetSavingThrowType(spellName);
+            string savingThrowType = GetSavingThrowType(spellName);
 
-            return new ActionResults(dmg, spellName, effectType, savingThrow, status);
+            return new ActionResults(dmg, spellName, effectType, savingThrowType, status);
         }
 
         public static int GetSpellDamage(string spellName, int casterLevel)
