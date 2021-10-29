@@ -98,7 +98,7 @@ namespace NPCConsoleTesting
             return retrievalMethod;
         }
 
-        private static Combatant GetCombatant(int retrievalMethod, int numberOfCombatants, string connectionString)
+        private Combatant GetCombatant(int retrievalMethod, int numberOfCombatants, string connectionString)
         {
             List<Combatant> result = new();
 
@@ -116,7 +116,7 @@ namespace NPCConsoleTesting
             }
             else if (retrievalMethod == 3)
             {
-                string name = GetNameFromUserInput(numberOfCombatants + 1);
+                string name = GetCustomNameFromUserInput(numberOfCombatants + 1);
                 try
                 {
                     result.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
@@ -158,33 +158,16 @@ namespace NPCConsoleTesting
                 charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
         }
 
-        public static Combatant BuildCombatantViaConsole(int charNumber)
+        public Combatant BuildCombatantViaConsole(int charNumber)
         {
-            Console.WriteLine("Generate name randomly or enter custom name? 1 = Random, 2 = Custom");
-            int nameCreationTechnique = int.Parse(Console.ReadLine());
-            string name = nameCreationTechnique == 2 ? GetNameFromUserInput(charNumber) : GenerateRandomName();
+            string name = GetName(charNumber);
+            string charClass = GetCharClass(name);
+            int level = GetLevel(name, _MinLevel, _MaxLevel);
 
-            Console.WriteLine("Determine class randomly or enter manually? 1 = Random, 2 = Manually");
-            int classSelectionTechnique = int.Parse(Console.ReadLine());
-            //TODO: refactor
-            //string charClass = classSelectionTechnique == 2 ? [...] : SelectRandomClass();
-            string charClass;
-            if (classSelectionTechnique == 2)
-            {
-                Console.WriteLine($"Enter class for character {charNumber}");
-                charClass = Console.ReadLine();
-            }
-            else
-            {
-                charClass = SelectRandomClass();
-            }
-            
-            string charClassCap = charClass[0].ToString().ToUpper() + charClass[1..];
+            //Console.WriteLine($"Enter level for {name}");
+            //int level = int.Parse(Console.ReadLine());
 
-            Console.WriteLine($"Enter level for character {charNumber}");
-            int level = int.Parse(Console.ReadLine());
-
-            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClassCap, level);
+            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
             int currentHP = HPByLevel.Sum();
 
             //Console.WriteLine($"Enter HP for character {charNumber}");
@@ -193,19 +176,73 @@ namespace NPCConsoleTesting
             //Console.WriteLine($"Enter initMod for character {charNumber}");
             //int initMod = int.Parse(Console.ReadLine());
 
-            Console.WriteLine($"Enter weapon for character {charNumber}");
+            Console.WriteLine($"Enter weapon for {name}");
             string weapon = Console.ReadLine();
             string weaponCap = weapon[0].ToString().ToUpper() + weapon[1..];
 
             //TODO: spells?
 
-            return new Combatant(name, charClassCap, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weaponCap);
+            return new Combatant(name, charClass, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weaponCap);
         }
 
-        public static string GetNameFromUserInput(int charNumber)
+        public static string GetName(int charNumber)
+        {
+            Console.WriteLine("Generate name randomly or enter custom name? 1 = Random, 2 = Custom");
+            int nameCreationTechnique = int.Parse(Console.ReadLine());
+            string name = nameCreationTechnique == 2 ? GetCustomNameFromUserInput(charNumber) : GenerateRandomName();
+
+            if (nameCreationTechnique != 2)
+            {
+                Console.WriteLine($"Character {charNumber}'s name will be... {name}");
+            }
+
+            return name;
+        }
+
+        public static string GetCustomNameFromUserInput(int charNumber)
         {
             Console.WriteLine($"Enter name for character {charNumber}");
             return Console.ReadLine();
+        }
+
+        public static string GetCharClass(string name)
+        {
+            Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually");
+            int classSelectionTechnique = int.Parse(Console.ReadLine());
+            //TODO: refactor
+            //string charClass = classSelectionTechnique == 2 ? [...] : SelectRandomClass();
+            string charClass;
+            if (classSelectionTechnique == 2)
+            {
+                Console.WriteLine($"Enter class for {name}");
+                charClass = Console.ReadLine();
+            }
+            else
+            {
+                charClass = SelectRandomClass();
+            }
+
+            //capitalize first letter
+            return charClass[0].ToString().ToUpper() + charClass[1..];
+        }
+
+        public static int GetLevel(string name, int minLevel, int maxLevel)
+        {
+            Console.WriteLine($"Determine level for {name} randomly or enter manually? 1 = Random, 2 = Manually");
+            int levelSelectionTechnique = int.Parse(Console.ReadLine());
+
+            int level;
+            if (levelSelectionTechnique == 2)
+            {
+                Console.WriteLine($"Enter level for {name}");
+                level = int.Parse(Console.ReadLine());
+            }
+            else
+            {
+                level = _random.Next(minLevel, maxLevel + 1);
+            }
+
+            return level;
         }
 
         public static string GenerateRandomName()
