@@ -160,10 +160,25 @@ namespace NPCConsoleTesting
 
         public static Combatant BuildCombatantViaConsole(int charNumber)
         {
-            string name = GetNameFromUserInput(charNumber);
+            Console.WriteLine("Generate name randomly or enter custom name? 1 = Random, 2 = Custom");
+            int nameCreationTechnique = int.Parse(Console.ReadLine());
+            string name = nameCreationTechnique == 2 ? GetNameFromUserInput(charNumber) : GenerateRandomName();
 
-            Console.WriteLine($"Enter class for character {charNumber}");
-            string charClass = Console.ReadLine();
+            Console.WriteLine("Determine class randomly or enter manually? 1 = Random, 2 = Manually");
+            int classSelectionTechnique = int.Parse(Console.ReadLine());
+            //TODO: refactor
+            //string charClass = classSelectionTechnique == 2 ? [...] : SelectRandomClass();
+            string charClass;
+            if (classSelectionTechnique == 2)
+            {
+                Console.WriteLine($"Enter class for character {charNumber}");
+                charClass = Console.ReadLine();
+            }
+            else
+            {
+                charClass = SelectRandomClass();
+            }
+            
             string charClassCap = charClass[0].ToString().ToUpper() + charClass[1..];
 
             Console.WriteLine($"Enter level for character {charNumber}");

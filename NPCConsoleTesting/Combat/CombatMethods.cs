@@ -471,7 +471,7 @@ namespace NPCConsoleTesting
 
             if (spellName != null)
             {
-                entries.Add($"{targeter.Name} cast a {spellName} spell, doing {damage} damage to {target.Name}.");
+                entries.Add($"{targeter.Name}'s {spellName} spell did {damage} damage to {target.Name}.");
             }
             else
             {
