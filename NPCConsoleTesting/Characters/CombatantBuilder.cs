@@ -162,13 +162,17 @@ namespace NPCConsoleTesting
         {
             string name = GetName(charNumber);
             string charClass = GetCharClass(name);
+            string race = GetCharRace(name);
             int level = GetLevel(name, _MinLevel, _MaxLevel);
 
-            //Console.WriteLine($"Enter level for {name}");
-            //int level = int.Parse(Console.ReadLine());
+            Attributes attributes = GenerateAttributes(charClass, race);
+            int str = attributes.Strength;
+            int ex_str = attributes.Ex_Strength;
+            int dex = attributes.Dexterity;
+            int con = attributes.Constitution;
 
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
-            int currentHP = HPByLevel.Sum();
+            int currentHP = CalcMaxHP(HPByLevel, con, charClass);
 
             //Console.WriteLine($"Enter HP for character {charNumber}");
             //int HP = int.Parse(Console.ReadLine());
@@ -187,7 +191,7 @@ namespace NPCConsoleTesting
 
         public static string GetName(int charNumber)
         {
-            Console.WriteLine("Generate name randomly or enter custom name? 1 = Random, 2 = Custom");
+            Console.WriteLine($"Generate name for character {charNumber} randomly or enter custom name? 1 = Random, 2 = Custom");
             int nameCreationTechnique = int.Parse(Console.ReadLine());
             string name = nameCreationTechnique == 2 ? GetCustomNameFromUserInput(charNumber) : GenerateRandomName();
 
@@ -223,7 +227,42 @@ namespace NPCConsoleTesting
             }
 
             //capitalize first letter
-            return charClass[0].ToString().ToUpper() + charClass[1..];
+            charClass = charClass[0].ToString().ToUpper() + charClass[1..];
+
+            if (classSelectionTechnique != 2)
+            {
+                Console.WriteLine($"{name}'s class will be... {charClass}");
+            }
+
+            return charClass;
+        }
+
+        public static string GetCharRace(string name)
+        {
+            Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually");
+            int raceSelectionTechnique = int.Parse(Console.ReadLine());
+            //TODO: refactor
+            //string race = raceSelectionTechnique == 2 ? [...] : SelectRandomRace();
+            string race;
+            if (raceSelectionTechnique == 2)
+            {
+                Console.WriteLine($"Enter race for {name}");
+                race = Console.ReadLine();
+            }
+            else
+            {
+                race = SelectRandomRace();
+            }
+
+            //capitalize first letter
+            race =  race[0].ToString().ToUpper() + race[1..];
+
+            if (raceSelectionTechnique != 2)
+            {
+                Console.WriteLine($"{name}'s race will be... {race}");
+            }
+
+            return race;
         }
 
         public static int GetLevel(string name, int minLevel, int maxLevel)
@@ -240,6 +279,11 @@ namespace NPCConsoleTesting
             else
             {
                 level = _random.Next(minLevel, maxLevel + 1);
+            }
+
+            if (levelSelectionTechnique != 2)
+            {
+                Console.WriteLine($"{name}'s level will be... {level}");
             }
 
             return level;
