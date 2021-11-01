@@ -10,8 +10,6 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        //TODO: Lots of refactoring to be done in this file
-
         public ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
             ActionResults result = new(0);
@@ -114,18 +112,13 @@ namespace NPCConsoleTesting
 
             if (str >= 17)
             {
-                if (0 <= ex_str && ex_str <= 50)
+                result = ex_str switch
                 {
-                    result++;
-                }
-                else if (51 <= ex_str && ex_str <= 99)
-                {
-                    result += 2;
-                }
-                else if (ex_str == 100)
-                {
-                    result += 3;
-                }
+                    < 51 => 1,
+                    < 100 => 2,
+                    100 => 3,
+                    _ => 0
+                };
             }
 
             return result;
@@ -137,59 +130,22 @@ namespace NPCConsoleTesting
 
             if (15 < str && str < 18)
             {
-                result++;
+                result = 1;
             }
 
             if (str == 18)
             {
-                if (ex_str == 0)
+                int tempResult = ex_str switch
                 {
-                    result += 2;
-                }
-                else if (1 <= ex_str && ex_str <= 75)
-                {
-                    result += 3;
-                }
-                else if (76 <= ex_str && ex_str <= 90)
-                {
-                    result += 4;
-                }
-                else if (91 <= ex_str && ex_str <= 99)
-                {
-                    result += 5;
-                }
-                else if (ex_str == 100)
-                {
-                    result += 6;
-                }
-            }
-
-            return result;
-        }
-
-        public static int CalcConBonusToHP(int con, string charClass)
-        {
-            int result;
-
-            if (charClass == "Fighter" || charClass == "Ranger" || charClass == "Paladin")
-            {
-                result = con switch
-                {
-                    <15 => 0,
-                    15 => 1,
-                    16 => 2,
-                    17 => 3,
-                    >17 => 4
+                    0 => 2,
+                    <76 => 3,
+                    <91 => 4,
+                    <100 => 5,
+                    100 => 6,
+                    _ => 2
                 };
-            }
-            else
-            {
-                result = con switch
-                {
-                    < 15 => 0,
-                    15 => 1,
-                    >15 => 2
-                };
+
+                result = tempResult;
             }
 
             return result;
@@ -262,7 +218,7 @@ namespace NPCConsoleTesting
             return result + weaponInfo.DmgModifier;
         }
 
-        public static WeaponInfo GetWeaponInfo(string weapon)
+        private static WeaponInfo GetWeaponInfo(string weapon)
         {
             WeaponInfo results = weapon switch
             {
@@ -311,10 +267,12 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public void IncrementStatuses(List<Combatant> chars, List<string> log)
+        public void IncrementStatuses(List<Combatant> combatants, List<string> log)
         {
-            foreach (Combatant x in chars)
+            foreach (Combatant x in combatants)
             {
+                //TODO: possible check here for haste and slow effets canceling each other out
+
                 foreach (Status y in x.Statuses)
                 {
                     y.Duration--;
@@ -324,45 +282,42 @@ namespace NPCConsoleTesting
                     }
                 }
 
+                //when the duration of a status reaches zero, that status is removed
                 x.Statuses.RemoveAll(z => z.Duration < 1);
             }
         }
 
-        public void DetermineActions(List<Combatant> chars)
+        public void DetermineActions(List<Combatant> combatants)
         {
-            foreach (Combatant ch in chars)
+            foreach (Combatant ch in combatants)
             {
                 string spellName = SpellMethods.SelectFromCombatantsSpells(ch);
                 ch.ActionForThisRound = spellName == "" ? "Melee Attack" : spellName;
             }
         }
 
-        public void DetermineTargets(List<Combatant> chars)
+        public void DetermineTargets(List<Combatant> combatants)
         {
             //set targets if needed
-            foreach (Combatant ch in chars)
+            foreach (Combatant ch in combatants)
             {
-                if (ch.Target == "" || chars.Where(x => x.Name == ch.Target).Count() == 0)
+                if (ch.Target == "" || combatants.Where(x => x.Name == ch.Target).Count() == 0)
                 {
-                    List<string> potentialTargets = chars.Where(x => ch.Name != x.Name).Select(x => x.Name).ToList();
-                    ch.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
+                    DetermineTargetForOneCombatant(combatants, ch);
                 }
             }
-            //show targets
-            //for (int i = 0; i < chars.Count; i++)
-            //{
-            //    if (chars[i].hp > 0)
-            //    {
-            //        Console.WriteLine($"{chars[i].name} target: {chars[i].target}");
-            //    }
-            //}
-            //if (doReadLines) { Console.ReadLine(); }
         }
 
-        public void DetermineInits(List<Combatant> chars)
+        public void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC)
+        {
+            List<string> potentialTargets = combatants.Where(x => priorityC.Name != x.Name && x.CurrentHP > 0).Select(x => x.Name).ToList();
+            priorityC.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
+        }
+
+        public void DetermineInits(List<Combatant> combatants)
         {
             //set inits
-            foreach (Combatant ch in chars)
+            foreach (Combatant ch in combatants)
             {
                 if(ch.ActionForThisRound != "Melee Attack")
                 {
@@ -376,7 +331,7 @@ namespace NPCConsoleTesting
             }
 
             //order combatants by init
-            chars.Sort((p, q) => p.Init.CompareTo(q.Init));
+            combatants.Sort((p, q) => p.Init.CompareTo(q.Init));
         }
 
         public CombatantUpdateResults ApplyActionResultToCombatant(Combatant targeter, Combatant target, ActionResults results, int segment)
@@ -384,18 +339,36 @@ namespace NPCConsoleTesting
             List<string> entries = new();
             bool opportunityForSimulAttack = false;
 
+            //handle spell actions
             if (results.SpellName != null)
             {
+                //if a combatant whose round action is a spell takes damage before their turn, they take no action this round 
                 if (targeter.GotHitThisRound)
                 {
                     entries.Add($"{targeter.Name}'s casting of {results.SpellName} was interrupted.");
                     return new CombatantUpdateResults(entries, opportunityForSimulAttack);
                 }
 
-                if (results.SpellAffectType == "Status")
+                //TODO: fix / refactor this
+                if (results.SpellEffectType == "Status")
                 {
-                    target.Statuses.Add(results.Status);
-                    entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+                    if (results.SpellSavingThrowType == "Negate")
+                    {
+                        if (DoASavingThrow(target) == "Failure")
+                        {
+                            target.Statuses.Add(results.Status);
+                            entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+                        }
+                        else if (DoASavingThrow(target) == "Success")
+                        {
+                            entries.Add($"{targeter.Name} attempted to cast {results.SpellName} on {target.Name}, but {target.Name}'s saving throw was successful.");
+                        }
+                    }
+                    else
+                    {
+                        target.Statuses.Add(results.Status);
+                        entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+                    }
                 }
 
                 if (results.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
@@ -405,20 +378,105 @@ namespace NPCConsoleTesting
                 }
             }
 
+            //apply damage from spell or melee attack
             if (results.Damage > 0)
             {
-                opportunityForSimulAttack = ApplyDamageToCombatant(targeter, target, results.Damage, entries, segment, opportunityForSimulAttack);
+                if (results.SpellSavingThrowType == "Half")
+                {
+                    if (DoASavingThrow(target) == "Success")
+                    {
+                        entries.Add($"{target.Name}'s saving throw was successful; damage reduced by half.");
+                        results.Damage /= 2;
+                    }
+                }
+
+                opportunityForSimulAttack = ApplyDamageToCombatant(targeter, target, results.SpellName, results.Damage, entries, segment, opportunityForSimulAttack);
             }
 
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
-        public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
+        private string DoASavingThrow(Combatant target)
+        {
+            int targetNumber = GetSavingThrowTargetNumber(target);
+
+            return _random.Next(1, 21) < targetNumber ? "Failure" : "Success";
+        }
+
+        private int GetSavingThrowTargetNumber(Combatant target)
+        {
+            int result;
+
+            if (target.CharacterClass == "Magic-User" || target.CharacterClass == "Illusionist")
+            {
+                result = target.Level switch
+                {
+                    < 6 => 12,
+                    6 or 7 or 8 or 9 or 10 => 10,
+                    11 or 12 or 13 or 14 or 15 => 8,
+                    16 or 17 or 18 or 19 or 20 => 6,
+                    > 20 => 4
+                };
+            }
+            else if (target.CharacterClass == "Cleric" || target.CharacterClass == "Druid")
+            {
+                result = target.Level switch
+                {
+                    < 4 => 15,
+                    4 or 5 or 6 => 14,
+                    7 or 8 or 9 => 12,
+                    10 or 11 or 12 => 11,
+                    13 or 14 or 15 => 10,
+                    16 or 17 or 18 => 9,
+                    > 18 => 7
+                };
+            }
+            else if (target.CharacterClass == "Thief" || target.CharacterClass == "Assassin" || target.CharacterClass == "Monk")
+            {
+                result = target.Level switch
+                {
+                    < 5 => 15,
+                    5 or 6 or 7 or 8 => 13,
+                    9 or 10 or 11 or 12 => 11,
+                    13 or 14 or 15 or 16 => 9,
+                    17 or 18 or 19 or 20 => 7,
+                    > 20 => 5
+                };
+            }
+            else
+            {
+                result = target.Level switch
+                {
+                    < 1 => 19,
+                    1 or 2 => 17,
+                    3 or 4 => 16,
+                    5 or 6 => 14,
+                    7 or 8 => 13,
+                    9 or 10 => 11,
+                    11 or 12 => 10,
+                    13 or 14 => 8,
+                    15 or 16 => 7,
+                    > 16 => 6
+                };
+            }
+
+            return result;
+        }
+
+        public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, string spellName, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
         {
             //adjust target hp and GotHitThisRound status
             target.CurrentHP -= damage;
             target.GotHitThisRound = true;
-            entries.Add($"{targeter.Name} struck {target.Name} for {damage} damage.");
+
+            if (spellName != null)
+            {
+                entries.Add($"{targeter.Name}'s {spellName} spell did {damage} damage to {target.Name}.");
+            }
+            else
+            {
+                entries.Add($"{targeter.Name} struck {target.Name} for {damage} damage.");
+            }
 
             if (target.CurrentHP < 1)
             {

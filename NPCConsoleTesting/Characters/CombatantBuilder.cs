@@ -13,14 +13,6 @@ namespace NPCConsoleTesting
         private int _MaxInitMod;
         private int _MinAC;
         private int _MaxAC;
-        private int _MinThac0;
-        private int _MaxThac0;
-        private int _MinNumberOfAttackDice;
-        private int _MaxNumberOfAttackDice;
-        private int _MinTypeOfAttackDie;
-        private int _MaxTypeOfAttackDie;
-        private int _MinDmgModifier;
-        private int _MaxDmgModifier;
         private int _MinLevel;
         private int _MaxLevel;
 
@@ -30,14 +22,6 @@ namespace NPCConsoleTesting
         public int MaxInitMod { get => _MaxInitMod; set => _MaxInitMod = value; }
         public int MinAC { get => _MinAC; set => _MinAC = value; }
         public int MaxAC { get => _MaxAC; set => _MaxAC = value; }
-        public int MinThac0 { get => _MinThac0; set => _MinThac0 = value; }
-        public int MaxThac0 { get => _MaxThac0; set => _MaxThac0 = value; }
-        public int MinNumberOfAttackDice { get => _MinNumberOfAttackDice; set => _MinNumberOfAttackDice = value; }
-        public int MaxNumberOfAttackDice { get => _MaxNumberOfAttackDice; set => _MaxNumberOfAttackDice = value; }
-        public int MinTypeOfAttackDie { get => _MinTypeOfAttackDie; set => _MinTypeOfAttackDie = value; }
-        public int MaxTypeOfAttackDie { get => _MaxTypeOfAttackDie; set => _MaxTypeOfAttackDie = value; }
-        public int MinDmgModifier { get => _MinDmgModifier; set => _MinDmgModifier = value; }
-        public int MaxDmgModifier { get => _MaxDmgModifier; set => _MaxDmgModifier = value; }
         public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
         public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
 
@@ -49,14 +33,6 @@ namespace NPCConsoleTesting
             MaxInitMod = 5;
             MinAC = 3;
             MaxAC = 10;
-            MinThac0 = 1;
-            MaxThac0 = 20;
-            MinNumberOfAttackDice = 1;
-            MaxNumberOfAttackDice = 2;
-            MinTypeOfAttackDie = 1;
-            MaxTypeOfAttackDie = 6;
-            MinDmgModifier = 0;
-            MaxDmgModifier = 2;
             MinLevel = 1;
             MaxLevel = 5;
         }
@@ -67,6 +43,20 @@ namespace NPCConsoleTesting
         static Random _random = new();
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
+        {
+            int numberBattling = DetermineNumberBattling();
+            int retrievalMethod = DetermineRetrievalMethod();
+
+            List<Combatant> combatants = new();
+            while (combatants.Count < numberBattling)
+            {
+                combatants.Add(GetCombatant(retrievalMethod, combatants.Count, connectionString));
+            }
+
+            return combatants;
+        }
+
+        private int DetermineNumberBattling()
         {
             int numberBattling = 0;
             while (numberBattling < 2)
@@ -86,16 +76,18 @@ namespace NPCConsoleTesting
                 }
             }
 
-            //Set the source for all characters
+            return numberBattling;
+        }
+
+        private int DetermineRetrievalMethod()
+        {
             Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
-            int charOrigin = 0;
-            bool intEntered = false;
-            while (!intEntered)
+            int retrievalMethod = 0;
+            while (retrievalMethod == 0)
             {
                 try
                 {
-                    charOrigin = int.Parse(Console.ReadLine());
-                    intEntered = true;
+                    retrievalMethod = int.Parse(Console.ReadLine());
                 }
                 catch (Exception)
                 {
@@ -103,41 +95,44 @@ namespace NPCConsoleTesting
                 }
             }
 
-            List<Combatant> combatants = new();
+            return retrievalMethod;
+        }
 
-            while (combatants.Count < numberBattling)
+        private Combatant GetCombatant(int retrievalMethod, int numberOfCombatants, string connectionString)
+        {
+            List<Combatant> result = new();
+
+            if (retrievalMethod == 2)
             {
-                if (charOrigin == 2)
+                try
                 {
-                    try
-                    {
-                        combatants.Add(BuildCombatantViaConsole(combatants.Count + 1));
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
+                    result.Add(BuildCombatantViaConsole(numberOfCombatants + 1));
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("That didn't work. Try again.");
+                }
 
-                }
-                else if (charOrigin == 3)
+            }
+            else if (retrievalMethod == 3)
+            {
+                string name = GetCustomNameFromUserInput(numberOfCombatants + 1);
+                try
                 {
-                    string name = GetNameFromUserInput(combatants.Count + 1);
-                    try
-                    {
-                        combatants.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
+                    result.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
                 }
-                else
+                catch (Exception)
                 {
-                    combatants.Add(BuildCombatantRandomly());
+                    Console.WriteLine("That didn't work. Try again.");
                 }
             }
+            else
+            {
+                CombatantBuilder cb = new();
+                result.Add(cb.BuildCombatantRandomly());
+            }
 
-            return combatants;
+            return result[0];
         }
 
         public Combatant BuildCombatantRandomly()
@@ -152,8 +147,7 @@ namespace NPCConsoleTesting
             int dex = attributes.Dexterity;
             int con = attributes.Constitution;
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
-            //set currentHP to maxHP (sum of HPByLevel values + con bonus)
-            int currentHP = HPByLevel.Sum() + CombatMethods.CalcConBonusToHP(con, charClass);
+            int currentHP = CalcMaxHP(HPByLevel, con, charClass);
             //int initMod = 0;
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass);
@@ -164,19 +158,21 @@ namespace NPCConsoleTesting
                 charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
         }
 
-        public static Combatant BuildCombatantViaConsole(int charNumber)
+        public Combatant BuildCombatantViaConsole(int charNumber)
         {
-            string name = GetNameFromUserInput(charNumber);
+            string name = GetName(charNumber);
+            string charClass = GetCharClass(name);
+            string race = GetCharRace(name);
+            int level = GetLevel(name, _MinLevel, _MaxLevel);
 
-            Console.WriteLine($"Enter class for character {charNumber}");
-            string charClass = Console.ReadLine();
-            string charClassCap = charClass[0].ToString().ToUpper() + charClass[1..];
-
-            Console.WriteLine($"Enter level for character {charNumber}");
-            int level = int.Parse(Console.ReadLine());
+            Attributes attributes = GenerateAttributes(charClass, race);
+            int str = attributes.Strength;
+            int ex_str = attributes.Ex_Strength;
+            int dex = attributes.Dexterity;
+            int con = attributes.Constitution;
 
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
-            int currentHP = HPByLevel.Sum();
+            int currentHP = CalcMaxHP(HPByLevel, con, charClass);
 
             //Console.WriteLine($"Enter HP for character {charNumber}");
             //int HP = int.Parse(Console.ReadLine());
@@ -184,21 +180,113 @@ namespace NPCConsoleTesting
             //Console.WriteLine($"Enter initMod for character {charNumber}");
             //int initMod = int.Parse(Console.ReadLine());
 
-            Console.WriteLine($"Enter weapon for character {charNumber}");
+            Console.WriteLine($"Enter weapon for {name}");
             string weapon = Console.ReadLine();
             string weaponCap = weapon[0].ToString().ToUpper() + weapon[1..];
 
             //TODO: spells?
 
-            //TODO: figure out what we do for HP_By_Level here
-            return new Combatant(name, charClassCap, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weaponCap);
+            return new Combatant(name, charClass, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weaponCap);
         }
 
-        public static string GetNameFromUserInput(int charNumber)
+        public static string GetName(int charNumber)
         {
-            //Console.WriteLine($"Enter the character's name.");
+            Console.WriteLine($"Generate name for character {charNumber} randomly or enter custom name? 1 = Random, 2 = Custom");
+            int nameCreationTechnique = int.Parse(Console.ReadLine());
+            string name = nameCreationTechnique == 2 ? GetCustomNameFromUserInput(charNumber) : GenerateRandomName();
+
+            if (nameCreationTechnique != 2)
+            {
+                Console.WriteLine($"Character {charNumber}'s name will be... {name}");
+            }
+
+            return name;
+        }
+
+        public static string GetCustomNameFromUserInput(int charNumber)
+        {
             Console.WriteLine($"Enter name for character {charNumber}");
             return Console.ReadLine();
+        }
+
+        public static string GetCharClass(string name)
+        {
+            Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually");
+            int classSelectionTechnique = int.Parse(Console.ReadLine());
+            //TODO: refactor
+            //string charClass = classSelectionTechnique == 2 ? [...] : SelectRandomClass();
+            string charClass;
+            if (classSelectionTechnique == 2)
+            {
+                Console.WriteLine($"Enter class for {name}");
+                charClass = Console.ReadLine();
+            }
+            else
+            {
+                charClass = SelectRandomClass();
+            }
+
+            //capitalize first letter
+            charClass = charClass[0].ToString().ToUpper() + charClass[1..];
+
+            if (classSelectionTechnique != 2)
+            {
+                Console.WriteLine($"{name}'s class will be... {charClass}");
+            }
+
+            return charClass;
+        }
+
+        public static string GetCharRace(string name)
+        {
+            Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually");
+            int raceSelectionTechnique = int.Parse(Console.ReadLine());
+            //TODO: refactor
+            //string race = raceSelectionTechnique == 2 ? [...] : SelectRandomRace();
+            string race;
+            if (raceSelectionTechnique == 2)
+            {
+                Console.WriteLine($"Enter race for {name}");
+                race = Console.ReadLine();
+            }
+            else
+            {
+                race = SelectRandomRace();
+            }
+
+            //capitalize first letter
+            race =  race[0].ToString().ToUpper() + race[1..];
+
+            if (raceSelectionTechnique != 2)
+            {
+                Console.WriteLine($"{name}'s race will be... {race}");
+            }
+
+            return race;
+        }
+
+        public static int GetLevel(string name, int minLevel, int maxLevel)
+        {
+            Console.WriteLine($"Determine level for {name} randomly or enter manually? 1 = Random, 2 = Manually");
+            int levelSelectionTechnique = int.Parse(Console.ReadLine());
+
+            int level;
+            if (levelSelectionTechnique == 2)
+            {
+                Console.WriteLine($"Enter level for {name}");
+                level = int.Parse(Console.ReadLine());
+            }
+            else
+            {
+                level = _random.Next(minLevel, maxLevel + 1);
+            }
+
+            if (levelSelectionTechnique != 2)
+            {
+                Console.WriteLine($"{name}'s level will be... {level}");
+            }
+
+            return level;
         }
 
         public static string GenerateRandomName()
@@ -291,42 +379,32 @@ namespace NPCConsoleTesting
         public static Attributes GenerateAttributes(string charClass, string race)
         {
             Attributes mins = GetAttributeMins(charClass);
-            Attributes attributes = new();
-
-            do
+            Attributes attributes = new()
             {
-                attributes.Strength = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Strength", race);
-            } while (attributes.Strength < mins.Strength);
-            
-            do
-            {
-                attributes.Intelligence = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-            } while (attributes.Intelligence < mins.Intelligence);
-
-            do
-            {
-                attributes.Constitution = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Constitution", race);
-            } while (attributes.Constitution < mins.Constitution);
-
-            do
-            {
-                attributes.Wisdom = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7);
-            } while (attributes.Wisdom < mins.Wisdom);
-
-            do
-            {
-                attributes.Dexterity = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Dexterity", race);
-            } while (attributes.Dexterity < mins.Dexterity);
-
-            do
-            {
-                attributes.Charisma = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier("Charisma", race);
-            } while (attributes.Charisma < mins.Charisma);
+                Strength = AssignAttribute("Strength", race, mins.Strength),
+                Intelligence = AssignAttribute("Intelligence", race, mins.Intelligence),
+                Wisdom = AssignAttribute("Wisdom", race, mins.Wisdom),
+                Dexterity = AssignAttribute("Dexterity", race, mins.Dexterity),
+                Constitution = AssignAttribute("Constitution", race, mins.Constitution),
+                Charisma = AssignAttribute("Charisma", race, mins.Charisma)
+            };
 
             //Fighters with 18 strength get Ex_Strength
             attributes.Ex_Strength = charClass == "Fighter" && attributes.Strength == 18 ? _random.Next(1, 101) : 0;
 
             return attributes;
+        }
+
+        private static int AssignAttribute(string attribute, string race, int min)
+        {
+            int result;
+
+            do
+            {
+                result = _random.Next(1, 7) + _random.Next(1, 7) + _random.Next(1, 7) + GetRacialAttributeModifier(attribute, race);
+            } while (result < min);
+
+            return result;
         }
 
         private static int GetRacialAttributeModifier(string attribute, string race)
@@ -400,9 +478,42 @@ namespace NPCConsoleTesting
             return result;
         }
 
+        public static int CalcMaxHP(List<int> HPByLevel, int con, string charClass)
+        {
+            return HPByLevel.Sum() + CalcConBonusToHP(con, charClass);
+        }
+
+        public static int CalcConBonusToHP(int con, string charClass)
+        {
+            int result;
+
+            if (charClass == "Fighter" || charClass == "Ranger" || charClass == "Paladin")
+            {
+                result = con switch
+                {
+                    < 15 => 0,
+                    15 => 1,
+                    16 => 2,
+                    17 => 3,
+                    > 17 => 4
+                };
+            }
+            else
+            {
+                result = con switch
+                {
+                    < 15 => 0,
+                    15 => 1,
+                    > 15 => 2
+                };
+            }
+
+            return result;
+        }
+
         private static string SelectRandomArmor(string charClass)
         {
-            List<string> armorList = new() { "Leather", "Studded Leather", "Scale Mail", "Chain Mail", "Banded Mail", "Plate Mail" };
+            List<string> armorList = new() { "Leather", "Studded Leather", "Scale", "Chain", "Banded", "Plate" };
 
             string result = charClass switch
             {
@@ -416,9 +527,24 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomWeapon(string charClass)
         {
-            List<string> weaponList = new() { };
+            List<string> MUList = new() { "Dagger", "Darts", "Staff" };
+            List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
+            List<string> DruidList = new() { "Club", "Dagger", "Darts", "Hammer", "Spear", "Staff" };
+            List<string> ThiefList = new() { "Club", "Dagger", "Darts", "Longsword", "Shortsword" };
+            List<string> MonkList = new() { "Club", "Darts", "Dagger", "Staff", "None" };
+            List<string> FighterList = new() { "Axe", "Halberd", "Longsword", "Shortsword", "Spear", "Two-Handed Sword"};
 
-            return "Dagger";
+            return charClass switch
+            {
+                "Magic-User" or "Illusionist" => MUList[_random.Next(0, MUList.Count)],
+                "Cleric" => ClericList[_random.Next(0, ClericList.Count)],
+                "Druid" => DruidList[_random.Next(0, DruidList.Count)],
+                "Thief" => ThiefList[_random.Next(0, ThiefList.Count)],
+                "Monk" => MonkList[_random.Next(0, MonkList.Count)],
+                "Fighter" or "Paladin" or "Ranger" => FighterList[_random.Next(0, FighterList.Count)],
+                
+                _ => "None"
+            };
         }
 
         private static bool DetermineShieldPresence(string charClass, string weapon)

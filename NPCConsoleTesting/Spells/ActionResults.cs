@@ -6,14 +6,16 @@ namespace NPCConsoleTesting
     {
         public int Damage { get; set; }
         public string SpellName { get; set; }
-        public string SpellAffectType { get; set; }
+        public string SpellEffectType { get; set; }
+        public string SpellSavingThrowType { get; set; }
         public Status Status { get; set; }
 
-        public ActionResults(int dmg, string spellName = null, string affectType = null, Status status = null)
+        public ActionResults(int dmg, string spellName = null, string effectType = null, string savingThrowType = null, Status status = null)
         {
             Damage = dmg;
             SpellName = spellName;
-            SpellAffectType = affectType;
+            SpellEffectType = effectType;
+            SpellSavingThrowType = savingThrowType;
             Status = status;
         }
     }

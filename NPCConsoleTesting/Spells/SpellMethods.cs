@@ -31,14 +31,12 @@ namespace NPCConsoleTesting
 
         public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
-            string affectType = DamageSpells.Contains(spellName) ? "damage" : "status";
+            string effectType = DamageSpells.Contains(spellName) ? "Damage" : "Status";
             Status status = new("", 0);
             int dmg = 0;
 
-            //TODO: somewhere in here we need to check if a saving throw is called for
-
             //TODO: add checks for input not in either list
-            if (affectType == "damage")
+            if (effectType == "Damage")
             {
                 dmg = GetSpellDamage(spellName, casterLevel) + bonus;
             }
@@ -48,7 +46,9 @@ namespace NPCConsoleTesting
                 status.Duration = GetStatusDuration(spellName, casterLevel);
             }
 
-            return new ActionResults(dmg, spellName, affectType, status);
+            string savingThrowType = GetSavingThrowType(spellName);
+
+            return new ActionResults(dmg, spellName, effectType, savingThrowType, status);
         }
 
         public static int GetSpellDamage(string spellName, int casterLevel)
@@ -99,6 +99,24 @@ namespace NPCConsoleTesting
             return result;
         }
 
+        public static string GetSavingThrowType(string spellName)
+        {
+            return spellName switch
+            {
+                //"Burning Hands" => "",
+                //"Cure Light Wounds",
+                //"Magic Missile",
+                //"Shocking Grasp",
+                //"Haste",
+                //"Slow",
+                //"Strength",
+                //"Sleep",
+                "Fireball" or "Lightning Bolt" => "Half",
+                "Hold Person" or "Ray of Enfeeblement" or "Web" => "Negate",
+                _ => "None"
+            };
+        }
+
         public static string SelectFromCombatantsSpells(Combatant combatant)
         {
             if (combatant.Spells == null || combatant.Spells.Count < 1)
@@ -110,14 +128,14 @@ namespace NPCConsoleTesting
             List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).ToList();
 
             //a combatant at full HP with only cure spells will not cast a spell
-            if (combatant.CurrentHP >= (combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass)) &&
+            if (combatant.CurrentHP >= CombatantBuilder.CalcMaxHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&
                 nonCureSpells.Count < 1)
             {
                 return "";
             }
 
             //unless the combatant is at full health, cure spells are prioritized
-            if (combatant.CurrentHP < combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass) &&
+            if (combatant.CurrentHP < CombatantBuilder.CalcMaxHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&
                 cureSpells.Count > 0)
             {
                 //select random cure spell
