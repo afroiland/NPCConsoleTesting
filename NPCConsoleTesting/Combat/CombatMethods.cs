@@ -20,7 +20,7 @@ namespace NPCConsoleTesting
                 CalcMonkAC(defender.Level, defender.OtherACBonus);
 
             //calculate number needed for successful attack roll
-            int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus;
+            int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus - ;
             if (attacker.CharacterClass != "Monk")
             {
                 targetNumber -= CalcStrBonusToHit(attacker.Strength, attacker.Ex_Strength);
@@ -218,6 +218,181 @@ namespace NPCConsoleTesting
             return result + weaponInfo.DmgModifier;
         }
 
+        private static int CalcWeaponVsArmorAdjustment(string weapon, string armor, bool hasShield)
+        {
+            int armorClass = CalcNonMonkAC(armor, hasShield, 0, 0);
+
+            int result = armorClass switch
+            {
+                10 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => 0,
+                        "Staff" => 1,
+                        "Longsword" => 2,
+                        //TODO: figure out if this is footman's or horseman's flail
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                9 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => ,
+                        "Staff" => ,
+                        "Longsword" => ,
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                8 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => ,
+                        "Staff" => ,
+                        "Longsword" => ,
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                7 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => ,
+                        "Staff" => ,
+                        "Longsword" => ,
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                6 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => ,
+                        "Staff" => ,
+                        "Longsword" => ,
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                5 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => ,
+                        "Staff" => ,
+                        "Longsword" => ,
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                4 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => ,
+                        "Staff" => ,
+                        "Longsword" => ,
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                3 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => ,
+                        "Staff" => ,
+                        "Longsword" => ,
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                2 =>
+                    weapon switch
+                    {
+                        "Dagger" => 3,
+                        "Darts" => 1,
+                        "Shortsword" => 2,
+                        "Club" => 1,
+                        "Hammer" => ,
+                        "Staff" => ,
+                        "Longsword" => ,
+                        "Flail" => ,
+                        "Mace" => ,
+                        "Axe" => ,
+                        "Halberd" => ,
+                        "Spear" => ,
+                        "Two-Handed Sword" => ,
+                        _ => 0
+                    },
+                _ => 0
+            };
+
+            return result;
+        }
+
         private static WeaponInfo GetWeaponInfo(string weapon)
         {
             WeaponInfo results = weapon switch
@@ -225,7 +400,9 @@ namespace NPCConsoleTesting
                 "Darts" => new(1, 3, 0),
                 "Dagger" => new(1, 4, 0),
                 "Hammer" => new(1, 4, 1),
-                "Club" or "Flail" or "Mace" or "Shortsword" or "Spear" or "Staff" => new(1, 6, 0),
+                "Club" or "Mace" or "Shortsword" or "Spear" or "Staff" => new(1, 6, 0),
+                //TODO: figure out if this is footman's or horseman's flail
+                "Flail" => new(1, 6, 1),
                 "Axe" or "Longsword" => new(1, 8, 0 ),
                 "Halberd" or "Two-Handed Sword" => new(1, 10, 0),
                 _ => new(1, 3, 0 )
@@ -482,6 +659,7 @@ namespace NPCConsoleTesting
             {
                 entries.Add($"{target.Name} fell.");
 
+                //a combatant that falls during the segment where they were about to take their action still gets to take their action
                 if (target.Init == segment)
                 {
                     opportunityForSimulAttack = true;

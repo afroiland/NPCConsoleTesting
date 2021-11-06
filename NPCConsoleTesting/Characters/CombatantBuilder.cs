@@ -162,7 +162,7 @@ namespace NPCConsoleTesting
         {
             string name = GetName(charNumber);
             string charClass = GetCharClass(name);
-            string race = GetCharRace(name);
+            string race = GetCharRace(name, charClass);
             int level = GetLevel(name, _MinLevel, _MaxLevel);
 
             Attributes attributes = GenerateAttributes(charClass, race);
@@ -237,13 +237,14 @@ namespace NPCConsoleTesting
             return charClass;
         }
 
-        public static string GetCharRace(string name)
+        public static string GetCharRace(string name, string charClass)
         {
             Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually");
             int raceSelectionTechnique = int.Parse(Console.ReadLine());
             //TODO: refactor
             //string race = raceSelectionTechnique == 2 ? [...] : SelectRandomRace();
             string race;
+            //TODO: add logic for race dependant on class
             if (raceSelectionTechnique == 2)
             {
                 Console.WriteLine($"Enter race for {name}");
@@ -251,6 +252,7 @@ namespace NPCConsoleTesting
             }
             else
             {
+                //TODO: add logic for race dependant on class
                 race = SelectRandomRace();
             }
 
@@ -372,6 +374,7 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomRace()
         {
+            //TODO: add logic for race dependant on class
             List<string> races = new() { "Human", "Elf", "Dwarf", "Halfling" };
             return races[_random.Next(0, races.Count)];
         }
