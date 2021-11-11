@@ -40,6 +40,13 @@ namespace NPCConsoleTesting
         const int MIN_NAME_PATTERN_LENGTH = 3;
         const int MAX_NAME_PATTERN_LENGTH = 7;
 
+        static List<string> MUList = new() { "Dagger", "Darts", "Staff" };
+        static List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
+        static List<string> DruidList = new() { "Club", "Dagger", "Darts", "Hammer", "Spear", "Staff" };
+        static List<string> ThiefList = new() { "Club", "Dagger", "Darts", "Longsword", "Shortsword" };
+        static List<string> MonkList = new() { "Club", "Darts", "Dagger", "Staff", "None" };
+        static List<string> FighterList = new() { "Axe", "Halberd", "Longsword", "Shortsword", "Spear", "Two-Handed Sword" };
+
         static Random _random = new();
 
         public List<Combatant> BuildListOfCombatants(string connectionString)
@@ -180,13 +187,19 @@ namespace NPCConsoleTesting
             //Console.WriteLine($"Enter initMod for character {charNumber}");
             //int initMod = int.Parse(Console.ReadLine());
 
-            Console.WriteLine($"Enter weapon for {name}");
-            string weapon = Console.ReadLine();
-            string weaponCap = weapon[0].ToString().ToUpper() + weapon[1..];
+            //Console.WriteLine($"Enter weapon for {name}");
+            //string weapon = Console.ReadLine();
+            //string weaponCap = weapon[0].ToString().ToUpper() + weapon[1..];
+
+            string weapon = GetWeapon(name, charClass, level);
+
+            //armor
+
+            //shield
 
             //TODO: spells?
 
-            return new Combatant(name, charClass, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weaponCap);
+            return new Combatant(name, charClass, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weapon);
         }
 
         public static string GetName(int charNumber)
@@ -289,6 +302,50 @@ namespace NPCConsoleTesting
             }
 
             return level;
+        }
+
+        public static string GetWeapon(string name, string charClass, int level)
+        {
+            Console.WriteLine($"Determiner {name}'s weapon randomly or enter manually? 1 = Random, 2 = Manually");
+            int weaponSelectionTechnique = int.Parse(Console.ReadLine());
+
+            string weapon = "";
+            while (!WeaponIsAppropriate(charClass, weapon))
+            {
+                if (weaponSelectionTechnique == 2)
+                {
+                    Console.WriteLine($"Enter weapon for {name}");
+                    weapon = Console.ReadLine();
+                    weapon = weapon[0].ToString().ToUpper() + weapon[1..];
+
+                    if (!WeaponIsAppropriate(charClass, weapon))
+                    {
+                        //TODO: suggest an appropriate weapon based on class
+                        Console.WriteLine($"That's not an appropriate weapon.");
+                    }
+                }
+                else
+                {
+                    weapon = SelectRandomWeapon(charClass, level);
+                }
+            }
+
+            if (weaponSelectionTechnique != 2)
+            {
+                Console.WriteLine($"{name} shall wield a... {weapon}");
+            }
+
+            return weapon;
+        }
+
+        private static bool WeaponIsAppropriate(string charClass, string weapon)
+        {
+            return charClass switch
+            {
+                "Magic-User" or "Illusionist" => MUList.Contains(weapon),
+                "Cleric" => ClericList.Contains(weapon),
+                _ => false
+            }; 
         }
 
         public static string GenerateRandomName()
@@ -531,12 +588,12 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomWeapon(string charClass, int level)
         {
-            List<string> MUList = new() { "Dagger", "Darts", "Staff" };
-            List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
-            List<string> DruidList = new() { "Club", "Dagger", "Darts", "Hammer", "Spear", "Staff" };
-            List<string> ThiefList = new() { "Club", "Dagger", "Darts", "Longsword", "Shortsword" };
-            List<string> MonkList = new() { "Club", "Darts", "Dagger", "Staff", "None" };
-            List<string> FighterList = new() { "Axe", "Halberd", "Longsword", "Shortsword", "Spear", "Two-Handed Sword"};
+            //List<string> MUList = new() { "Dagger", "Darts", "Staff" };
+            //List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
+            //List<string> DruidList = new() { "Club", "Dagger", "Darts", "Hammer", "Spear", "Staff" };
+            //List<string> ThiefList = new() { "Club", "Dagger", "Darts", "Longsword", "Shortsword" };
+            //List<string> MonkList = new() { "Club", "Darts", "Dagger", "Staff", "None" };
+            //List<string> FighterList = new() { "Axe", "Halberd", "Longsword", "Shortsword", "Spear", "Two-Handed Sword"};
 
             //beyond level five, a monk has higher damage potential w/o a weapon
             if (charClass == "Monk" && level > 5)
