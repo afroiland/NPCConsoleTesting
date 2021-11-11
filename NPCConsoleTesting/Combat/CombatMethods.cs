@@ -221,9 +221,7 @@ namespace NPCConsoleTesting
 
         private static int CalcWeaponVsArmorAdjustment(string weapon, string armor, bool hasShield)
         {
-            int armorClass = CalcNonMonkAC(armor, hasShield, 0, 0);
-
-            int result = armorClass switch
+            return CalcNonMonkAC(armor, hasShield, 0, 0) switch
             {
                 10 =>
                     weapon switch
@@ -308,8 +306,6 @@ namespace NPCConsoleTesting
                     },
                 _ => 0
             };
-
-            return result;
         }
 
         private static WeaponInfo GetWeaponInfo(string weapon)

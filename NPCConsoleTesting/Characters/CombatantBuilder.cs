@@ -150,7 +150,7 @@ namespace NPCConsoleTesting
             int currentHP = CalcMaxHP(HPByLevel, con, charClass);
             //int initMod = 0;
             string armor = SelectRandomArmor(charClass);
-            string weapon = SelectRandomWeapon(charClass);
+            string weapon = SelectRandomWeapon(charClass, level);
             bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
 
@@ -488,6 +488,7 @@ namespace NPCConsoleTesting
 
         public static int CalcConBonusToHP(int con, string charClass)
         {
+            //TODO: refactor to use nested switches
             int result;
 
             if (charClass == "Fighter" || charClass == "Ranger" || charClass == "Paladin")
@@ -528,7 +529,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        private static string SelectRandomWeapon(string charClass)
+        private static string SelectRandomWeapon(string charClass, int level)
         {
             List<string> MUList = new() { "Dagger", "Darts", "Staff" };
             List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
@@ -536,6 +537,12 @@ namespace NPCConsoleTesting
             List<string> ThiefList = new() { "Club", "Dagger", "Darts", "Longsword", "Shortsword" };
             List<string> MonkList = new() { "Club", "Darts", "Dagger", "Staff", "None" };
             List<string> FighterList = new() { "Axe", "Halberd", "Longsword", "Shortsword", "Spear", "Two-Handed Sword"};
+
+            //beyond level five, a monk has higher damage potential w/o a weapon
+            if (charClass == "Monk" && level > 5)
+            {
+                return "None";
+            }
 
             return charClass switch
             {
