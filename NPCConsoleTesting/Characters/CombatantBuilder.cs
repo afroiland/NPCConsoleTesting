@@ -40,6 +40,9 @@ namespace NPCConsoleTesting
         const int MIN_NAME_PATTERN_LENGTH = 3;
         const int MAX_NAME_PATTERN_LENGTH = 7;
 
+        static List<string> charClasses = new() { "Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin" };
+
+        //TODO: rename as [...]WeaponLists
         static List<string> MUList = new() { "Dagger", "Darts", "Staff" };
         static List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
         static List<string> DruidList = new() { "Club", "Dagger", "Darts", "Hammer", "Spear", "Staff" };
@@ -74,21 +77,24 @@ namespace NPCConsoleTesting
                     numberBattling = int.Parse(Console.ReadLine());
                     if (numberBattling < 2)
                     {
-                        Console.WriteLine("Must be at least two");
+                        Console.WriteLine("At least two are needed for a battle.");
                     }
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("We're looking for an integer");
+                    Console.WriteLine("We're looking for an integer...");
                 }
             }
+
+            Console.WriteLine("Hmm, a good number for a battle.");
 
             return numberBattling;
         }
 
         private int DetermineRetrievalMethod()
         {
-            Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
+            Console.WriteLine("How shall the combatants be selected? 1 = Random, 2 = Custom, 3 = Get from db.");
+            //Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
             int retrievalMethod = 0;
             while (retrievalMethod == 0)
             {
@@ -98,7 +104,7 @@ namespace NPCConsoleTesting
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("We're looking for an integer");
+                    Console.WriteLine("We're looking for an integer...");
                 }
             }
 
@@ -109,34 +115,37 @@ namespace NPCConsoleTesting
         {
             List<Combatant> result = new();
 
-            if (retrievalMethod == 2)
+            while (result.Count < 1)
             {
-                try
+                if (retrievalMethod == 2)
                 {
-                    result.Add(BuildCombatantViaConsole(numberOfCombatants + 1));
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("That didn't work. Try again.");
-                }
+                    try
+                    {
+                        result.Add(BuildCombatantViaConsole(numberOfCombatants + 1));
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
 
-            }
-            else if (retrievalMethod == 3)
-            {
-                string name = GetCustomNameFromUserInput(numberOfCombatants + 1);
-                try
-                {
-                    result.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
                 }
-                catch (Exception)
+                else if (retrievalMethod == 3)
                 {
-                    Console.WriteLine("That didn't work. Try again.");
+                    string name = GetCustomNameFromUserInput(numberOfCombatants + 1);
+                    try
+                    {
+                        result.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
                 }
-            }
-            else
-            {
-                CombatantBuilder cb = new();
-                result.Add(cb.BuildCombatantRandomly());
+                else
+                {
+                    CombatantBuilder cb = new();
+                    result.Add(cb.BuildCombatantRandomly());
+                }
             }
 
             return result[0];
@@ -187,10 +196,6 @@ namespace NPCConsoleTesting
             //Console.WriteLine($"Enter initMod for character {charNumber}");
             //int initMod = int.Parse(Console.ReadLine());
 
-            //Console.WriteLine($"Enter weapon for {name}");
-            //string weapon = Console.ReadLine();
-            //string weaponCap = weapon[0].ToString().ToUpper() + weapon[1..];
-
             string weapon = GetWeapon(name, charClass, level);
 
             //armor
@@ -204,34 +209,31 @@ namespace NPCConsoleTesting
 
         public static string GetName(int charNumber)
         {
-            Console.WriteLine($"Generate name for character {charNumber} randomly or enter custom name? 1 = Random, 2 = Custom");
+            Console.WriteLine($"Generate name for character {charNumber} randomly or enter a custom name? 1 = Random, 2 = Custom.");
             int nameCreationTechnique = int.Parse(Console.ReadLine());
             string name = nameCreationTechnique == 2 ? GetCustomNameFromUserInput(charNumber) : GenerateRandomName();
 
-            if (nameCreationTechnique != 2)
-            {
-                Console.WriteLine($"Character {charNumber}'s name will be... {name}");
-            }
+            Console.WriteLine($"{name}... A fine name.");
 
             return name;
         }
 
         public static string GetCustomNameFromUserInput(int charNumber)
         {
-            Console.WriteLine($"Enter name for character {charNumber}");
+            Console.WriteLine($"Enter name for character {charNumber}:");
             return Console.ReadLine();
         }
 
         public static string GetCharClass(string name)
         {
-            Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually");
+            Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
             int classSelectionTechnique = int.Parse(Console.ReadLine());
             //TODO: refactor
             //string charClass = classSelectionTechnique == 2 ? [...] : SelectRandomClass();
             string charClass;
             if (classSelectionTechnique == 2)
             {
-                Console.WriteLine($"Enter class for {name}");
+                Console.WriteLine($"Enter class for {name}:");
                 charClass = Console.ReadLine();
             }
             else
@@ -242,17 +244,15 @@ namespace NPCConsoleTesting
             //capitalize first letter
             charClass = charClass[0].ToString().ToUpper() + charClass[1..];
 
-            if (classSelectionTechnique != 2)
-            {
-                Console.WriteLine($"{name}'s class will be... {charClass}");
-            }
+            string article = charClass == "Assassin" ? "an" : "a";
+            Console.WriteLine($"Very well, {name} will be... {article} {charClass}.");
 
             return charClass;
         }
 
         public static string GetCharRace(string name, string charClass)
         {
-            Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually");
+            Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
             int raceSelectionTechnique = int.Parse(Console.ReadLine());
             //TODO: refactor
             //string race = raceSelectionTechnique == 2 ? [...] : SelectRandomRace();
@@ -260,7 +260,7 @@ namespace NPCConsoleTesting
             //TODO: add logic for race dependant on class
             if (raceSelectionTechnique == 2)
             {
-                Console.WriteLine($"Enter race for {name}");
+                Console.WriteLine($"Enter a race for {name}:");
                 race = Console.ReadLine();
             }
             else
@@ -272,10 +272,8 @@ namespace NPCConsoleTesting
             //capitalize first letter
             race =  race[0].ToString().ToUpper() + race[1..];
 
-            if (raceSelectionTechnique != 2)
-            {
-                Console.WriteLine($"{name}'s race will be... {race}");
-            }
+            string article = race == "Elf" ? "an" : "a";
+            Console.WriteLine($"Very well, {name} will be... {article} {race}.");
 
             return race;
         }
@@ -296,17 +294,14 @@ namespace NPCConsoleTesting
                 level = _random.Next(minLevel, maxLevel + 1);
             }
 
-            if (levelSelectionTechnique != 2)
-            {
-                Console.WriteLine($"{name}'s level will be... {level}");
-            }
+            Console.WriteLine($"Very well, {name}'s level will be... {level}");
 
             return level;
         }
 
         public static string GetWeapon(string name, string charClass, int level)
         {
-            Console.WriteLine($"Determiner {name}'s weapon randomly or enter manually? 1 = Random, 2 = Manually");
+            Console.WriteLine($"Determiner {name}'s weapon randomly or enter manually? 1 = Random, 2 = Manually.");
             int weaponSelectionTechnique = int.Parse(Console.ReadLine());
 
             string weapon = "";
@@ -321,7 +316,7 @@ namespace NPCConsoleTesting
                     if (!WeaponIsAppropriate(charClass, weapon))
                     {
                         //TODO: suggest an appropriate weapon based on class
-                        Console.WriteLine($"That's not an appropriate weapon.");
+                        Console.WriteLine($"That's not an appropriate weapon. Try something else.");
                     }
                 }
                 else
@@ -330,16 +325,15 @@ namespace NPCConsoleTesting
                 }
             }
 
-            if (weaponSelectionTechnique != 2)
-            {
-                Console.WriteLine($"{name} shall wield a... {weapon}");
-            }
+            //TODO: fix grammar for "axe", "darts" and "none"
+            Console.WriteLine($"Very well, {name} shall wield a... {weapon}");
 
             return weapon;
         }
 
         private static bool WeaponIsAppropriate(string charClass, string weapon)
         {
+            //TODO: complete switch for all classes
             return charClass switch
             {
                 "Magic-User" or "Illusionist" => MUList.Contains(weapon),
@@ -425,7 +419,7 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomClass()
         {
-            List<string> charClasses = new() {"Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin"};
+            //List<string> charClasses = new() {"Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin"};
             return charClasses[_random.Next(0, charClasses.Count)];
         }
 
@@ -601,6 +595,7 @@ namespace NPCConsoleTesting
                 return "None";
             }
 
+            //TODO: assassin?
             return charClass switch
             {
                 "Magic-User" or "Illusionist" => MUList[_random.Next(0, MUList.Count)],
@@ -609,7 +604,6 @@ namespace NPCConsoleTesting
                 "Thief" => ThiefList[_random.Next(0, ThiefList.Count)],
                 "Monk" => MonkList[_random.Next(0, MonkList.Count)],
                 "Fighter" or "Paladin" or "Ranger" => FighterList[_random.Next(0, FighterList.Count)],
-                
                 _ => "None"
             };
         }
