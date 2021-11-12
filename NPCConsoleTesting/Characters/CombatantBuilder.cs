@@ -94,7 +94,6 @@ namespace NPCConsoleTesting
         private int DetermineRetrievalMethod()
         {
             Console.WriteLine("How shall the combatants be selected? 1 = Random, 2 = Custom, 3 = Get from db.");
-            //Console.WriteLine("1 = Random, 2 = Custom, 3 = Get from db");
             int retrievalMethod = 0;
             while (retrievalMethod == 0)
             {
@@ -221,7 +220,21 @@ namespace NPCConsoleTesting
         public static string GetCustomNameFromUserInput(int charNumber)
         {
             Console.WriteLine($"Enter name for character {charNumber}:");
-            return Console.ReadLine();
+
+            string name = "";
+            while (name == "")
+            {
+                try
+                {
+                    name = Console.ReadLine();
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("That didn't work. Try again.");
+                }
+            }
+
+            return name;
         }
 
         public static string GetCharClass(string name)
@@ -333,11 +346,14 @@ namespace NPCConsoleTesting
 
         private static bool WeaponIsAppropriate(string charClass, string weapon)
         {
-            //TODO: complete switch for all classes
             return charClass switch
             {
                 "Magic-User" or "Illusionist" => MUList.Contains(weapon),
                 "Cleric" => ClericList.Contains(weapon),
+                "Druid" => DruidList.Contains(weapon),
+                "Thief" => ThiefList.Contains(weapon),
+                "Monk" => MonkList.Contains(weapon),
+                "Fighter" or "Paladin" or "Ranger" or "Assassin" => FighterList.Contains(weapon),
                 _ => false
             }; 
         }
@@ -419,7 +435,6 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomClass()
         {
-            //List<string> charClasses = new() {"Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin"};
             return charClasses[_random.Next(0, charClasses.Count)];
         }
 
@@ -582,20 +597,12 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomWeapon(string charClass, int level)
         {
-            //List<string> MUList = new() { "Dagger", "Darts", "Staff" };
-            //List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
-            //List<string> DruidList = new() { "Club", "Dagger", "Darts", "Hammer", "Spear", "Staff" };
-            //List<string> ThiefList = new() { "Club", "Dagger", "Darts", "Longsword", "Shortsword" };
-            //List<string> MonkList = new() { "Club", "Darts", "Dagger", "Staff", "None" };
-            //List<string> FighterList = new() { "Axe", "Halberd", "Longsword", "Shortsword", "Spear", "Two-Handed Sword"};
-
             //beyond level five, a monk has higher damage potential w/o a weapon
             if (charClass == "Monk" && level > 5)
             {
                 return "None";
             }
 
-            //TODO: assassin?
             return charClass switch
             {
                 "Magic-User" or "Illusionist" => MUList[_random.Next(0, MUList.Count)],
@@ -603,7 +610,7 @@ namespace NPCConsoleTesting
                 "Druid" => DruidList[_random.Next(0, DruidList.Count)],
                 "Thief" => ThiefList[_random.Next(0, ThiefList.Count)],
                 "Monk" => MonkList[_random.Next(0, MonkList.Count)],
-                "Fighter" or "Paladin" or "Ranger" => FighterList[_random.Next(0, FighterList.Count)],
+                "Fighter" or "Paladin" or "Ranger" or "Assassin" => FighterList[_random.Next(0, FighterList.Count)],
                 _ => "None"
             };
         }
