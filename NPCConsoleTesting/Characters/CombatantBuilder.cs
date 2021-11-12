@@ -239,23 +239,52 @@ namespace NPCConsoleTesting
 
         public static string GetCharClass(string name)
         {
+            //TODO: refactor all these selection teachniques into a new method
             Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
-            int classSelectionTechnique = int.Parse(Console.ReadLine());
-            //TODO: refactor
-            //string charClass = classSelectionTechnique == 2 ? [...] : SelectRandomClass();
-            string charClass;
-            if (classSelectionTechnique == 2)
+            int classSelectionTechnique = 0;
+            while (classSelectionTechnique == 0)
             {
-                Console.WriteLine($"Enter class for {name}:");
-                charClass = Console.ReadLine();
-            }
-            else
-            {
-                charClass = SelectRandomClass();
+                try
+                {
+                    classSelectionTechnique = int.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("We're looking for an integer...");
+                }
             }
 
-            //capitalize first letter
-            charClass = charClass[0].ToString().ToUpper() + charClass[1..];
+            string charClass = "";
+            while (!charClasses.Contains(charClass))
+            {
+                if (classSelectionTechnique == 2)
+                {
+                    try
+                    {
+                        Console.WriteLine($"Enter class for {name}:");
+                        charClass = CapitalizeFirstLetter(Console.ReadLine());
+
+                        List<string> muNames = new() { "Wizard", "Mage", "Magic user", "Magic-user" };
+                        if (muNames.Contains(charClass))
+                        {
+                            charClass = "Magic-User";
+                        }
+                        else if (!charClasses.Contains(charClass))
+                        {
+                            string randomClass = SelectRandomClass();
+                            Console.WriteLine($"That class isn't recognized; you'll have to pick something else. Perhaps a {randomClass}?");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
+                }
+                else
+                {
+                    charClass = SelectRandomClass();
+                }
+            }
 
             string article = charClass == "Assassin" ? "an" : "a";
             Console.WriteLine($"Very well, {name} will be... {article} {charClass}.");
@@ -267,23 +296,20 @@ namespace NPCConsoleTesting
         {
             Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
             int raceSelectionTechnique = int.Parse(Console.ReadLine());
-            //TODO: refactor
-            //string race = raceSelectionTechnique == 2 ? [...] : SelectRandomRace();
-            string race;
-            //TODO: add logic for race dependant on class
+
+            //TODO: add logic for race dependent on class
+            string race = "";
+            //TODO: while()...
             if (raceSelectionTechnique == 2)
             {
                 Console.WriteLine($"Enter a race for {name}:");
-                race = Console.ReadLine();
+                race = CapitalizeFirstLetter(Console.ReadLine());
             }
             else
             {
-                //TODO: add logic for race dependant on class
+                //TODO: add logic for race dependent on class
                 race = SelectRandomRace();
             }
-
-            //capitalize first letter
-            race =  race[0].ToString().ToUpper() + race[1..];
 
             string article = race == "Elf" ? "an" : "a";
             Console.WriteLine($"Very well, {name} will be... {article} {race}.");
@@ -323,8 +349,7 @@ namespace NPCConsoleTesting
                 if (weaponSelectionTechnique == 2)
                 {
                     Console.WriteLine($"Enter weapon for {name}");
-                    weapon = Console.ReadLine();
-                    weapon = weapon[0].ToString().ToUpper() + weapon[1..];
+                    weapon = CapitalizeFirstLetter(Console.ReadLine());
 
                     if (!WeaponIsAppropriate(charClass, weapon))
                     {
@@ -425,7 +450,13 @@ namespace NPCConsoleTesting
             }
 
             //Capitalize first letter and return
-            return char.ToUpper(name[0]) + name[1..];
+            //return char.ToUpper(name[0]) + name[1..];
+            return CapitalizeFirstLetter(name);
+        }
+
+        public static string CapitalizeFirstLetter(string text)
+        {
+            return char.ToUpper(text[0]) + text[1..];
         }
 
         public enum LetterGroups
@@ -440,7 +471,8 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomRace()
         {
-            //TODO: add logic for race dependant on class
+            //TODO: add logic for race dependent on class
+            //TODO: pull this list out as was done with classes and weapons
             List<string> races = new() { "Human", "Elf", "Dwarf", "Halfling" };
             return races[_random.Next(0, races.Count)];
         }
