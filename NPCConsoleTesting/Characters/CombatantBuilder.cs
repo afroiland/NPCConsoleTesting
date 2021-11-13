@@ -41,6 +41,7 @@ namespace NPCConsoleTesting
         const int MAX_NAME_PATTERN_LENGTH = 7;
 
         static List<string> charClasses = new() { "Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin" };
+        static List<string> races = new() { "Human", "Elf", "Dwarf", "Halfling" };
 
         //TODO: rename as [...]WeaponLists
         static List<string> MUList = new() { "Dagger", "Darts", "Staff" };
@@ -272,7 +273,9 @@ namespace NPCConsoleTesting
                         else if (!charClasses.Contains(charClass))
                         {
                             string randomClass = SelectRandomClass();
-                            Console.WriteLine($"That class isn't recognized; you'll have to pick something else. Perhaps a {randomClass}?");
+                            //TODO: create AddArticle() method
+                            string article2 = randomClass == "Assassin" ? "an" : "a";
+                            Console.WriteLine($"That class isn't recognized; try something else. Perhaps {article2} {randomClass}?");
                         }
                     }
                     catch (Exception)
@@ -295,20 +298,50 @@ namespace NPCConsoleTesting
         public static string GetCharRace(string name, string charClass)
         {
             Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
-            int raceSelectionTechnique = int.Parse(Console.ReadLine());
+            int raceSelectionTechnique = 0;
+            while (raceSelectionTechnique == 0)
+            {
+                try
+                {
+                    raceSelectionTechnique = int.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("We're looking for an integer...");
+                }
+            } 
 
             //TODO: add logic for race dependent on class
             string race = "";
-            //TODO: while()...
-            if (raceSelectionTechnique == 2)
+            while(!races.Contains(race))
             {
-                Console.WriteLine($"Enter a race for {name}:");
-                race = CapitalizeFirstLetter(Console.ReadLine());
-            }
-            else
-            {
-                //TODO: add logic for race dependent on class
-                race = SelectRandomRace();
+                if (raceSelectionTechnique == 2)
+                {
+                    //Console.WriteLine($"Enter a race for {name}:");
+                    //race = CapitalizeFirstLetter(Console.ReadLine());
+                    try
+                    {
+                        Console.WriteLine($"Enter race for {name}:");
+                        race = CapitalizeFirstLetter(Console.ReadLine());
+
+                        if (!races.Contains(race))
+                        {
+                            string randomRace = SelectRandomRace();
+                            //TODO: create AddArticle() method
+                            string article2 = randomRace == "Elf" ? "an" : "a";
+                            Console.WriteLine($"That race isn't recognized; try something else. Perhaps {article2} {randomRace}?");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
+                }
+                else
+                {
+                    //TODO: add logic for race dependent on class
+                    race = SelectRandomRace();
+                }
             }
 
             string article = race == "Elf" ? "an" : "a";
@@ -464,16 +497,11 @@ namespace NPCConsoleTesting
             consonants, startingBlends, endingBlends, vowels
         }
 
-        private static string SelectRandomClass()
-        {
-            return charClasses[_random.Next(0, charClasses.Count)];
-        }
+        private static string SelectRandomClass() => charClasses[_random.Next(0, charClasses.Count)];
 
         private static string SelectRandomRace()
         {
             //TODO: add logic for race dependent on class
-            //TODO: pull this list out as was done with classes and weapons
-            List<string> races = new() { "Human", "Elf", "Dwarf", "Halfling" };
             return races[_random.Next(0, races.Count)];
         }
 
