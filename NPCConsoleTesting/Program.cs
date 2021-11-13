@@ -35,6 +35,9 @@ namespace NPCConsoleTesting
 
             var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
 
+            Console.WriteLine("Welcome to old-school combat simulator.");
+            Console.WriteLine();
+
             bool userIsDoneWithProgram = false;
             while (!userIsDoneWithProgram)
             {

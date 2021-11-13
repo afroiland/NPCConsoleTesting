@@ -20,7 +20,8 @@ namespace NPCConsoleTesting
                 CalcMonkAC(defender.Level, defender.OtherACBonus);
 
             //calculate number needed for successful attack roll
-            int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus;
+            int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus
+                - CalcWeaponVsArmorAdjustment(attacker.Weapon, defender.Armor, defender.HasShield);
             if (attacker.CharacterClass != "Monk")
             {
                 targetNumber -= CalcStrBonusToHit(attacker.Strength, attacker.Ex_Strength);
@@ -218,14 +219,103 @@ namespace NPCConsoleTesting
             return result + weaponInfo.DmgModifier;
         }
 
+        private static int CalcWeaponVsArmorAdjustment(string weapon, string armor, bool hasShield)
+        {
+            return CalcNonMonkAC(armor, hasShield, 0, 0) switch
+            {
+                10 =>
+                    weapon switch
+                    {
+                        "Club" or "Darts" or "Staff" => 1,
+                        "Axe" or "Longsword" or "Shortsword" => 2,
+                        "Dagger" => 3,
+                        _ => 0
+                    },
+                9 =>
+                    weapon switch
+                    {
+                        "Axe" or "Dagger" or "Flail" or "Halberd" or "Longsword" or "Staff" or "Two-Handed Sword" => 1,
+                        _ => 0
+                    },
+                8 =>
+                    weapon switch
+                    {
+                        "Axe" or "Dagger" or "Darts" or "Flail" or "Halberd" or "Shortsword" or "Staff" => 1,
+                        "Two-Handed Sword" => 3,
+                        _ => 0
+                    },
+                7 =>
+                    weapon switch
+                    {
+                        "Club" => -1,
+                        "Flail" => 1,
+                        "Halberd" => 2,
+                        "Two-Handed Sword" => 3,
+                        _ => 0
+                    },
+                6 =>
+                    weapon switch
+                    {
+                        "Club" or "Darts" => -1,
+                        "Halberd" => 2,
+                        "Two-Handed Sword" => 3,
+                        _ => 0
+                    },
+                5 =>
+                    weapon switch
+                    {
+                        "Club" or "Dagger" or "Darts" => -2,
+                        "Axe" or "Spear" or "Staff" => -1,
+                        "Hammer" => 1,
+                        "Halberd" or "Two-Handed Sword" => 2,
+                        _ => 0
+                    },
+                4 =>
+                    weapon switch
+                    {
+
+                        "Club" or "Darts" or "Staff" => -3,
+                        "Dagger" => -2,
+                        "Axe" or "Shortsword" or "Spear" => -1,
+                        "Halberd" => 1,
+                        "Two-Handed Sword" => 2,
+                        _ => 0
+                    },
+                3 =>
+                    weapon switch
+                    {
+                        "Staff" => -5,
+                        "Club" or "Darts" => -4,
+                        "Dagger" => -3,
+                        "Axe" or "Shortsword" => -2,
+                        "Longsword" or "Spear" => -1,
+                        "Halberd" or "Hammer" or "Mace" => 1,
+                        "Two-Handed Sword" => 2,
+                        _ => 0
+                    },
+                2 =>
+                    weapon switch
+                    {
+                        "Staff" => -7,
+                        "Club" or "Darts" => -5,
+                        "Axe" or "Dagger" or "Shortsword" => -3,
+                        "Longsword" or "Spear" => -2,
+                        "Halberd" or "Mace" => 1,
+                        "Two-Handed Sword" => 2,
+                        _ => 0
+                    },
+                _ => 0
+            };
+        }
+
         private static WeaponInfo GetWeaponInfo(string weapon)
         {
             WeaponInfo results = weapon switch
             {
                 "Darts" => new(1, 3, 0),
                 "Dagger" => new(1, 4, 0),
-                "Hammer" => new(1, 4, 1),
-                "Club" or "Flail" or "Mace" or "Shortsword" or "Spear" or "Staff" => new(1, 6, 0),
+                "Flail" or "Hammer" => new(1, 4, 1),
+                "Club" or "Mace" or "Shortsword" or "Spear" or "Staff" => new(1, 6, 0),
                 "Axe" or "Longsword" => new(1, 8, 0 ),
                 "Halberd" or "Two-Handed Sword" => new(1, 10, 0),
                 _ => new(1, 3, 0 )
@@ -482,6 +572,7 @@ namespace NPCConsoleTesting
             {
                 entries.Add($"{target.Name} fell.");
 
+                //a combatant that falls during the segment where they were about to take their action still gets to take their action
                 if (target.Init == segment)
                 {
                     opportunityForSimulAttack = true;
