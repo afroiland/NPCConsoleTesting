@@ -88,6 +88,7 @@ namespace NPCConsoleTesting
             }
 
             Console.WriteLine("Hmm, a good number for a battle.");
+            Console.WriteLine();
 
             return numberBattling;
         }
@@ -214,6 +215,7 @@ namespace NPCConsoleTesting
             string name = nameCreationTechnique == 2 ? GetCustomNameFromUserInput(charNumber) : GenerateRandomName();
 
             Console.WriteLine($"{name}... A fine name.");
+            Console.WriteLine();
 
             return name;
         }
@@ -228,6 +230,10 @@ namespace NPCConsoleTesting
                 try
                 {
                     name = Console.ReadLine();
+                    if (name == "")
+                    {
+                        Console.WriteLine("At least one letter is needed.");
+                    }
                 }
                 catch (Exception)
                 {
@@ -290,7 +296,8 @@ namespace NPCConsoleTesting
             }
 
             string article = charClass == "Assassin" ? "an" : "a";
-            Console.WriteLine($"Very well, {name} will be... {article} {charClass}.");
+            Console.WriteLine($"Very well, {name} shall be {article} {charClass}.");
+            Console.WriteLine();
 
             return charClass;
         }
@@ -309,7 +316,7 @@ namespace NPCConsoleTesting
                 {
                     Console.WriteLine("We're looking for an integer...");
                 }
-            } 
+            }
 
             //TODO: add logic for race dependent on class
             string race = "";
@@ -317,8 +324,6 @@ namespace NPCConsoleTesting
             {
                 if (raceSelectionTechnique == 2)
                 {
-                    //Console.WriteLine($"Enter a race for {name}:");
-                    //race = CapitalizeFirstLetter(Console.ReadLine());
                     try
                     {
                         Console.WriteLine($"Enter race for {name}:");
@@ -345,28 +350,61 @@ namespace NPCConsoleTesting
             }
 
             string article = race == "Elf" ? "an" : "a";
-            Console.WriteLine($"Very well, {name} will be... {article} {race}.");
+            Console.WriteLine($"Very well, {name} shall be {article} {race}.");
+            Console.WriteLine();
 
             return race;
         }
 
         public static int GetLevel(string name, int minLevel, int maxLevel)
         {
-            Console.WriteLine($"Determine level for {name} randomly or enter manually? 1 = Random, 2 = Manually");
-            int levelSelectionTechnique = int.Parse(Console.ReadLine());
-
-            int level;
-            if (levelSelectionTechnique == 2)
+            Console.WriteLine($"Determine level for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
+            int levelSelectionTechnique = 0;
+            while (levelSelectionTechnique == 0)
             {
-                Console.WriteLine($"Enter level for {name}");
-                level = int.Parse(Console.ReadLine());
-            }
-            else
-            {
-                level = _random.Next(minLevel, maxLevel + 1);
+                try
+                {
+                    levelSelectionTechnique = int.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("We're looking for an integer...");
+                }
             }
 
-            Console.WriteLine($"Very well, {name}'s level will be... {level}");
+            int level = 0;
+            while (level < minLevel || level > maxLevel)
+            {
+                if (levelSelectionTechnique == 2)
+                {
+                    try
+                    {
+                        Console.WriteLine($"Enter level for {name}:");
+                        level = int.Parse(Console.ReadLine());
+
+                        if (level < minLevel)
+                        {
+                            Console.WriteLine("Level must be a positive integer.");
+                        }
+
+                        if (level > maxLevel)
+                        {
+                            Console.WriteLine($"Current settings won't allow a combatant of that level. Maximum level is {maxLevel} at this time.");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
+                }
+                else
+                {
+                    level = _random.Next(minLevel, maxLevel + 1);
+                }
+            }
+
+            Console.WriteLine($"Very well, {name}'s level shall be {level}.");
+            Console.WriteLine();
 
             return level;
         }
@@ -374,20 +412,38 @@ namespace NPCConsoleTesting
         public static string GetWeapon(string name, string charClass, int level)
         {
             Console.WriteLine($"Determiner {name}'s weapon randomly or enter manually? 1 = Random, 2 = Manually.");
-            int weaponSelectionTechnique = int.Parse(Console.ReadLine());
+            int weaponSelectionTechnique = 0;
+            while (weaponSelectionTechnique == 0)
+            {
+                try
+                {
+                    weaponSelectionTechnique = int.Parse(Console.ReadLine());
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("We're looking for an integer...");
+                }
+            }
 
             string weapon = "";
             while (!WeaponIsAppropriate(charClass, weapon))
             {
                 if (weaponSelectionTechnique == 2)
                 {
-                    Console.WriteLine($"Enter weapon for {name}");
-                    weapon = CapitalizeFirstLetter(Console.ReadLine());
-
-                    if (!WeaponIsAppropriate(charClass, weapon))
+                    try
                     {
-                        //TODO: suggest an appropriate weapon based on class
-                        Console.WriteLine($"That's not an appropriate weapon. Try something else.");
+                        Console.WriteLine($"Enter weapon for {name}:");
+                        weapon = CapitalizeFirstLetter(Console.ReadLine());
+
+                        if (!WeaponIsAppropriate(charClass, weapon))
+                        {
+                            //TODO: suggest an appropriate weapon based on class
+                            Console.WriteLine($"That's not an appropriate weapon. Try something else.");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
                     }
                 }
                 else
@@ -397,7 +453,8 @@ namespace NPCConsoleTesting
             }
 
             //TODO: fix grammar for "axe", "darts" and "none"
-            Console.WriteLine($"Very well, {name} shall wield a... {weapon}");
+            Console.WriteLine($"Very well, {name} shall wield a {weapon}.");
+            Console.WriteLine();
 
             return weapon;
         }
