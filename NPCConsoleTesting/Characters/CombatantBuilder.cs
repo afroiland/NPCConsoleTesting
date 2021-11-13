@@ -96,12 +96,17 @@ namespace NPCConsoleTesting
         private int DetermineRetrievalMethod()
         {
             Console.WriteLine("How shall the combatants be selected? 1 = Random, 2 = Custom, 3 = Get from db.");
-            int retrievalMethod = 0;
-            while (retrievalMethod == 0)
+            return GetIntFromUser();
+        }
+
+        private static int GetIntFromUser()
+        {
+            int integer = 0;
+            while (integer == 0)
             {
                 try
                 {
-                    retrievalMethod = int.Parse(Console.ReadLine());
+                    integer = int.Parse(Console.ReadLine());
                 }
                 catch (Exception)
                 {
@@ -109,7 +114,7 @@ namespace NPCConsoleTesting
                 }
             }
 
-            return retrievalMethod;
+            return integer;
         }
 
         private Combatant GetCombatant(int retrievalMethod, int numberOfCombatants, string connectionString)
@@ -126,9 +131,8 @@ namespace NPCConsoleTesting
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine("That didn't work. Try again.");
+                        Console.WriteLine("Something went wrong; we'll have to start over for this combatant.");
                     }
-
                 }
                 else if (retrievalMethod == 3)
                 {
@@ -211,7 +215,7 @@ namespace NPCConsoleTesting
         public static string GetName(int charNumber)
         {
             Console.WriteLine($"Generate name for character {charNumber} randomly or enter a custom name? 1 = Random, 2 = Custom.");
-            int nameCreationTechnique = int.Parse(Console.ReadLine());
+            int nameCreationTechnique = GetIntFromUser();
             string name = nameCreationTechnique == 2 ? GetCustomNameFromUserInput(charNumber) : GenerateRandomName();
 
             Console.WriteLine($"{name}... A fine name.");
@@ -246,20 +250,8 @@ namespace NPCConsoleTesting
 
         public static string GetCharClass(string name)
         {
-            //TODO: refactor all these selection teachniques into a new method
             Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
-            int classSelectionTechnique = 0;
-            while (classSelectionTechnique == 0)
-            {
-                try
-                {
-                    classSelectionTechnique = int.Parse(Console.ReadLine());
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("We're looking for an integer...");
-                }
-            }
+            int classSelectionTechnique = GetIntFromUser();
 
             string charClass = "";
             while (!charClasses.Contains(charClass))
@@ -305,18 +297,7 @@ namespace NPCConsoleTesting
         public static string GetCharRace(string name, string charClass)
         {
             Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
-            int raceSelectionTechnique = 0;
-            while (raceSelectionTechnique == 0)
-            {
-                try
-                {
-                    raceSelectionTechnique = int.Parse(Console.ReadLine());
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("We're looking for an integer...");
-                }
-            }
+            int raceSelectionTechnique = GetIntFromUser();
 
             //TODO: add logic for race dependent on class
             string race = "";
@@ -359,18 +340,7 @@ namespace NPCConsoleTesting
         public static int GetLevel(string name, int minLevel, int maxLevel)
         {
             Console.WriteLine($"Determine level for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
-            int levelSelectionTechnique = 0;
-            while (levelSelectionTechnique == 0)
-            {
-                try
-                {
-                    levelSelectionTechnique = int.Parse(Console.ReadLine());
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("We're looking for an integer...");
-                }
-            }
+            int levelSelectionTechnique = GetIntFromUser();
 
             int level = 0;
             while (level < minLevel || level > maxLevel)
@@ -412,18 +382,7 @@ namespace NPCConsoleTesting
         public static string GetWeapon(string name, string charClass, int level)
         {
             Console.WriteLine($"Determiner {name}'s weapon randomly or enter manually? 1 = Random, 2 = Manually.");
-            int weaponSelectionTechnique = 0;
-            while (weaponSelectionTechnique == 0)
-            {
-                try
-                {
-                    weaponSelectionTechnique = int.Parse(Console.ReadLine());
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("We're looking for an integer...");
-                }
-            }
+            int weaponSelectionTechnique = GetIntFromUser();
 
             string weapon = "";
             while (!WeaponIsAppropriate(charClass, weapon))
@@ -539,8 +498,6 @@ namespace NPCConsoleTesting
                 }
             }
 
-            //Capitalize first letter and return
-            //return char.ToUpper(name[0]) + name[1..];
             return CapitalizeFirstLetter(name);
         }
 
