@@ -52,23 +52,23 @@ namespace UnitTests
                     Assert.That(cmbt.HasShield, Is.Not.Null);
                 }
 
-                CollectionAssert.Contains(resultsListClass, "Fighter");
-                CollectionAssert.Contains(resultsListClass, "Magic-User");
-                CollectionAssert.Contains(resultsListClass, "Monk");
-                CollectionAssert.Contains(resultsListClass, "Assassin");
+                CollectionAssert.Contains(resultsListClass, "fighter");
+                CollectionAssert.Contains(resultsListClass, "magic-user");
+                CollectionAssert.Contains(resultsListClass, "monk");
+                CollectionAssert.Contains(resultsListClass, "assassin");
 
-                CollectionAssert.Contains(resultsListRace, "Human");
-                CollectionAssert.Contains(resultsListRace, "Elf");
-                CollectionAssert.Contains(resultsListRace, "Dwarf");
-                CollectionAssert.Contains(resultsListRace, "Halfling");
+                CollectionAssert.Contains(resultsListRace, "human");
+                CollectionAssert.Contains(resultsListRace, "elf");
+                CollectionAssert.Contains(resultsListRace, "dwarf");
+                CollectionAssert.Contains(resultsListRace, "halfling");
 
-                CollectionAssert.Contains(resultsListArmor, "Leather");
-                CollectionAssert.Contains(resultsListArmor, "Scale");
-                CollectionAssert.Contains(resultsListArmor, "Chain");
-                CollectionAssert.Contains(resultsListArmor, "Plate");
+                CollectionAssert.Contains(resultsListArmor, "leather");
+                CollectionAssert.Contains(resultsListArmor, "scale");
+                CollectionAssert.Contains(resultsListArmor, "chain");
+                CollectionAssert.Contains(resultsListArmor, "plate");
 
                 //TODO: add assertions once SelectRandomWeapon() gets built out
-                CollectionAssert.Contains(resultsListWeapon, "Dagger");
+                CollectionAssert.Contains(resultsListWeapon, "dagger");
             });
         }
 
@@ -92,11 +92,11 @@ namespace UnitTests
         public void GenerateHPByLevelByCharClass_returns_values_within_range()
         {
             //Act
-            List<int> fighterLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("Fighter", 1);
-            List<int> rangerLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("Ranger", 1);
-            List<int> rangerLvl7 = CombatantBuilder.GenerateHPByLevelByCharClass("Ranger", 7);
-            List<int> thiefLvl3 = CombatantBuilder.GenerateHPByLevelByCharClass("Thief", 3);
-            List<int> monkLvl5 = CombatantBuilder.GenerateHPByLevelByCharClass("Monk", 5);
+            List<int> fighterLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("fighter", 1);
+            List<int> rangerLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("ranger", 1);
+            List<int> rangerLvl7 = CombatantBuilder.GenerateHPByLevelByCharClass("ranger", 7);
+            List<int> thiefLvl3 = CombatantBuilder.GenerateHPByLevelByCharClass("thief", 3);
+            List<int> monkLvl5 = CombatantBuilder.GenerateHPByLevelByCharClass("monk", 5);
 
             //for testing the range of each values, the first int is excluded for monks and rangers
             List<int> rangerLvl7Copy = new(rangerLvl7);

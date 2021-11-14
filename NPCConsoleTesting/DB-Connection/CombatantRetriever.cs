@@ -35,8 +35,8 @@ namespace NPCConsoleTesting
 
         public static List<string> SelectOnlyCombatSpells(string allSpells)
         {
-            List<string> combatSpells = new() {"Burning Hands", "Cure Light Wounds", "Fireball", "Flame Arrow", "Haste", "Hold Person",
-                "Lightning Bolt", "Magic Missile", "Shocking Grasp", "Slow", "Strength", "Ray of Enfeeblement", "Sleep", "Web"};
+            List<string> combatSpells = new() {"burning hands", "cure light wounds", "fireball", "flame arrow", "haste", "hold person",
+                "lightning bolt", "magic missile", "shocking grasp", "slow", "strength", "ray of enfeeblement", "sleep", "web"};
 
             List<string> listOfAllSpells = allSpells.Split(", ").ToList();
 

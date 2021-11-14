@@ -9,34 +9,34 @@ namespace NPCConsoleTesting
     {
         static Random _random = new();
 
-        public static List<string> DamageSpells = new() {
-            "Burning Hands",
-            "Cure Light Wounds",
-            "Fireball",
-            "Lightning Bolt",
-            "Magic Missile",
-            "Shocking Grasp"
+        public static List<string> damageSpells = new() {
+            "burning hands",
+            "cure light wounds",
+            "fireball",
+            "lightning bolt",
+            "magic missile",
+            "shocking grasp"
         };
 
         public List<string> StatusSpells = new()
         {
-            "Haste",
-            "Hold Person",
-            "Slow",
-            "Strength",
-            "Ray of Enfeeblement",
-            "Sleep",
-            "Web"
+            "haste",
+            "hold person",
+            "slow",
+            "strength",
+            "ray of enfeeblement",
+            "sleep",
+            "web"
         };
 
         public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
-            string effectType = DamageSpells.Contains(spellName) ? "Damage" : "Status";
+            string effectType = damageSpells.Contains(spellName) ? "damage" : "status";
             Status status = new("", 0);
             int dmg = 0;
 
             //TODO: add checks for input not in either list
-            if (effectType == "Damage")
+            if (effectType == "damage")
             {
                 dmg = GetSpellDamage(spellName, casterLevel) + bonus;
             }
@@ -56,11 +56,11 @@ namespace NPCConsoleTesting
             int result = spellName switch
             {
                 //TODO: calc damage by level where needed
-                "Burning Hands" => casterLevel,
-                "Cure Light Wounds" => -(_random.Next(1, 9)),
-                "Fireball" or "Lightning Bolt" => 18,                
-                "Magic Missile" => 5,
-                "Shocking Grasp" => _random.Next(1, 9) + casterLevel,
+                "burning hands" => casterLevel,
+                "cure light wounds" => -(_random.Next(1, 9)),
+                "fireball" or "lightning bolt" => 18,
+                "magic missile" => 5,
+                "shocking grasp" => _random.Next(1, 9) + casterLevel,
                 _ => 0
             };
 
@@ -71,12 +71,12 @@ namespace NPCConsoleTesting
         {
             string result = spellName switch
             {
-                "Haste" => "Hasted",
-                "Hold Person" or "Web" => "Held",
-                "Slow" => "Slowed",
-                "Strength" => "Strong",
-                "Ray of Enfeeblement" => "Weakened",
-                "Sleep" => "Asleep",
+                "haste" => "hasted",
+                "hold person" or "web" => "held",
+                "slow" => "slowed",
+                "strength" => "strengthened",
+                "ray of enfeeblement" => "weakened",
+                "sleep" => "asleep",
                 _ => ""
             };
 
@@ -87,12 +87,12 @@ namespace NPCConsoleTesting
         {
             int result = spellName switch
             {
-                "Haste" => 3 + casterLevel,
-                "Hold Person" => 4 + casterLevel,
-                "Slow" => 3 + casterLevel,
-                "Strength" => 60 * casterLevel,
-                "Ray of Enfeeblement" => casterLevel,
-                "Sleep" => 5 * casterLevel,
+                "haste" => 3 + casterLevel,
+                "hold person" => 4 + casterLevel,
+                "slow" => 3 + casterLevel,
+                "strength" => 60 * casterLevel,
+                "ray of enfeeblement" => casterLevel,
+                "sleep" => 5 * casterLevel,
                 _ => 0
             };
 
@@ -103,17 +103,17 @@ namespace NPCConsoleTesting
         {
             return spellName switch
             {
-                //"Burning Hands" => "",
-                //"Cure Light Wounds",
-                //"Magic Missile",
-                //"Shocking Grasp",
-                //"Haste",
-                //"Slow",
-                //"Strength",
-                //"Sleep",
-                "Fireball" or "Lightning Bolt" => "Half",
-                "Hold Person" or "Ray of Enfeeblement" or "Web" => "Negate",
-                _ => "None"
+                //"burning hands" => "",
+                //"cure light wounds",
+                //"magic missile",
+                //"shocking grasp",
+                //"haste",
+                //"slow",
+                //"strength",
+                //"sleep",
+                "fireball" or "lightning bolt" => "half",
+                "hold person" or "ray of enfeeblement" or "web" => "negate",
+                _ => "none"
             };
         }
 
@@ -124,8 +124,8 @@ namespace NPCConsoleTesting
                 return "";
             }
 
-            List<string> cureSpells = combatant.Spells.Where(x => x.Contains("Cure")).ToList();
-            List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).ToList();
+            List<string> cureSpells = combatant.Spells.Where(x => x.Contains("cure")).ToList();
+            List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("cure")).ToList();
 
             //a combatant at full HP with only cure spells will not cast a spell
             if (combatant.CurrentHP >= CombatantBuilder.CalcMaxHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&

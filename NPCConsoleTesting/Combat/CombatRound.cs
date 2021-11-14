@@ -37,7 +37,7 @@ namespace NPCConsoleTesting
                 targetIndex = combatants.FindIndex(x => x.Name == combatants[priorityIndex].Target);
 
                 //if target has <= 0 hp and priority combatant's action is melee attack, priority combatant switches to a new target
-                if (combatants[targetIndex].CurrentHP <= 0 && combatants[priorityIndex].ActionForThisRound == "Melee Attack" &&
+                if (combatants[targetIndex].CurrentHP <= 0 && combatants[priorityIndex].ActionForThisRound == "melee attack" &&
                     combatants.Where(x => x.CurrentHP > 0).Count() > 1)
                 {
                     combatMethods.DetermineTargetForOneCombatant(combatants, combatants[priorityIndex]);
@@ -46,7 +46,7 @@ namespace NPCConsoleTesting
 
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
                 if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 ||
-                    combatants[priorityIndex].Statuses.Any(x => x.Name == "Held" || x.Name == "Asleep"))
+                    combatants[priorityIndex].Statuses.Any(x => x.Name == "held" || x.Name == "asleep"))
                 {
                     priorityIndex++;
                     break;
@@ -64,7 +64,7 @@ namespace NPCConsoleTesting
         private static bool DoActionAndApplyResults(ICombatMethods combatMethods, Combatant priorityCombatant, Combatant targetCombatant, int segment, List<String> logResults)
         {
             //priority combatant does an action
-            ActionResults actionResults = priorityCombatant.ActionForThisRound == "Melee Attack" ?
+            ActionResults actionResults = priorityCombatant.ActionForThisRound == "melee attack" ?
                 combatMethods.DoAMeleeAttack(priorityCombatant, targetCombatant) :
                 SpellMethods.DoASpell(priorityCombatant.ActionForThisRound, priorityCombatant.Level);
 
@@ -75,7 +75,7 @@ namespace NPCConsoleTesting
             logResults.AddRange(updateResults.LogEntries);
 
             //if a spell was cast, remove it from the combatant's spell list
-            if (priorityCombatant.ActionForThisRound != "Melee Attack")
+            if (priorityCombatant.ActionForThisRound != "melee attack")
             {
                 int index = priorityCombatant.Spells.IndexOf(priorityCombatant.ActionForThisRound);
                 priorityCombatant.Spells.RemoveAt(index);

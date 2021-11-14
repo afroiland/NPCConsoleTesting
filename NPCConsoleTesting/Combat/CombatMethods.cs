@@ -16,13 +16,13 @@ namespace NPCConsoleTesting
             int attackRoll = _random.Next(1, 21);
 
             //calculate defender's armor class
-            int armorClass = defender.CharacterClass != "Monk" ? CalcNonMonkAC(defender.Armor, defender.HasShield, defender.Dexterity, defender.OtherACBonus) :
+            int armorClass = defender.CharacterClass != "monk" ? CalcNonMonkAC(defender.Armor, defender.HasShield, defender.Dexterity, defender.OtherACBonus) :
                 CalcMonkAC(defender.Level, defender.OtherACBonus);
 
             //calculate number needed for successful attack roll
             int targetNumber = CalcThac0(attacker.CharacterClass, attacker.Level) - armorClass - attacker.MagicalBonus - attacker.OtherHitBonus
                 - CalcWeaponVsArmorAdjustment(attacker.Weapon, defender.Armor, defender.HasShield);
-            if (attacker.CharacterClass != "Monk")
+            if (attacker.CharacterClass != "monk")
             {
                 targetNumber -= CalcStrBonusToHit(attacker.Strength, attacker.Ex_Strength);
             }
@@ -30,7 +30,7 @@ namespace NPCConsoleTesting
             //an attack roll of 20 always succeeds and a roll of 1 always fails
             if (attackRoll == 20 || (attackRoll >= targetNumber && attackRoll != 1))
             {
-                result.Damage = attacker.CharacterClass == "Monk" ?
+                result.Damage = attacker.CharacterClass == "monk" ?
                     CalcMonkMeleeDmg(attacker.Level, attacker.Weapon, attacker.MagicalBonus, attacker.OtherDmgBonus) :
                     CalcNonMonkMeleeDmg(attacker.Weapon, attacker.Strength, attacker.Ex_Strength, attacker.MagicalBonus, attacker.OtherDmgBonus);
             }
@@ -40,15 +40,15 @@ namespace NPCConsoleTesting
 
         public static int CalcThac0(string charClass, int level)
         {
-            List<int> MUThac0s = new() { 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11 };
-            List<int> ThiefThac0s = new() { 20, 20, 20, 20, 19, 19, 19, 19, 16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10 };
+            List<int> muThac0s = new() { 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11 };
+            List<int> thiefThac0s = new() { 20, 20, 20, 20, 19, 19, 19, 19, 16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10 };
 
             int result = charClass switch
             {
-                "Fighter" or "Paladin" or "Ranger" or "Monster" => 21 - level,
-                "Magic-User" or "Illusionist" => MUThac0s[level - 1],
-                "Cleric" or "Monk" or "Druid" => 20 - (int)(Math.Floor((level - 1) / 3d) * 2),
-                "Thief" or "Assassin" => ThiefThac0s[level - 1],
+                "fighter" or "paladin" or "ranger" or "monster" => 21 - level,
+                "magic-user" or "illusionist" => muThac0s[level - 1],
+                "cleric" or "monk" or "druid" => 20 - (int)(Math.Floor((level - 1) / 3d) * 2),
+                "thief" or "assassin" => thiefThac0s[level - 1],
                 _ => 20
             };
             return result;
@@ -58,13 +58,13 @@ namespace NPCConsoleTesting
         {
             int result = armor switch
             {
-                "None" => 10,
-                "Leather" => 8,
-                "Studded Leather" => 7,
-                "Scale" => 6,
-                "Chain" => 5,
-                "Banded" => 4,
-                "Plate" => 3,
+                "none" => 10,
+                "leather" => 8,
+                "studded leather" => 7,
+                "scale" => 6,
+                "chain" => 5,
+                "banded" => 4,
+                "plate" => 3,
                 _ => 10
             };
 
@@ -156,7 +156,7 @@ namespace NPCConsoleTesting
         {
             int result;
 
-            if (weapon == "None")
+            if (weapon == "none")
             {
                 result = CalcMonkOpenHandDmg(level);
             }
@@ -226,82 +226,82 @@ namespace NPCConsoleTesting
                 10 =>
                     weapon switch
                     {
-                        "Club" or "Darts" or "Staff" => 1,
-                        "Axe" or "Longsword" or "Shortsword" => 2,
-                        "Dagger" => 3,
+                        "club" or "darts" or "staff" => 1,
+                        "axe" or "longsword" or "shortsword" => 2,
+                        "dagger" => 3,
                         _ => 0
                     },
                 9 =>
                     weapon switch
                     {
-                        "Axe" or "Dagger" or "Flail" or "Halberd" or "Longsword" or "Staff" or "Two-Handed Sword" => 1,
+                        "axe" or "dagger" or "flail" or "halberd" or "longsword" or "staff" or "two-handed sword" => 1,
                         _ => 0
                     },
                 8 =>
                     weapon switch
                     {
-                        "Axe" or "Dagger" or "Darts" or "Flail" or "Halberd" or "Shortsword" or "Staff" => 1,
-                        "Two-Handed Sword" => 3,
+                        "axe" or "dagger" or "darts" or "flail" or "halberd" or "shortsword" or "staff" => 1,
+                        "two-handed sword" => 3,
                         _ => 0
                     },
                 7 =>
                     weapon switch
                     {
-                        "Club" => -1,
-                        "Flail" => 1,
-                        "Halberd" => 2,
-                        "Two-Handed Sword" => 3,
+                        "club" => -1,
+                        "flail" => 1,
+                        "halberd" => 2,
+                        "two-handed sword" => 3,
                         _ => 0
                     },
                 6 =>
                     weapon switch
                     {
-                        "Club" or "Darts" => -1,
-                        "Halberd" => 2,
-                        "Two-Handed Sword" => 3,
+                        "club" or "darts" => -1,
+                        "halberd" => 2,
+                        "two-handed sword" => 3,
                         _ => 0
                     },
                 5 =>
                     weapon switch
                     {
-                        "Club" or "Dagger" or "Darts" => -2,
-                        "Axe" or "Spear" or "Staff" => -1,
-                        "Hammer" => 1,
-                        "Halberd" or "Two-Handed Sword" => 2,
+                        "club" or "dagger" or "darts" => -2,
+                        "axe" or "spear" or "staff" => -1,
+                        "hammer" => 1,
+                        "halberd" or "two-handed sword" => 2,
                         _ => 0
                     },
                 4 =>
                     weapon switch
                     {
 
-                        "Club" or "Darts" or "Staff" => -3,
-                        "Dagger" => -2,
-                        "Axe" or "Shortsword" or "Spear" => -1,
-                        "Halberd" => 1,
-                        "Two-Handed Sword" => 2,
+                        "club" or "darts" or "staff" => -3,
+                        "dagger" => -2,
+                        "axe" or "shortsword" or "spear" => -1,
+                        "halberd" => 1,
+                        "two-handed sword" => 2,
                         _ => 0
                     },
                 3 =>
                     weapon switch
                     {
-                        "Staff" => -5,
-                        "Club" or "Darts" => -4,
-                        "Dagger" => -3,
-                        "Axe" or "Shortsword" => -2,
-                        "Longsword" or "Spear" => -1,
-                        "Halberd" or "Hammer" or "Mace" => 1,
-                        "Two-Handed Sword" => 2,
+                        "staff" => -5,
+                        "club" or "darts" => -4,
+                        "dagger" => -3,
+                        "axe" or "shortsword" => -2,
+                        "longsword" or "spear" => -1,
+                        "halberd" or "hammer" or "mace" => 1,
+                        "two-handed sword" => 2,
                         _ => 0
                     },
                 2 =>
                     weapon switch
                     {
-                        "Staff" => -7,
-                        "Club" or "Darts" => -5,
-                        "Axe" or "Dagger" or "Shortsword" => -3,
-                        "Longsword" or "Spear" => -2,
-                        "Halberd" or "Mace" => 1,
-                        "Two-Handed Sword" => 2,
+                        "staff" => -7,
+                        "club" or "darts" => -5,
+                        "axe" or "dagger" or "shortsword" => -3,
+                        "longsword" or "spear" => -2,
+                        "halberd" or "mace" => 1,
+                        "two-handed sword" => 2,
                         _ => 0
                     },
                 _ => 0
@@ -312,12 +312,12 @@ namespace NPCConsoleTesting
         {
             WeaponInfo results = weapon switch
             {
-                "Darts" => new(1, 3, 0),
-                "Dagger" => new(1, 4, 0),
-                "Flail" or "Hammer" => new(1, 4, 1),
-                "Club" or "Mace" or "Shortsword" or "Spear" or "Staff" => new(1, 6, 0),
-                "Axe" or "Longsword" => new(1, 8, 0 ),
-                "Halberd" or "Two-Handed Sword" => new(1, 10, 0),
+                "darts" => new(1, 3, 0),
+                "dagger" => new(1, 4, 0),
+                "flail" or "hammer" => new(1, 4, 1),
+                "club" or "mace" or "shortsword" or "spear" or "staff" => new(1, 6, 0),
+                "axe" or "longsword" => new(1, 8, 0 ),
+                "halberd" or "two-handed sword" => new(1, 10, 0),
                 _ => new(1, 3, 0 )
             };
 
@@ -328,11 +328,11 @@ namespace NPCConsoleTesting
         {
             int result = spellName switch
             {
-                "Burning Hands" or "Magic Missile" or "Shocking Grasp" or "Sleep" => 1,
-                "Ray of Enfeeblement" or "Web" => 2,
-                "Fireball" or "Haste" or "Lightning Bolt" or "Slow" => 3,
-                "Cure Light Wounds" or "Hold Person" => 5,
-                "Strength" => 10,
+                "burning hands" or "magic missile" or "shocking grasp" or "sleep" => 1,
+                "ray of enfeeblement" or "web" => 2,
+                "fireball" or "haste" or "lightning bolt" or "slow" => 3,
+                "cure light wounds" or "hold person" => 5,
+                "strength" => 10,
                 _ => 10
             };
 
@@ -343,14 +343,14 @@ namespace NPCConsoleTesting
         {
             int result = weapon switch
             {
-                "Dagger" or "Darts" => 2,
-                "Shortsword" => 3,
-                "Club" or "Hammer" or "Staff" => 4,
-                "Longsword" => 5,
-                "Flail" or "Mace" => 6,
-                "Axe" or "Spear" => 7,
-                "Halberd" => 9,
-                "Two-Handed Sword" => 10,
+                "dagger" or "darts" => 2,
+                "shortsword" => 3,
+                "club" or "hammer" or "staff" => 4,
+                "longsword" => 5,
+                "flail" or "mace" => 6,
+                "axe" or "spear" => 7,
+                "halberd" => 9,
+                "two-handed sword" => 10,
                 _ => 0
             };
 
@@ -382,7 +382,7 @@ namespace NPCConsoleTesting
             foreach (Combatant ch in combatants)
             {
                 string spellName = SpellMethods.SelectFromCombatantsSpells(ch);
-                ch.ActionForThisRound = spellName == "" ? "Melee Attack" : spellName;
+                ch.ActionForThisRound = spellName == "" ? "melee attack" : spellName;
             }
         }
 
@@ -409,7 +409,7 @@ namespace NPCConsoleTesting
             //set inits
             foreach (Combatant ch in combatants)
             {
-                if(ch.ActionForThisRound != "Melee Attack")
+                if(ch.ActionForThisRound != "melee attack")
                 {
                     //ch.Init = _random.Next(1, 11) + GetCastingTime(ch.Spells[0]) + ch.InitMod;
                     ch.Init = GetCastingTime(ch.Spells[0]) + ch.InitMod;
@@ -440,16 +440,16 @@ namespace NPCConsoleTesting
                 }
 
                 //TODO: fix / refactor this
-                if (results.SpellEffectType == "Status")
+                if (results.SpellEffectType == "status")
                 {
-                    if (results.SpellSavingThrowType == "Negate")
+                    if (results.SpellSavingThrowType == "negate")
                     {
-                        if (DoASavingThrow(target) == "Failure")
+                        if (DoASavingThrow(target) == "failure")
                         {
                             target.Statuses.Add(results.Status);
                             entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
                         }
-                        else if (DoASavingThrow(target) == "Success")
+                        else if (DoASavingThrow(target) == "success")
                         {
                             entries.Add($"{targeter.Name} attempted to cast {results.SpellName} on {target.Name}, but {target.Name}'s saving throw was successful.");
                         }
@@ -471,9 +471,9 @@ namespace NPCConsoleTesting
             //apply damage from spell or melee attack
             if (results.Damage > 0)
             {
-                if (results.SpellSavingThrowType == "Half")
+                if (results.SpellSavingThrowType == "half")
                 {
-                    if (DoASavingThrow(target) == "Success")
+                    if (DoASavingThrow(target) == "success")
                     {
                         entries.Add($"{target.Name}'s saving throw was successful; damage reduced by half.");
                         results.Damage /= 2;
@@ -490,14 +490,14 @@ namespace NPCConsoleTesting
         {
             int targetNumber = GetSavingThrowTargetNumber(target);
 
-            return _random.Next(1, 21) < targetNumber ? "Failure" : "Success";
+            return _random.Next(1, 21) < targetNumber ? "failure" : "success";
         }
 
         private int GetSavingThrowTargetNumber(Combatant target)
         {
             int result;
 
-            if (target.CharacterClass == "Magic-User" || target.CharacterClass == "Illusionist")
+            if (target.CharacterClass == "magic-user" || target.CharacterClass == "illusionist")
             {
                 result = target.Level switch
                 {
@@ -508,7 +508,7 @@ namespace NPCConsoleTesting
                     > 20 => 4
                 };
             }
-            else if (target.CharacterClass == "Cleric" || target.CharacterClass == "Druid")
+            else if (target.CharacterClass == "cleric" || target.CharacterClass == "druid")
             {
                 result = target.Level switch
                 {
@@ -521,7 +521,7 @@ namespace NPCConsoleTesting
                     > 18 => 7
                 };
             }
-            else if (target.CharacterClass == "Thief" || target.CharacterClass == "Assassin" || target.CharacterClass == "Monk")
+            else if (target.CharacterClass == "thief" || target.CharacterClass == "assassin" || target.CharacterClass == "monk")
             {
                 result = target.Level switch
                 {
@@ -580,10 +580,10 @@ namespace NPCConsoleTesting
             }
 
             //a sleeping character who takes damage (and survives) wakes up
-            if (target.Statuses.FindIndex(x => x.Name == "Asleep") >= 0)
+            if (target.Statuses.FindIndex(x => x.Name == "asleep") >= 0)
             {
                 entries.Add($"{target.Name} is no longer asleep.");
-                target.Statuses.RemoveAll(r => r.Name == "Asleep");
+                target.Statuses.RemoveAll(r => r.Name == "asleep");
             }
 
             return opportunityForSimulAttack;

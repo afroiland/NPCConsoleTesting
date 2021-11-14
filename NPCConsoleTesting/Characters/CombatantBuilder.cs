@@ -40,16 +40,15 @@ namespace NPCConsoleTesting
         const int MIN_NAME_PATTERN_LENGTH = 3;
         const int MAX_NAME_PATTERN_LENGTH = 7;
 
-        static List<string> charClasses = new() { "Fighter", "Paladin", "Ranger", "Magic-User", "Cleric", "Monk", "Druid", "Thief", "Assassin" };
-        static List<string> races = new() { "Human", "Elf", "Dwarf", "Halfling" };
+        static List<string> charClasses = new() { "fighter", "paladin", "ranger", "magic-user", "cleric", "monk", "druid", "thief", "assassin" };
+        static List<string> races = new() { "human", "elf", "dwarf", "halfling" };
 
-        //TODO: rename as [...]WeaponLists
-        static List<string> MUList = new() { "Dagger", "Darts", "Staff" };
-        static List<string> ClericList = new() { "Club", "Flail", "Hammer", "Mace", "Staff" };
-        static List<string> DruidList = new() { "Club", "Dagger", "Darts", "Hammer", "Spear", "Staff" };
-        static List<string> ThiefList = new() { "Club", "Dagger", "Darts", "Longsword", "Shortsword" };
-        static List<string> MonkList = new() { "Club", "Darts", "Dagger", "Staff", "None" };
-        static List<string> FighterList = new() { "Axe", "Halberd", "Longsword", "Shortsword", "Spear", "Two-Handed Sword" };
+        static List<string> muWeaponList = new() { "dagger", "darts", "staff" };
+        static List<string> clericWeaponList = new() { "club", "flail", "hammer", "mace", "staff" };
+        static List<string> druidWeaponList = new() { "club", "dagger", "darts", "hammer", "spear", "staff" };
+        static List<string> thiefWeaponList = new() { "club", "dagger", "darts", "longsword", "shortsword" };
+        static List<string> monkWeaponList = new() { "club", "darts", "dagger", "staff", "none" };
+        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear", "two-handed sword" };
 
         static Random _random = new();
 
@@ -131,7 +130,7 @@ namespace NPCConsoleTesting
                     }
                     catch (Exception)
                     {
-                        Console.WriteLine("Something went wrong; we'll have to start over for this combatant.");
+                        Console.WriteLine("Something went wrong; we'll have to start over for this character.");
                     }
                 }
                 else if (retrievalMethod == 3)
@@ -209,7 +208,7 @@ namespace NPCConsoleTesting
 
             //TODO: spells?
 
-            return new Combatant(name, charClass, level, "Human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weapon);
+            return new Combatant(name, charClass, level, "human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weapon);
         }
 
         public static string GetName(int charNumber)
@@ -261,18 +260,19 @@ namespace NPCConsoleTesting
                     try
                     {
                         Console.WriteLine($"Enter class for {name}:");
-                        charClass = CapitalizeFirstLetter(Console.ReadLine());
+                        charClass = Console.ReadLine();
 
-                        List<string> muNames = new() { "Wizard", "Mage", "Magic user", "Magic-user" };
+                        List<string> muNames = new() { "wizard", "mage", "magic user" };
+                        //TODO: lowercase input before checking against list
                         if (muNames.Contains(charClass))
                         {
-                            charClass = "Magic-User";
+                            charClass = "magic-user";
                         }
                         else if (!charClasses.Contains(charClass))
                         {
                             string randomClass = SelectRandomClass();
                             //TODO: create AddArticle() method
-                            string article2 = randomClass == "Assassin" ? "an" : "a";
+                            string article2 = randomClass == "assassin" ? "an" : "a";
                             Console.WriteLine($"That class isn't recognized; try something else. Perhaps {article2} {randomClass}?");
                         }
                     }
@@ -287,7 +287,7 @@ namespace NPCConsoleTesting
                 }
             }
 
-            string article = charClass == "Assassin" ? "an" : "a";
+            string article = charClass == "assassin" ? "an" : "a";
             Console.WriteLine($"Very well, {name} shall be {article} {charClass}.");
             Console.WriteLine();
 
@@ -308,13 +308,13 @@ namespace NPCConsoleTesting
                     try
                     {
                         Console.WriteLine($"Enter race for {name}:");
-                        race = CapitalizeFirstLetter(Console.ReadLine());
+                        race = Console.ReadLine();
 
                         if (!races.Contains(race))
                         {
                             string randomRace = SelectRandomRace();
-                            //TODO: create AddArticle() method
-                            string article2 = randomRace == "Elf" ? "an" : "a";
+                            //TODO: create DetermineArticle() method
+                            string article2 = randomRace == "elf" ? "an" : "a";
                             Console.WriteLine($"That race isn't recognized; try something else. Perhaps {article2} {randomRace}?");
                         }
                     }
@@ -330,7 +330,7 @@ namespace NPCConsoleTesting
                 }
             }
 
-            string article = race == "Elf" ? "an" : "a";
+            string article = race == "elf" ? "an" : "a";
             Console.WriteLine($"Very well, {name} shall be {article} {race}.");
             Console.WriteLine();
 
@@ -359,7 +359,7 @@ namespace NPCConsoleTesting
 
                         if (level > maxLevel)
                         {
-                            Console.WriteLine($"Current settings won't allow a combatant of that level. Maximum level is {maxLevel} at this time.");
+                            Console.WriteLine($"Current settings won't allow for a character of that level. Maximum level is {maxLevel} at this time.");
                         }
                     }
                     catch (Exception)
@@ -381,7 +381,7 @@ namespace NPCConsoleTesting
 
         public static string GetWeapon(string name, string charClass, int level)
         {
-            Console.WriteLine($"Determiner {name}'s weapon randomly or enter manually? 1 = Random, 2 = Manually.");
+            Console.WriteLine($"Determine {name}'s weapon randomly or enter manually? 1 = Random, 2 = Manually.");
             int weaponSelectionTechnique = GetIntFromUser();
 
             string weapon = "";
@@ -392,7 +392,7 @@ namespace NPCConsoleTesting
                     try
                     {
                         Console.WriteLine($"Enter weapon for {name}:");
-                        weapon = CapitalizeFirstLetter(Console.ReadLine());
+                        weapon = Console.ReadLine();
 
                         if (!WeaponIsAppropriate(charClass, weapon))
                         {
@@ -422,12 +422,12 @@ namespace NPCConsoleTesting
         {
             return charClass switch
             {
-                "Magic-User" or "Illusionist" => MUList.Contains(weapon),
-                "Cleric" => ClericList.Contains(weapon),
-                "Druid" => DruidList.Contains(weapon),
-                "Thief" => ThiefList.Contains(weapon),
-                "Monk" => MonkList.Contains(weapon),
-                "Fighter" or "Paladin" or "Ranger" or "Assassin" => FighterList.Contains(weapon),
+                "magic-user" or "illusionist" => muWeaponList.Contains(weapon),
+                "cleric" => clericWeaponList.Contains(weapon),
+                "druid" => druidWeaponList.Contains(weapon),
+                "thief" => thiefWeaponList.Contains(weapon),
+                "monk" => monkWeaponList.Contains(weapon),
+                "fighter" or "paladin" or "ranger" or "assassin" => fighterWeaponList.Contains(weapon),
                 _ => false
             }; 
         }
@@ -498,10 +498,10 @@ namespace NPCConsoleTesting
                 }
             }
 
-            return CapitalizeFirstLetter(name);
+            return CapitalizeFirstLetterOfString(name);
         }
 
-        public static string CapitalizeFirstLetter(string text)
+        public static string CapitalizeFirstLetterOfString(string text)
         {
             return char.ToUpper(text[0]) + text[1..];
         }
@@ -532,8 +532,8 @@ namespace NPCConsoleTesting
                 Charisma = AssignAttribute("Charisma", race, mins.Charisma)
             };
 
-            //Fighters with 18 strength get Ex_Strength
-            attributes.Ex_Strength = charClass == "Fighter" && attributes.Strength == 18 ? _random.Next(1, 101) : 0;
+            //fighters with 18 strength get Ex_Strength
+            attributes.Ex_Strength = charClass == "fighter" && attributes.Strength == 18 ? _random.Next(1, 101) : 0;
 
             return attributes;
         }
@@ -555,17 +555,17 @@ namespace NPCConsoleTesting
             switch (attribute)
             {
                 case "Strength":
-                    if(race == "Halfling") { return -1; }
+                    if(race == "halfling") { return -1; }
                     break;
                 case "Constitution":
-                    if (race == "Dwarf") { return 1; }
-                    if (race == "Elf") { return -1; }
+                    if (race == "dwarf") { return 1; }
+                    if (race == "elf") { return -1; }
                     break;
                 case "Dexterity":
-                    if (race == "Halfling" || race == "Elf") { return 1; }
+                    if (race == "halfling" || race == "elf") { return 1; }
                     break;
                 case "Charisma":
-                    if (race == "Dwarf") { return -1; }
+                    if (race == "dwarf") { return -1; }
                     break;
                 default: break;
             }
@@ -577,15 +577,15 @@ namespace NPCConsoleTesting
         {
             Attributes result = charClass switch
             {
-                "Fighter" => new Attributes() { Strength = 9},
-                "Paladin" => new Attributes() { Strength = 12, Intelligence = 9, Wisdom = 13, Constitution = 9, Charisma = 17 },
-                "Ranger" => new Attributes() { Strength = 13, Wisdom = 14, Constitution = 14 },
-                "Magic-User" => new Attributes() { Intelligence = 9 },
-                "Cleric" => new Attributes() { Wisdom = 9 },
-                "Druid" => new Attributes() { Wisdom = 12, Charisma = 15 },
-                "Thief" => new Attributes() { Dexterity = 9 },
-                "Assassin" => new Attributes() { Strength = 12, Intelligence = 11, Dexterity = 12 },
-                "Monk" => new Attributes() { Strength = 15, Wisdom = 15, Dexterity = 15, Constitution = 11 },                
+                "fighter" => new Attributes() { Strength = 9},
+                "paladin" => new Attributes() { Strength = 12, Intelligence = 9, Wisdom = 13, Constitution = 9, Charisma = 17 },
+                "ranger" => new Attributes() { Strength = 13, Wisdom = 14, Constitution = 14 },
+                "magic-user" => new Attributes() { Intelligence = 9 },
+                "cleric" => new Attributes() { Wisdom = 9 },
+                "druid" => new Attributes() { Wisdom = 12, Charisma = 15 },
+                "thief" => new Attributes() { Dexterity = 9 },
+                "assassin" => new Attributes() { Strength = 12, Intelligence = 11, Dexterity = 12 },
+                "monk" => new Attributes() { Strength = 15, Wisdom = 15, Dexterity = 15, Constitution = 11 },
                 _ => new Attributes() { }
             };
 
@@ -596,10 +596,10 @@ namespace NPCConsoleTesting
         {
             int dieType = charClass switch
             {
-                "Fighter" or "Paladin" => 10,
-                "Cleric" or "Druid" or "Ranger" => 8,
-                "Thief" or "Assassin" => 6,
-                "Magic-User" or "Illusionist" or "Monk" => 4,
+                "fighter" or "paladin" => 10,
+                "cleric" or "druid" or "ranger" => 8,
+                "thief" or "assassin" => 6,
+                "magic-user" or "illusionist" or "monk" => 4,
                 _ => 3
             };
 
@@ -607,7 +607,7 @@ namespace NPCConsoleTesting
             List<int> result = new() { dieType };
 
             //rangers and monks get two HD at first level
-            if (charClass == "Ranger" || charClass == "Monk")
+            if (charClass == "ranger" || charClass == "monk")
             {
                 result[0] += dieType;
             }
@@ -631,7 +631,7 @@ namespace NPCConsoleTesting
             //TODO: refactor to use nested switches
             int result;
 
-            if (charClass == "Fighter" || charClass == "Ranger" || charClass == "Paladin")
+            if (charClass == "fighter" || charClass == "ranger" || charClass == "paladin")
             {
                 result = con switch
                 {
@@ -657,13 +657,13 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomArmor(string charClass)
         {
-            List<string> armorList = new() { "Leather", "Studded Leather", "Scale", "Chain", "Banded", "Plate" };
+            List<string> armorList = new() { "leather", "studded leather", "scale", "chain", "banded", "plate" };
 
             string result = charClass switch
             {
-                "Fighter" or "Cleric" or "Paladin" or "Ranger" => armorList[_random.Next(0, armorList.Count)],
-                "Druid" or "Assassin" or "Thief" => "Leather",
-                _ => "None"
+                "fighter" or "cleric" or "paladin" or "ranger" => armorList[_random.Next(0, armorList.Count)],
+                "druid" or "assassin" or "thief" => "leather",
+                _ => "none"
             };
 
             return result;
@@ -672,27 +672,27 @@ namespace NPCConsoleTesting
         private static string SelectRandomWeapon(string charClass, int level)
         {
             //beyond level five, a monk has higher damage potential w/o a weapon
-            if (charClass == "Monk" && level > 5)
+            if (charClass == "monk" && level > 5)
             {
-                return "None";
+                return "none";
             }
 
             return charClass switch
             {
-                "Magic-User" or "Illusionist" => MUList[_random.Next(0, MUList.Count)],
-                "Cleric" => ClericList[_random.Next(0, ClericList.Count)],
-                "Druid" => DruidList[_random.Next(0, DruidList.Count)],
-                "Thief" => ThiefList[_random.Next(0, ThiefList.Count)],
-                "Monk" => MonkList[_random.Next(0, MonkList.Count)],
-                "Fighter" or "Paladin" or "Ranger" or "Assassin" => FighterList[_random.Next(0, FighterList.Count)],
-                _ => "None"
+                "magic-user" or "illusionist" => muWeaponList[_random.Next(0, muWeaponList.Count)],
+                "cleric" => clericWeaponList[_random.Next(0, clericWeaponList.Count)],
+                "druid" => druidWeaponList[_random.Next(0, druidWeaponList.Count)],
+                "thief" => thiefWeaponList[_random.Next(0, thiefWeaponList.Count)],
+                "monk" => monkWeaponList[_random.Next(0, monkWeaponList.Count)],
+                "fighter" or "paladin" or "ranger" or "assassin" => fighterWeaponList[_random.Next(0, fighterWeaponList.Count)],
+                _ => "none"
             };
         }
 
         private static bool DetermineShieldPresence(string charClass, string weapon)
         {
-            List<string> classesThatCannotUseShield = new() { "Magic-User", "Illusionist" };
-            List<string> weaponsThatRequireTwoHands = new() { "Spear", "Halberd", "Staff", "Two-Handed Sword" };
+            List<string> classesThatCannotUseShield = new() { "magic-user", "illusionist" };
+            List<string> weaponsThatRequireTwoHands = new() { "spear", "halberd", "staff", "two-handed sword" };
 
             bool result = true;
             if (classesThatCannotUseShield.Contains(charClass) || weaponsThatRequireTwoHands.Contains(weapon))
@@ -707,11 +707,11 @@ namespace NPCConsoleTesting
         {
             List<String> result = charClass switch
             {
-                "Magic-User" => GenerateMUSpellList(level),
-                "Cleric" => GenerateClericSpellList(level),
-                "Paladin" => GeneratePaladinSpellList(level),
-                "Druid" => GenerateDruidSpellList(level),
-                "Ranger" => GenerateRangerSpellList(level),
+                "magic-user" => GenerateMUSpellList(level),
+                "cleric" => GenerateClericSpellList(level),
+                "paladin" => GeneratePaladinSpellList(level),
+                "druid" => GenerateDruidSpellList(level),
+                "ranger" => GenerateRangerSpellList(level),
                 _ => new List<String>() { }
             };
 
@@ -720,12 +720,12 @@ namespace NPCConsoleTesting
 
         private static List<string> GenerateMUSpellList(int level)
         {
-            return new List<string> { "Magic Missile", "Sleep" };
+            return new List<string> { "magic missile", "sleep" };
         }
 
         private static List<string> GenerateClericSpellList(int level)
         {
-            return new List<string> { "Hold Person", "Cure Light Wounds" };
+            return new List<string> { "hold person", "cure light wounds" };
         }
 
         private static List<string> GeneratePaladinSpellList(int level)
@@ -735,7 +735,7 @@ namespace NPCConsoleTesting
 
         private static List<string> GenerateDruidSpellList(int level)
         {
-            return new List<string> { "Cure Light Wounds" };
+            return new List<string> { "cure light wounds" };
         }
 
         private static List<string> GenerateRangerSpellList(int level)
