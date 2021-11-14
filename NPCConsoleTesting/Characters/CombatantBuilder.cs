@@ -182,7 +182,7 @@ namespace NPCConsoleTesting
         {
             string name = GetName(charNumber);
             string charClass = GetCharClass(name);
-            string race = GetCharRace(name, charClass);
+            string race = GetRace(name, charClass);
             int level = GetLevel(name, _MinLevel, _MaxLevel);
 
             Attributes attributes = GenerateAttributes(charClass, race);
@@ -201,14 +201,14 @@ namespace NPCConsoleTesting
             //int initMod = int.Parse(Console.ReadLine());
 
             string weapon = GetWeapon(name, charClass, level);
+            string armor = GetArmor(name, charClass);
+            bool hasShield = DetermineShieldPresence(charClass, weapon);
 
-            //armor
+            //TODO: option to determine spells from user input?
+            List<string> spells = GenerateSpellList(charClass, level);
 
-            //shield
-
-            //TODO: spells?
-
-            return new Combatant(name, charClass, level, "human", 12, 12, 12, HPByLevel, currentHP, charWeapon: weapon);
+            return new Combatant(name, charClass, level, race, str, dex, con, HPByLevel, currentHP, charEx_Strength: ex_str, charArmor: armor,
+                charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
         }
 
         public static string GetName(int charNumber)
@@ -253,6 +253,7 @@ namespace NPCConsoleTesting
             int classSelectionTechnique = GetIntFromUser();
 
             string charClass = "";
+            string article;
             while (!charClasses.Contains(charClass))
             {
                 if (classSelectionTechnique == 2)
@@ -260,10 +261,9 @@ namespace NPCConsoleTesting
                     try
                     {
                         Console.WriteLine($"Enter class for {name}:");
-                        charClass = Console.ReadLine();
+                        charClass = Console.ReadLine().ToLower();
 
                         List<string> muNames = new() { "wizard", "mage", "magic user" };
-                        //TODO: lowercase input before checking against list
                         if (muNames.Contains(charClass))
                         {
                             charClass = "magic-user";
@@ -271,9 +271,8 @@ namespace NPCConsoleTesting
                         else if (!charClasses.Contains(charClass))
                         {
                             string randomClass = SelectRandomClass();
-                            //TODO: create AddArticle() method
-                            string article2 = randomClass == "assassin" ? "an" : "a";
-                            Console.WriteLine($"That class isn't recognized; try something else. Perhaps {article2} {randomClass}?");
+                            article = DetermineIndefiniteArticle(randomClass);
+                            Console.WriteLine($"That class isn't recognized; try something else. Perhaps {article} {randomClass}?");
                         }
                     }
                     catch (Exception)
@@ -287,20 +286,21 @@ namespace NPCConsoleTesting
                 }
             }
 
-            string article = charClass == "assassin" ? "an" : "a";
+            article = DetermineIndefiniteArticle(charClass);
             Console.WriteLine($"Very well, {name} shall be {article} {charClass}.");
             Console.WriteLine();
 
             return charClass;
         }
 
-        public static string GetCharRace(string name, string charClass)
+        public static string GetRace(string name, string charClass)
         {
             Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
             int raceSelectionTechnique = GetIntFromUser();
 
             //TODO: add logic for race dependent on class
             string race = "";
+            string article;
             while(!races.Contains(race))
             {
                 if (raceSelectionTechnique == 2)
@@ -308,14 +308,13 @@ namespace NPCConsoleTesting
                     try
                     {
                         Console.WriteLine($"Enter race for {name}:");
-                        race = Console.ReadLine();
+                        race = Console.ReadLine().ToLower();
 
                         if (!races.Contains(race))
                         {
                             string randomRace = SelectRandomRace();
-                            //TODO: create DetermineArticle() method
-                            string article2 = randomRace == "elf" ? "an" : "a";
-                            Console.WriteLine($"That race isn't recognized; try something else. Perhaps {article2} {randomRace}?");
+                            article = DetermineIndefiniteArticle(randomRace);
+                            Console.WriteLine($"That race isn't recognized; try something else. Perhaps {article} {randomRace}?");
                         }
                     }
                     catch (Exception)
@@ -330,7 +329,7 @@ namespace NPCConsoleTesting
                 }
             }
 
-            string article = race == "elf" ? "an" : "a";
+            article = DetermineIndefiniteArticle(race);
             Console.WriteLine($"Very well, {name} shall be {article} {race}.");
             Console.WriteLine();
 
@@ -385,6 +384,7 @@ namespace NPCConsoleTesting
             int weaponSelectionTechnique = GetIntFromUser();
 
             string weapon = "";
+            string article;
             while (!WeaponIsAppropriate(charClass, weapon))
             {
                 if (weaponSelectionTechnique == 2)
@@ -392,7 +392,7 @@ namespace NPCConsoleTesting
                     try
                     {
                         Console.WriteLine($"Enter weapon for {name}:");
-                        weapon = Console.ReadLine();
+                        weapon = Console.ReadLine().ToLower();
 
                         if (!WeaponIsAppropriate(charClass, weapon))
                         {
@@ -411,8 +411,8 @@ namespace NPCConsoleTesting
                 }
             }
 
-            //TODO: fix grammar for "axe", "darts" and "none"
-            Console.WriteLine($"Very well, {name} shall wield a {weapon}.");
+            article = weapon == "darts" ? "" : DetermineIndefiniteArticle(weapon) + " ";
+            Console.WriteLine($"Very well, {name} shall wield {article}{weapon}.");
             Console.WriteLine();
 
             return weapon;
@@ -420,6 +420,7 @@ namespace NPCConsoleTesting
 
         private static bool WeaponIsAppropriate(string charClass, string weapon)
         {
+            //TODO: add the rest of the classes so that a random bunch of letters won't return true
             return charClass switch
             {
                 "magic-user" or "illusionist" => muWeaponList.Contains(weapon),
@@ -427,9 +428,58 @@ namespace NPCConsoleTesting
                 "druid" => druidWeaponList.Contains(weapon),
                 "thief" => thiefWeaponList.Contains(weapon),
                 "monk" => monkWeaponList.Contains(weapon),
-                "fighter" or "paladin" or "ranger" or "assassin" => fighterWeaponList.Contains(weapon),
-                _ => false
-            }; 
+                _ => weapon != ""
+            };
+        }
+
+        public static string GetArmor(string name, string charClass)
+        {
+            Console.WriteLine($"Determine {name}'s armor randomly or enter manually? 1 = Random, 2 = Manually.");
+            int armorSelectionTechnique = GetIntFromUser();
+
+            string armor = "";
+            while (!ArmorIsAppropriate(charClass, armor))
+            {
+                if (armorSelectionTechnique == 2)
+                {
+                    try
+                    {
+                        Console.WriteLine($"Enter armor for {name}:");
+                        armor = Console.ReadLine().ToLower();
+
+                        if (!ArmorIsAppropriate(charClass, armor))
+                        {
+                            //TODO: suggest an appropriate armor based on class
+                            Console.WriteLine($"That's not an appropriate armor. Try something else.");
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("That didn't work. Try again.");
+                    }
+                }
+                else
+                {
+                    armor = SelectRandomArmor(charClass);
+                }
+            }
+
+            string armorType = armor.Contains("leather") ? "armor" : "mail";
+            Console.WriteLine($"Very well, {name} shall wear {armor} {armorType}.");
+            Console.WriteLine();
+
+            return armor;
+        }
+
+        private static bool ArmorIsAppropriate(string charClass, string armor)
+        {
+            //TODO: add the rest of the classes so that a random bunch of letters won't return true
+            return charClass switch
+            {
+                "magic-user" or "illusionist" or "monk" => armor == "none",
+                "thief" or "druid" or "assassin" => armor == "none" || armor == "leather",
+                _ => armor != ""
+            };
         }
 
         public static string GenerateRandomName()
@@ -438,7 +488,7 @@ namespace NPCConsoleTesting
             string[] startingBlends = {"bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "sl",
                 "sn", "sw", "tr", "tw", "wh", "wr", "scr", "shr", "sph", "spl", "spr", "squ", "str", "thr"};
             string[] endingBlends = { "ch", "sc", "sh", "sk", "sm", "sp", "st", "th", "sch"};
-            string[] vowels = {"a", "e", "i", "o", "u", "y"};
+            char[] vowels = {'a', 'e', 'i', 'o', 'u', 'y' };
             string[] doubleVowels = {"aa", "ae", "ai", "ao", "au", "ea", "ee", "ei", "eo", "eu", "ia", "ie",
                 "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo"};
 
@@ -509,6 +559,12 @@ namespace NPCConsoleTesting
         public enum LetterGroups
         {
             consonants, startingBlends, endingBlends, vowels
+        }
+
+        private static string DetermineIndefiniteArticle(string text)
+        {
+            char[] nonY_Vowels = { 'a', 'e', 'i', 'o', 'u', };
+            return nonY_Vowels.Contains(text[0]) ? "an" : "a";
         }
 
         private static string SelectRandomClass() => charClasses[_random.Next(0, charClasses.Count)];
@@ -659,14 +715,12 @@ namespace NPCConsoleTesting
         {
             List<string> armorList = new() { "leather", "studded leather", "scale", "chain", "banded", "plate" };
 
-            string result = charClass switch
+            return charClass switch
             {
                 "fighter" or "cleric" or "paladin" or "ranger" => armorList[_random.Next(0, armorList.Count)],
                 "druid" or "assassin" or "thief" => "leather",
                 _ => "none"
             };
-
-            return result;
         }
 
         private static string SelectRandomWeapon(string charClass, int level)
