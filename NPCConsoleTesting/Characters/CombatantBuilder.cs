@@ -247,38 +247,129 @@ namespace NPCConsoleTesting
             return name;
         }
 
-        public static string GetCharClass(string name)
+        private static string GetCharInfoStringFromUser(string property, string name, string charClass = "", int minLevel = 1, int maxLevel = 1)
+        {
+            string inputString = "";
+
+            try
+            {
+                Console.WriteLine($"Enter {property} for {name}:");
+                inputString = Console.ReadLine().ToLower();
+
+                inputString = property switch
+                {
+                    "class" => CheckInputForCharClass(inputString),
+                    "race" => CheckInputForRace(inputString, charClass),
+                    "level" => CheckInputForLevel(inputString, minLevel, maxLevel),
+                    "weapon" => CheckInputForWeapon(inputString, charClass),
+                    "armor" => CheckInputForArmor(inputString, charClass),
+                    _ => ""
+                };
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("That didn't work. Try again.");
+            }
+
+            return inputString;
+        }
+
+        private static string CheckInputForCharClass(string charClass)
+        {
+            string charClassToBeChecked = charClass;
+
+            List<string> muNames = new() { "wizard", "mage", "magic user" };
+            if (muNames.Contains(charClass))
+            {
+                charClassToBeChecked = "magic-user";
+            }
+            else if (!charClasses.Contains(charClass))
+            {
+                string randomClass = SelectRandomClass();
+                Console.WriteLine($"That class isn't recognized; try something else. Perhaps {DetermineIndefiniteArticle(randomClass)} {randomClass}?");
+            }
+
+            return charClassToBeChecked;
+        }
+
+        private static string CheckInputForRace(string race, string charClass)
+        {
+            string raceToBeChecked = race;
+
+            if (!races.Contains(race))
+            {
+                string randomRace = SelectRandomRace();
+                Console.WriteLine($"That race isn't recognized; try something else. Perhaps {DetermineIndefiniteArticle(randomRace)} {randomRace}?");
+            }
+
+            return raceToBeChecked;
+        }
+
+        private static string CheckInputForLevel(string level, int minLevel, int maxLevel)
+        {
+            int levelToBeChecked = 0;
+
+            //TODO: this seems suboptimal
+            try
+            {
+                levelToBeChecked = int.Parse(level);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Level must be a positive integer.");
+                return "0";
+            }
+
+            if (levelToBeChecked < minLevel)
+            {
+                Console.WriteLine("Level must be a positive integer.");
+            }
+
+            if (levelToBeChecked > maxLevel)
+            {
+                Console.WriteLine($"Current settings won't allow for a character of that level. Maximum level is {maxLevel} at this time.");
+            }
+
+            return levelToBeChecked.ToString();
+        }
+
+        private static string CheckInputForWeapon(string weapon, string charClass)
+        {
+            string weaponToBeChecked = weapon;
+
+            if (!WeaponIsAppropriate(charClass, weapon))
+            {
+                //TODO: suggest an appropriate weapon based on class
+                Console.WriteLine($"That's not an appropriate weapon. Try something else.");
+            }
+
+            return weaponToBeChecked;
+        }
+
+        private static string CheckInputForArmor(string armor, string charClass)
+        {
+            string armorToBeChecked = armor;
+
+            if (!ArmorIsAppropriate(charClass, armor))
+            {
+                //TODO: suggest an appropriate armor based on class
+                Console.WriteLine($"That's not an appropriate armor. Try something else.");
+            }
+
+            return armorToBeChecked;
+        }
+
+    public static string GetCharClass(string name)
         {
             Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
             int classSelectionTechnique = GetIntFromUser();
 
             string charClass = "";
-            string article;
             while (!charClasses.Contains(charClass))
             {
                 if (classSelectionTechnique == 2)
                 {
-                    try
-                    {
-                        Console.WriteLine($"Enter class for {name}:");
-                        charClass = Console.ReadLine().ToLower();
-
-                        List<string> muNames = new() { "wizard", "mage", "magic user" };
-                        if (muNames.Contains(charClass))
-                        {
-                            charClass = "magic-user";
-                        }
-                        else if (!charClasses.Contains(charClass))
-                        {
-                            string randomClass = SelectRandomClass();
-                            article = DetermineIndefiniteArticle(randomClass);
-                            Console.WriteLine($"That class isn't recognized; try something else. Perhaps {article} {randomClass}?");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
+                    charClass = GetCharInfoStringFromUser("class", name);
                 }
                 else
                 {
@@ -286,8 +377,7 @@ namespace NPCConsoleTesting
                 }
             }
 
-            article = DetermineIndefiniteArticle(charClass);
-            Console.WriteLine($"Very well, {name} shall be {article} {charClass}.");
+            Console.WriteLine($"Very well, {name} shall be {DetermineIndefiniteArticle(charClass)} {charClass}.");
             Console.WriteLine();
 
             return charClass;
@@ -300,37 +390,19 @@ namespace NPCConsoleTesting
 
             //TODO: add logic for race dependent on class
             string race = "";
-            string article;
             while(!races.Contains(race))
             {
                 if (raceSelectionTechnique == 2)
                 {
-                    try
-                    {
-                        Console.WriteLine($"Enter race for {name}:");
-                        race = Console.ReadLine().ToLower();
-
-                        if (!races.Contains(race))
-                        {
-                            string randomRace = SelectRandomRace();
-                            article = DetermineIndefiniteArticle(randomRace);
-                            Console.WriteLine($"That race isn't recognized; try something else. Perhaps {article} {randomRace}?");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
+                    race = GetCharInfoStringFromUser("race", name, charClass);
                 }
                 else
                 {
-                    //TODO: add logic for race dependent on class
                     race = SelectRandomRace();
                 }
             }
 
-            article = DetermineIndefiniteArticle(race);
-            Console.WriteLine($"Very well, {name} shall be {article} {race}.");
+            Console.WriteLine($"Very well, {name} shall be {DetermineIndefiniteArticle(race)} {race}.");
             Console.WriteLine();
 
             return race;
@@ -346,25 +418,7 @@ namespace NPCConsoleTesting
             {
                 if (levelSelectionTechnique == 2)
                 {
-                    try
-                    {
-                        Console.WriteLine($"Enter level for {name}:");
-                        level = int.Parse(Console.ReadLine());
-
-                        if (level < minLevel)
-                        {
-                            Console.WriteLine("Level must be a positive integer.");
-                        }
-
-                        if (level > maxLevel)
-                        {
-                            Console.WriteLine($"Current settings won't allow for a character of that level. Maximum level is {maxLevel} at this time.");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
+                    level = int.Parse(GetCharInfoStringFromUser("level", name, minLevel: minLevel, maxLevel: maxLevel));
                 }
                 else
                 {
@@ -389,21 +443,7 @@ namespace NPCConsoleTesting
             {
                 if (weaponSelectionTechnique == 2)
                 {
-                    try
-                    {
-                        Console.WriteLine($"Enter weapon for {name}:");
-                        weapon = Console.ReadLine().ToLower();
-
-                        if (!WeaponIsAppropriate(charClass, weapon))
-                        {
-                            //TODO: suggest an appropriate weapon based on class
-                            Console.WriteLine($"That's not an appropriate weapon. Try something else.");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
+                    weapon = GetCharInfoStringFromUser("weapon", name, charClass);
                 }
                 else
                 {
@@ -442,21 +482,7 @@ namespace NPCConsoleTesting
             {
                 if (armorSelectionTechnique == 2)
                 {
-                    try
-                    {
-                        Console.WriteLine($"Enter armor for {name}:");
-                        armor = Console.ReadLine().ToLower();
-
-                        if (!ArmorIsAppropriate(charClass, armor))
-                        {
-                            //TODO: suggest an appropriate armor based on class
-                            Console.WriteLine($"That's not an appropriate armor. Try something else.");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("That didn't work. Try again.");
-                    }
+                    armor = GetCharInfoStringFromUser("armor", name, charClass);
                 }
                 else
                 {
