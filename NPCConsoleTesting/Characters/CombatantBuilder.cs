@@ -13,14 +13,16 @@ namespace NPCConsoleTesting
         public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
         public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
 
-        public CombatantBuilder()
+        public CombatantBuilder(int minLevel = DefaultMinLevel, int maxLevel = DefaultMaxLevel)
         {
-            MinLevel = 1;
-            MaxLevel = 7;
+            MinLevel = minLevel;
+            MaxLevel = maxLevel;
         }
 
-        const int MIN_NAME_PATTERN_LENGTH = 3;
-        const int MAX_NAME_PATTERN_LENGTH = 7;
+        private const int DefaultMinLevel = 1;
+        private const int DefaultMaxLevel = 7;
+        private const int MinNamePatternLength = 3;
+        private const int MaxNamePatternLength = 7;
 
         static List<string> charClasses = new() { "fighter", "paladin", "ranger", "magic-user", "cleric", "monk", "druid", "thief", "assassin" };
         static List<string> races = new() { "human", "elf", "dwarf", "halfling" };
@@ -338,6 +340,7 @@ namespace NPCConsoleTesting
 
             return armorToBeChecked;
         }
+
         public static string GetCharClass(string name)
         {
             Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
@@ -469,7 +472,7 @@ namespace NPCConsoleTesting
             string[] doubleVowels = {"aa", "ae", "ai", "ao", "au", "ea", "ee", "ei", "eo", "eu", "ia", "ie",
                 "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo"};
 
-            int patternLength = _random.Next(MIN_NAME_PATTERN_LENGTH, MAX_NAME_PATTERN_LENGTH);
+            int patternLength = _random.Next(MinNamePatternLength, MaxNamePatternLength);
             //the pattern will be a list of ints with values between 0 and 3, each int corresponding to a LetterGroup (consonants, etc.)
 
             //initialize the pattern with a random int between 0 and 3

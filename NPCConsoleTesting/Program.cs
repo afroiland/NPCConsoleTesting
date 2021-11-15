@@ -41,22 +41,10 @@ namespace NPCConsoleTesting
             bool userIsDoneWithProgram = false;
             while (!userIsDoneWithProgram)
             {
-                //build combatant list
                 CombatantBuilder combatantBuilder = new();
                 List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
 
-                //if there are four or fewer combatants, list them
-                if (combatants.Count < 5)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Here are the combatants:");
-                    foreach (Combatant c in combatants)
-                    {
-                        Console.WriteLine($"{c.Name}, Level {c.Level} {c.Race} {c.CharacterClass}, {c.CurrentHP} HP");
-                    }
-                }
-
-                //do a full combat
+                FullCombat.DisplayPreCombatInformation(combatants);
                 FullCombat.DoAFullCombat(combatants);
 
                 Console.WriteLine();

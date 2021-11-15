@@ -6,6 +6,8 @@ namespace NPCConsoleTesting.Combat
 {
     public class FullCombat
     {
+        const int MaxNumberOfCombatantsToDisplay = 6;
+
         public static void DoAFullCombat(List<Combatant> combatants)
         {
             //combatants fight until only one* remains.  (*in rare cases, zero)
@@ -40,6 +42,29 @@ namespace NPCConsoleTesting.Combat
                     break;
                 }
             }
+        }
+
+        public static void DisplayPreCombatInformation(List<Combatant> combatants)
+        {
+            if (combatants.Count <= MaxNumberOfCombatantsToDisplay)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Here are the combatants:");
+                foreach (Combatant c in combatants)
+                {
+                    Console.WriteLine($"{c.Name}, level {c.Level} {c.Race} {c.CharacterClass}, {c.CurrentHP} HP");
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Combatants are ready. Press any key to begin...");
+            Console.ReadKey(true);
+            Console.WriteLine("3");
+            System.Threading.Thread.Sleep(1000);
+            Console.WriteLine("2");
+            System.Threading.Thread.Sleep(1000);
+            Console.WriteLine("1");
+            System.Threading.Thread.Sleep(1500);
         }
     }
 }

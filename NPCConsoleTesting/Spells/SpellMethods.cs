@@ -7,9 +7,7 @@ namespace NPCConsoleTesting
 {
     public class SpellMethods
     {
-        static Random _random = new();
-
-        public static List<string> damageSpells = new() {
+        private static List<string> damageSpells = new() {
             "burning hands",
             "cure light wounds",
             "fireball",
@@ -18,7 +16,7 @@ namespace NPCConsoleTesting
             "shocking grasp"
         };
 
-        public List<string> StatusSpells = new()
+        private static List<string> statusSpells = new()
         {
             "haste",
             "hold person",
@@ -28,6 +26,8 @@ namespace NPCConsoleTesting
             "sleep",
             "web"
         };
+
+        static Random _random = new();
 
         public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
@@ -53,7 +53,7 @@ namespace NPCConsoleTesting
 
         public static int GetSpellDamage(string spellName, int casterLevel)
         {
-            int result = spellName switch
+            return spellName switch
             {
                 //TODO: calc damage by level where needed
                 "burning hands" => casterLevel,
@@ -63,13 +63,11 @@ namespace NPCConsoleTesting
                 "shocking grasp" => _random.Next(1, 9) + casterLevel,
                 _ => 0
             };
-
-            return result;
         }
 
         public static string GetStatusName(string spellName)
         {
-            string result = spellName switch
+            return spellName switch
             {
                 "haste" => "hasted",
                 "hold person" or "web" => "held",
@@ -79,13 +77,11 @@ namespace NPCConsoleTesting
                 "sleep" => "asleep",
                 _ => ""
             };
-
-            return result;
         }
 
         public static int GetStatusDuration(string spellName, int casterLevel)
         {
-            int result = spellName switch
+            return spellName switch
             {
                 "haste" => 3 + casterLevel,
                 "hold person" => 4 + casterLevel,
@@ -95,22 +91,12 @@ namespace NPCConsoleTesting
                 "sleep" => 5 * casterLevel,
                 _ => 0
             };
-
-            return result;
         }
 
         public static string GetSavingThrowType(string spellName)
         {
             return spellName switch
             {
-                //"burning hands" => "",
-                //"cure light wounds",
-                //"magic missile",
-                //"shocking grasp",
-                //"haste",
-                //"slow",
-                //"strength",
-                //"sleep",
                 "fireball" or "lightning bolt" => "half",
                 "hold person" or "ray of enfeeblement" or "web" => "negate",
                 _ => "none"

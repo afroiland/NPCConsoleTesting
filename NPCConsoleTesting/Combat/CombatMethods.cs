@@ -165,13 +165,11 @@ namespace NPCConsoleTesting
                 WeaponInfo weaponInfo = GetWeaponInfo(weapon);
                 result = CalcWeaponDmg(weaponInfo);
 
-                //add monk weapon damage bonus
+                //monk weapon damage bonus
                 result += level / 2;
             }
 
-            result += magicalDmgBonus + otherDmgBonus;
-
-            return result;
+            return result += magicalDmgBonus + otherDmgBonus;
         }
 
         private static int CalcMonkOpenHandDmg(int level)
@@ -326,7 +324,7 @@ namespace NPCConsoleTesting
 
         private static int GetCastingTime(string spellName)
         {
-            int result = spellName switch
+            return spellName switch
             {
                 "burning hands" or "magic missile" or "shocking grasp" or "sleep" => 1,
                 "ray of enfeeblement" or "web" => 2,
@@ -335,13 +333,11 @@ namespace NPCConsoleTesting
                 "strength" => 10,
                 _ => 10
             };
-
-            return result;
         }
 
         private static int GetSpeedFactor(string weapon)
         {
-            int result = weapon switch
+            return weapon switch
             {
                 "dagger" or "darts" => 2,
                 "shortsword" => 3,
@@ -353,8 +349,6 @@ namespace NPCConsoleTesting
                 "two-handed sword" => 10,
                 _ => 0
             };
-
-            return result;
         }
 
         public void IncrementStatuses(List<Combatant> combatants, List<string> log)
@@ -388,7 +382,6 @@ namespace NPCConsoleTesting
 
         public void DetermineTargets(List<Combatant> combatants)
         {
-            //set targets if needed
             foreach (Combatant ch in combatants)
             {
                 if (ch.Target == "" || combatants.Where(x => x.Name == ch.Target).Count() == 0)
@@ -406,7 +399,6 @@ namespace NPCConsoleTesting
 
         public void DetermineInits(List<Combatant> combatants)
         {
-            //set inits
             foreach (Combatant ch in combatants)
             {
                 if(ch.ActionForThisRound != "melee attack")
@@ -495,6 +487,7 @@ namespace NPCConsoleTesting
 
         private int GetSavingThrowTargetNumber(Combatant target)
         {
+            //TODO: refactor into nested switches
             int result;
 
             if (target.CharacterClass == "magic-user" || target.CharacterClass == "illusionist")
