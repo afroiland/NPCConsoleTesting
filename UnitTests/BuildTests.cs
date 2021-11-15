@@ -39,7 +39,7 @@ namespace UnitTests
                     Assert.That(cmbt.Name, Is.Not.Null);
                     Assert.That(cmbt.CharacterClass, Is.Not.Null);
                     Assert.That(cmbt.Race, Is.Not.Null);
-                    Assert.That(cmbt.Level, Is.Not.Null & Is.GreaterThan(0) & Is.LessThan(6));
+                    Assert.That(cmbt.Level, Is.Not.Null & Is.GreaterThan(cBuilder.MinLevel - 1) & Is.LessThan(cBuilder.MaxLevel + 1));
                     Assert.That(cmbt.Strength, Is.Not.Null);
                     Assert.That(cmbt.Ex_Strength, Is.Not.Null);
                     Assert.That(cmbt.Dexterity, Is.Not.Null);

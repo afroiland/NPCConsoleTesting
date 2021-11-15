@@ -7,35 +7,16 @@ namespace NPCConsoleTesting
 {
     public class CombatantBuilder
     {
-        private int _MinHP;
-        private int _MaxHP;
-        private int _MinInitMod;
-        private int _MaxInitMod;
-        private int _MinAC;
-        private int _MaxAC;
         private int _MinLevel;
         private int _MaxLevel;
 
-        public int MinHP { get => _MinHP; set => _MinHP = value; }
-        public int MaxHP { get => _MaxHP; set => _MaxHP = value; }
-        public int MinInitMod { get => _MinInitMod; set => _MinInitMod = value; }
-        public int MaxInitMod { get => _MaxInitMod; set => _MaxInitMod = value; }
-        public int MinAC { get => _MinAC; set => _MinAC = value; }
-        public int MaxAC { get => _MaxAC; set => _MaxAC = value; }
         public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
         public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
 
         public CombatantBuilder()
         {
-            //TODO: update these values
-            MinHP = 1;
-            MaxHP = 10;
-            MinInitMod = 1;
-            MaxInitMod = 5;
-            MinAC = 3;
-            MaxAC = 10;
             MinLevel = 1;
-            MaxLevel = 5;
+            MaxLevel = 7;
         }
 
         const int MIN_NAME_PATTERN_LENGTH = 3;
@@ -273,11 +254,9 @@ namespace NPCConsoleTesting
             string charClassToBeChecked = charClass;
 
             List<string> muNames = new() { "wizard", "mage", "magic user" };
-            if (muNames.Contains(charClass))
-            {
-                charClassToBeChecked = "magic-user";
-            }
-            else if (!charClasses.Contains(charClass))
+            charClassToBeChecked = muNames.Contains(charClassToBeChecked) ? "magic-user" : charClassToBeChecked;
+
+            if (!charClasses.Contains(charClassToBeChecked))
             {
                 string randomClass = SelectRandomClass();
                 Console.WriteLine($"That class isn't recognized; try something else. Perhaps {DetermineIndefiniteArticle(randomClass)} {randomClass}?");
@@ -288,9 +267,10 @@ namespace NPCConsoleTesting
 
         private static string CheckInputForRace(string race, string charClass)
         {
+            //though currently unneeded, the following string can be used if we want to add logic (cf. CheckInputForCharClass())
             string raceToBeChecked = race;
 
-            if (!races.Contains(race))
+            if (!races.Contains(raceToBeChecked))
             {
                 string randomRace = SelectRandomRace();
                 Console.WriteLine($"That race isn't recognized; try something else. Perhaps {DetermineIndefiniteArticle(randomRace)} {randomRace}?");
@@ -316,7 +296,7 @@ namespace NPCConsoleTesting
 
             if (levelToBeChecked < minLevel)
             {
-                Console.WriteLine("Level must be a positive integer.");
+                Console.WriteLine($"Current settings won't allow for a character of that level. Minimum level is {minLevel} at this time.");
             }
 
             if (levelToBeChecked > maxLevel)
@@ -329,12 +309,14 @@ namespace NPCConsoleTesting
 
         private static string CheckInputForWeapon(string weapon, string charClass)
         {
+            //though currently unneeded, the following string can be used if we want to add logic (cf. CheckInputForCharClass())
             string weaponToBeChecked = weapon;
 
-            if (!WeaponIsAppropriate(charClass, weapon))
+            if (!WeaponIsAppropriate(charClass, weaponToBeChecked))
             {
-                //TODO: suggest an appropriate weapon based on class
-                Console.WriteLine($"That's not an appropriate weapon. Try something else.");
+                string suggestion = SelectRandomWeapon(charClass, 1);
+                string article = suggestion == "darts" || suggestion == "none" ? "" : DetermineIndefiniteArticle(suggestion) + " ";
+                Console.WriteLine($"That's not an appropriate weapon for {DetermineIndefiniteArticle(charClass)} {charClass}. Perhaps {article}{suggestion}?");
             }
 
             return weaponToBeChecked;
@@ -344,10 +326,14 @@ namespace NPCConsoleTesting
         {
             string armorToBeChecked = armor;
 
-            if (!ArmorIsAppropriate(charClass, armor))
+            armorToBeChecked = armorToBeChecked.Contains("mail") ? armorToBeChecked.Replace("mail", "") : armorToBeChecked;
+            armorToBeChecked = armorToBeChecked.Contains("armor") ? armorToBeChecked.Replace("armor", "") : armorToBeChecked;
+            armorToBeChecked = armorToBeChecked.Contains(" ") ? armorToBeChecked.Replace(" ", "") : armorToBeChecked;
+
+            if (!ArmorIsAppropriate(charClass, armorToBeChecked))
             {
-                //TODO: suggest an appropriate armor based on class
-                Console.WriteLine($"That's not an appropriate armor. Try something else.");
+                string suggestion = SelectRandomArmor(charClass);
+                Console.WriteLine($"That's not appropriate armor for {DetermineIndefiniteArticle(charClass)} {charClass}. Perhaps {suggestion}?");
             }
 
             return armorToBeChecked;

@@ -13,6 +13,7 @@ namespace NPCConsoleTesting
 
             var queryResult = DBConnection.QueryDB(connectionString, query);
 
+            //TODO: add .ToLower() to race, armor, etc.
             string name = queryResult[0].Name;
             string charClass = queryResult[0].CharacterClass;
             int level = queryResult[0].Level;
