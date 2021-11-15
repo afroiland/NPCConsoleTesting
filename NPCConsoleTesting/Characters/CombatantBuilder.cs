@@ -27,6 +27,7 @@ namespace NPCConsoleTesting
 
         public CombatantBuilder()
         {
+            //TODO: update these values
             MinHP = 1;
             MaxHP = 10;
             MinInitMod = 1;
@@ -42,13 +43,14 @@ namespace NPCConsoleTesting
 
         static List<string> charClasses = new() { "fighter", "paladin", "ranger", "magic-user", "cleric", "monk", "druid", "thief", "assassin" };
         static List<string> races = new() { "human", "elf", "dwarf", "halfling" };
-
         static List<string> muWeaponList = new() { "dagger", "darts", "staff" };
         static List<string> clericWeaponList = new() { "club", "flail", "hammer", "mace", "staff" };
         static List<string> druidWeaponList = new() { "club", "dagger", "darts", "hammer", "spear", "staff" };
         static List<string> thiefWeaponList = new() { "club", "dagger", "darts", "longsword", "shortsword" };
         static List<string> monkWeaponList = new() { "club", "darts", "dagger", "staff", "none" };
-        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear", "two-handed sword" };
+        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear", "two-handed sword",
+            "dagger", "darts", "staff", "club", "flail", "hammer", "mace", "none" };
+        static List<string> armorList = new() { "none", "leather", "studded leather", "scale", "chain", "banded", "plate" };
 
         static Random _random = new();
 
@@ -184,26 +186,18 @@ namespace NPCConsoleTesting
             string charClass = GetCharClass(name);
             string race = GetRace(name, charClass);
             int level = GetLevel(name, _MinLevel, _MaxLevel);
-
             Attributes attributes = GenerateAttributes(charClass, race);
             int str = attributes.Strength;
             int ex_str = attributes.Ex_Strength;
             int dex = attributes.Dexterity;
             int con = attributes.Constitution;
-
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
             int currentHP = CalcMaxHP(HPByLevel, con, charClass);
-
-            //Console.WriteLine($"Enter HP for character {charNumber}");
-            //int HP = int.Parse(Console.ReadLine());
-
-            //Console.WriteLine($"Enter initMod for character {charNumber}");
-            //int initMod = int.Parse(Console.ReadLine());
-
+            //TODO: option to build HPByLevel to sum to a specific number?
+            //int initMod = GetIntFromUser();
             string weapon = GetWeapon(name, charClass, level);
             string armor = GetArmor(name, charClass);
             bool hasShield = DetermineShieldPresence(charClass, weapon);
-
             //TODO: option to determine spells from user input?
             List<string> spells = GenerateSpellList(charClass, level);
 
@@ -307,9 +301,9 @@ namespace NPCConsoleTesting
 
         private static string CheckInputForLevel(string level, int minLevel, int maxLevel)
         {
+            //TODO: this seems suboptimal
             int levelToBeChecked = 0;
 
-            //TODO: this seems suboptimal
             try
             {
                 levelToBeChecked = int.Parse(level);
@@ -358,8 +352,7 @@ namespace NPCConsoleTesting
 
             return armorToBeChecked;
         }
-
-    public static string GetCharClass(string name)
+        public static string GetCharClass(string name)
         {
             Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
             int classSelectionTechnique = GetIntFromUser();
@@ -367,14 +360,7 @@ namespace NPCConsoleTesting
             string charClass = "";
             while (!charClasses.Contains(charClass))
             {
-                if (classSelectionTechnique == 2)
-                {
-                    charClass = GetCharInfoStringFromUser("class", name);
-                }
-                else
-                {
-                    charClass = SelectRandomClass();
-                }
+                charClass = classSelectionTechnique == 2 ? GetCharInfoStringFromUser("class", name) : SelectRandomClass();
             }
 
             Console.WriteLine($"Very well, {name} shall be {DetermineIndefiniteArticle(charClass)} {charClass}.");
@@ -388,18 +374,10 @@ namespace NPCConsoleTesting
             Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
             int raceSelectionTechnique = GetIntFromUser();
 
-            //TODO: add logic for race dependent on class
             string race = "";
             while(!races.Contains(race))
             {
-                if (raceSelectionTechnique == 2)
-                {
-                    race = GetCharInfoStringFromUser("race", name, charClass);
-                }
-                else
-                {
-                    race = SelectRandomRace();
-                }
+                race = raceSelectionTechnique == 2 ? GetCharInfoStringFromUser("race", name, charClass) : SelectRandomRace();
             }
 
             Console.WriteLine($"Very well, {name} shall be {DetermineIndefiniteArticle(race)} {race}.");
@@ -416,14 +394,8 @@ namespace NPCConsoleTesting
             int level = 0;
             while (level < minLevel || level > maxLevel)
             {
-                if (levelSelectionTechnique == 2)
-                {
-                    level = int.Parse(GetCharInfoStringFromUser("level", name, minLevel: minLevel, maxLevel: maxLevel));
-                }
-                else
-                {
-                    level = _random.Next(minLevel, maxLevel + 1);
-                }
+                level = levelSelectionTechnique == 2 ? int.Parse(GetCharInfoStringFromUser("level", name, minLevel: minLevel, maxLevel: maxLevel))
+                    : _random.Next(minLevel, maxLevel + 1);
             }
 
             Console.WriteLine($"Very well, {name}'s level shall be {level}.");
@@ -441,14 +413,7 @@ namespace NPCConsoleTesting
             string article;
             while (!WeaponIsAppropriate(charClass, weapon))
             {
-                if (weaponSelectionTechnique == 2)
-                {
-                    weapon = GetCharInfoStringFromUser("weapon", name, charClass);
-                }
-                else
-                {
-                    weapon = SelectRandomWeapon(charClass, level);
-                }
+                weapon = weaponSelectionTechnique == 2 ? GetCharInfoStringFromUser("weapon", name, charClass) : SelectRandomWeapon(charClass, level);
             }
 
             article = weapon == "darts" ? "" : DetermineIndefiniteArticle(weapon) + " ";
@@ -460,7 +425,6 @@ namespace NPCConsoleTesting
 
         private static bool WeaponIsAppropriate(string charClass, string weapon)
         {
-            //TODO: add the rest of the classes so that a random bunch of letters won't return true
             return charClass switch
             {
                 "magic-user" or "illusionist" => muWeaponList.Contains(weapon),
@@ -468,7 +432,8 @@ namespace NPCConsoleTesting
                 "druid" => druidWeaponList.Contains(weapon),
                 "thief" => thiefWeaponList.Contains(weapon),
                 "monk" => monkWeaponList.Contains(weapon),
-                _ => weapon != ""
+                "fighter" or "paladin" or "ranger" or "assassin" => fighterWeaponList.Contains(weapon),
+                _ => false
             };
         }
 
@@ -480,18 +445,18 @@ namespace NPCConsoleTesting
             string armor = "";
             while (!ArmorIsAppropriate(charClass, armor))
             {
-                if (armorSelectionTechnique == 2)
-                {
-                    armor = GetCharInfoStringFromUser("armor", name, charClass);
-                }
-                else
-                {
-                    armor = SelectRandomArmor(charClass);
-                }
+                armor = armorSelectionTechnique == 2 ? GetCharInfoStringFromUser("armor", name, charClass) : SelectRandomArmor(charClass);
             }
 
-            string armorType = armor.Contains("leather") ? "armor" : "mail";
-            Console.WriteLine($"Very well, {name} shall wear {armor} {armorType}.");
+            if (armor == "none")
+            {
+                Console.WriteLine($"Very well, {name} shall wear no armor.");
+            }
+            else
+            {
+                string armorType = armor.Contains("leather") ? "armor" : "mail";
+                Console.WriteLine($"Very well, {name} shall wear {armor} {armorType}.");
+            }
             Console.WriteLine();
 
             return armor;
@@ -499,12 +464,12 @@ namespace NPCConsoleTesting
 
         private static bool ArmorIsAppropriate(string charClass, string armor)
         {
-            //TODO: add the rest of the classes so that a random bunch of letters won't return true
             return charClass switch
             {
                 "magic-user" or "illusionist" or "monk" => armor == "none",
                 "thief" or "druid" or "assassin" => armor == "none" || armor == "leather",
-                _ => armor != ""
+                "fighter" or "cleric" or "paladin" or "ranger" => armorList.Contains(armor),
+                _ => false
             };
         }
 
@@ -597,7 +562,6 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomRace()
         {
-            //TODO: add logic for race dependent on class
             return races[_random.Next(0, races.Count)];
         }
 
@@ -739,12 +703,10 @@ namespace NPCConsoleTesting
 
         private static string SelectRandomArmor(string charClass)
         {
-            List<string> armorList = new() { "leather", "studded leather", "scale", "chain", "banded", "plate" };
-
             return charClass switch
             {
-                "fighter" or "cleric" or "paladin" or "ranger" => armorList[_random.Next(0, armorList.Count)],
-                "druid" or "assassin" or "thief" => "leather",
+                "fighter" or "cleric" or "paladin" or "ranger" => armorList[_random.Next(1, armorList.Count)],
+                "druid" or "assassin" or "thief" => armorList[_random.Next(0, 2)],
                 _ => "none"
             };
         }
@@ -764,7 +726,7 @@ namespace NPCConsoleTesting
                 "druid" => druidWeaponList[_random.Next(0, druidWeaponList.Count)],
                 "thief" => thiefWeaponList[_random.Next(0, thiefWeaponList.Count)],
                 "monk" => monkWeaponList[_random.Next(0, monkWeaponList.Count)],
-                "fighter" or "paladin" or "ranger" or "assassin" => fighterWeaponList[_random.Next(0, fighterWeaponList.Count)],
+                "fighter" or "paladin" or "ranger" or "assassin" => fighterWeaponList[_random.Next(0, 6)],
                 _ => "none"
             };
         }
