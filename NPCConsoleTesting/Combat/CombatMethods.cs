@@ -43,7 +43,7 @@ namespace NPCConsoleTesting
             List<int> muThac0s = new() { 20, 20, 20, 20, 20, 19, 19, 19, 19, 19, 16, 16, 16, 16, 16, 13, 13, 13, 13, 13, 11 };
             List<int> thiefThac0s = new() { 20, 20, 20, 20, 19, 19, 19, 19, 16, 16, 16, 16, 14, 14, 14, 14, 12, 12, 12, 12, 10 };
 
-            int result = charClass switch
+            return charClass switch
             {
                 "fighter" or "paladin" or "ranger" or "monster" => 21 - level,
                 "magic-user" or "illusionist" => muThac0s[level - 1],
@@ -51,7 +51,6 @@ namespace NPCConsoleTesting
                 "thief" or "assassin" => thiefThac0s[level - 1],
                 _ => 20
             };
-            return result;
         }
 
         public static int CalcNonMonkAC(string armor, bool hasShield, int dex, int otherBonus)
@@ -162,8 +161,8 @@ namespace NPCConsoleTesting
             }
             else
             {
-                WeaponInfo weaponInfo = GetWeaponInfo(weapon);
-                result = CalcWeaponDmg(weaponInfo);
+                RangeViaDice rangeViaDice = GetRangeViaDice(weapon);
+                result = CalcMultipleDice(rangeViaDice);
 
                 //monk weapon damage bonus
                 result += level / 2;
@@ -174,7 +173,7 @@ namespace NPCConsoleTesting
 
         private static int CalcMonkOpenHandDmg(int level)
         {
-            WeaponInfo results = level switch
+            RangeViaDice results = level switch
             {
                 1 => new(1, 3, 0),
                 2 => new(1, 4, 0),
@@ -195,26 +194,26 @@ namespace NPCConsoleTesting
                 _ => new(1, 3, 0)
             };
 
-            return CalcWeaponDmg(results);
+            return CalcMultipleDice(results);
         }
 
         public int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus)
         {
-            WeaponInfo weaponInfo = GetWeaponInfo(weapon);
+            RangeViaDice rangeViaDice = GetRangeViaDice(weapon);
 
-            return CalcWeaponDmg(weaponInfo) + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
+            return CalcMultipleDice(rangeViaDice) + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
         }
 
-        private static int CalcWeaponDmg(WeaponInfo weaponInfo)
+        public static int CalcMultipleDice(RangeViaDice rangeViaDice)
         {
             int result = 0;
 
-            for (int i = 0; i < weaponInfo.NumberOfAttackDice; i++)
+            for (int i = 0; i < rangeViaDice.NumberOfDice; i++)
             {
-                result += _random.Next(1, weaponInfo.TypeOfAttackDie + 1);
+                result += _random.Next(1, rangeViaDice.TypeOfDie + 1);
             }
 
-            return result + weaponInfo.DmgModifier;
+            return result + rangeViaDice.Modifier;
         }
 
         private static int CalcWeaponVsArmorAdjustment(string weapon, string armor, bool hasShield)
@@ -306,9 +305,9 @@ namespace NPCConsoleTesting
             };
         }
 
-        private static WeaponInfo GetWeaponInfo(string weapon)
+        private static RangeViaDice GetRangeViaDice(string weapon)
         {
-            WeaponInfo results = weapon switch
+            RangeViaDice results = weapon switch
             {
                 "darts" => new(1, 3, 0),
                 "dagger" => new(1, 4, 0),

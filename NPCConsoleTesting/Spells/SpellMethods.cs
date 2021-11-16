@@ -1,4 +1,5 @@
 ﻿using NPCConsoleTesting.Characters;
+using NPCConsoleTesting.Combat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,11 +56,11 @@ namespace NPCConsoleTesting
         {
             return spellName switch
             {
-                //TODO: calc damage by level where needed
                 "burning hands" => casterLevel,
                 "cure light wounds" => -(_random.Next(1, 9)),
-                "fireball" or "lightning bolt" => 18,
-                "magic missile" => 5,
+                "fireball" or "lightning bolt" => CombatMethods.CalcMultipleDice(new RangeViaDice(casterLevel, 6, 0)),
+                //TODO: magic missile gets wrong # of missiles, and the +1 for each missile is not included
+                "magic missile" => CombatMethods.CalcMultipleDice(new RangeViaDice((int)Math.Floor(casterLevel / 2d) + 1, 4, 0)),
                 "shocking grasp" => _random.Next(1, 9) + casterLevel,
                 _ => 0
             };
