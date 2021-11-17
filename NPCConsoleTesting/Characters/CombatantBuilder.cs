@@ -80,21 +80,30 @@ namespace NPCConsoleTesting
         private int DetermineRetrievalMethod()
         {
             Console.WriteLine("How shall the combatants be selected? 1 = Random, 2 = Custom, 3 = Get from db.");
-            return GetIntFromUser();
+            return GetPositiveIntFromUser();
         }
 
-        private static int GetIntFromUser()
+        public static int GetPositiveIntFromUser()
         {
+            //TODO: refactor / clean up. Should this method take an error message param?
             int integer = 0;
-            while (integer == 0)
+            //bool exceptionThrown = false;
+            while (integer < 1)
             {
+                bool exceptionThrown = false;
                 try
                 {
                     integer = int.Parse(Console.ReadLine());
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("We're looking for an integer...");
+                    Console.WriteLine("We're looking for a positive integer...");
+                    exceptionThrown = true;
+                }
+
+                if (integer < 1 && !exceptionThrown)
+                {
+                    Console.WriteLine("We're looking for a positive integer...");
                 }
             }
 
@@ -177,7 +186,7 @@ namespace NPCConsoleTesting
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
             int currentHP = CalcMaxHP(HPByLevel, con, charClass);
             //TODO: option to build HPByLevel to sum to a specific number?
-            //int initMod = GetIntFromUser();
+            //int initMod = GetPositiveIntFromUser();
             string weapon = GetWeapon(name, charClass, level);
             string armor = GetArmor(name, charClass);
             bool hasShield = DetermineShieldPresence(charClass, weapon);
@@ -191,7 +200,7 @@ namespace NPCConsoleTesting
         public static string GetName(int charNumber)
         {
             Console.WriteLine($"Generate name for character {charNumber} randomly or enter a custom name? 1 = Random, 2 = Custom.");
-            int nameCreationTechnique = GetIntFromUser();
+            int nameCreationTechnique = GetPositiveIntFromUser();
             string name = nameCreationTechnique == 2 ? GetCustomNameFromUserInput(charNumber) : GenerateRandomName();
 
             Console.WriteLine($"{name}... A fine name.");
@@ -344,7 +353,7 @@ namespace NPCConsoleTesting
         public static string GetCharClass(string name)
         {
             Console.WriteLine($"Determine class for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
-            int classSelectionTechnique = GetIntFromUser();
+            int classSelectionTechnique = GetPositiveIntFromUser();
 
             string charClass = "";
             while (!charClasses.Contains(charClass))
@@ -361,7 +370,7 @@ namespace NPCConsoleTesting
         public static string GetRace(string name, string charClass)
         {
             Console.WriteLine($"Determine race for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
-            int raceSelectionTechnique = GetIntFromUser();
+            int raceSelectionTechnique = GetPositiveIntFromUser();
 
             string race = "";
             while(!races.Contains(race))
@@ -378,7 +387,7 @@ namespace NPCConsoleTesting
         public static int GetLevel(string name, int minLevel, int maxLevel)
         {
             Console.WriteLine($"Determine level for {name} randomly or enter manually? 1 = Random, 2 = Manually.");
-            int levelSelectionTechnique = GetIntFromUser();
+            int levelSelectionTechnique = GetPositiveIntFromUser();
 
             int level = 0;
             while (level < minLevel || level > maxLevel)
@@ -396,7 +405,7 @@ namespace NPCConsoleTesting
         public static string GetWeapon(string name, string charClass, int level)
         {
             Console.WriteLine($"Determine {name}'s weapon randomly or enter manually? 1 = Random, 2 = Manually.");
-            int weaponSelectionTechnique = GetIntFromUser();
+            int weaponSelectionTechnique = GetPositiveIntFromUser();
 
             string weapon = "";
             string article;
@@ -429,7 +438,7 @@ namespace NPCConsoleTesting
         public static string GetArmor(string name, string charClass)
         {
             Console.WriteLine($"Determine {name}'s armor randomly or enter manually? 1 = Random, 2 = Manually.");
-            int armorSelectionTechnique = GetIntFromUser();
+            int armorSelectionTechnique = GetPositiveIntFromUser();
 
             string armor = "";
             while (!ArmorIsAppropriate(charClass, armor))

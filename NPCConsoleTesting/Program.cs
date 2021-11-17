@@ -41,11 +41,30 @@ namespace NPCConsoleTesting
             bool userIsDoneWithProgram = false;
             while (!userIsDoneWithProgram)
             {
-                CombatantBuilder combatantBuilder = new();
-                List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
+                Console.WriteLine("1 = Simulate a single combat instance, 2 = Run a simulation multiple times");
+                int response = 0;
+                while (response != 1 && response != 2)
+                {
+                    response = CombatantBuilder.GetPositiveIntFromUser();
 
-                FullCombat.DisplayPreCombatInformation(combatants);
-                FullCombat.DoAFullCombat(combatants);
+                    if (response != 1 && response != 2)
+                    {
+                        Console.WriteLine("1 or 2, those are your options.");
+                    }
+                }
+
+                if (response == 1)
+                {
+                    CombatantBuilder combatantBuilder = new();
+                    List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
+
+                    FullCombat.DisplayPreCombatInformation(combatants);
+                    FullCombat.DoAFullCombat(combatants);
+                }
+                else if (response == 2)
+                {
+                    Console.WriteLine("(this is where multiple combats would be run)");
+                }
 
                 Console.WriteLine();
                 Console.WriteLine($"Go again? Y/N");
