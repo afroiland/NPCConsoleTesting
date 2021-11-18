@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NPCConsoleTesting.Combat
 {
@@ -8,7 +7,7 @@ namespace NPCConsoleTesting.Combat
     {
         const int MaxNumberOfCombatantsToDisplay = 6;
 
-        public static void DoAFullCombat(List<Combatant> combatants)
+        public static List<string> DoAFullCombat(List<Combatant> combatants)
         {
             //combatants fight until only one* remains.  (*in rare cases, zero)
             List<string> wholeFightLog = new() { " ", "Here's what happened:" };
@@ -32,7 +31,7 @@ namespace NPCConsoleTesting.Combat
                 {
                     //the fight has ended
                     wholeFightLog.Add($"{combatants[0].Name} won.");
-                    wholeFightLog.ForEach(i => Console.WriteLine(i));
+                    //wholeFightLog.ForEach(i => Console.WriteLine(i));
                 }
 
                 //lol
@@ -42,6 +41,8 @@ namespace NPCConsoleTesting.Combat
                     break;
                 }
             }
+
+            return wholeFightLog;
         }
 
         public static void DisplayPreCombatInformation(List<Combatant> combatants)
@@ -65,6 +66,11 @@ namespace NPCConsoleTesting.Combat
             System.Threading.Thread.Sleep(1000);
             Console.WriteLine("1");
             System.Threading.Thread.Sleep(1500);
+        }
+
+        public static void DisplayPostCombatInformation(List<string> combatLog)
+        {
+
         }
     }
 }

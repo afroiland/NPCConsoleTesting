@@ -34,6 +34,7 @@ namespace NPCConsoleTesting
                 .Build();
 
             var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
+            CombatantBuilder combatantBuilder = new();
 
             Console.WriteLine("Welcome to old-school combat simulator.");
             Console.WriteLine();
@@ -55,20 +56,25 @@ namespace NPCConsoleTesting
 
                 if (response == 1)
                 {
-                    CombatantBuilder combatantBuilder = new();
-                    List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
+                    int numberBattling = combatantBuilder.DetermineNumberBattling(false);
+                    List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
                     FullCombat.DisplayPreCombatInformation(combatants);
-                    FullCombat.DoAFullCombat(combatants);
+                    List<string> combatLog = FullCombat.DoAFullCombat(combatants);
+                    FullCombat.DisplayPostCombatInformation(combatLog);
                 }
                 else if (response == 2)
                 {
-                    Console.WriteLine("(this is where multiple combats would be run)");
+                    int numberBattling = combatantBuilder.DetermineNumberBattling(true);
+                    List <Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
+
+                    int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
+                    MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun);
                 }
 
                 Console.WriteLine();
                 Console.WriteLine($"Go again? Y/N");
-                if (Console.ReadLine().ToUpper() != "Y")
+                if (Console.ReadLine().ToLower() != "y")
                 {
                     userIsDoneWithProgram = true;
                 }

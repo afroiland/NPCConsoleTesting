@@ -9,18 +9,28 @@ namespace NPCConsoleTesting
     {
         private int _MinLevel;
         private int _MaxLevel;
+        private int _MaxCombatantsForSingleCombat;
+        private int _MaxCombatantsForMultipleCombats;
 
         public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
         public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
+        public int MaxCombatantsForSingleCombat { get => _MaxCombatantsForSingleCombat; set => _MaxCombatantsForSingleCombat = value; }
+        public int MaxCombatantsForMultipleCombats { get => _MaxCombatantsForMultipleCombats; set => _MaxCombatantsForMultipleCombats = value; }
 
-        public CombatantBuilder(int minLevel = DefaultMinLevel, int maxLevel = DefaultMaxLevel)
+        public CombatantBuilder(int minLevel = DefaultMinLevel, int maxLevel = DefaultMaxLevel,
+            int maxCombatantsForSingleCombat = DefaultMaxCombatantsForSingleCombat,
+            int maxCombatantsForMultipleCombats = DefaultMaxCombatantsForMultipleCombats)
         {
             MinLevel = minLevel;
             MaxLevel = maxLevel;
+            MaxCombatantsForSingleCombat = maxCombatantsForSingleCombat;
+            MaxCombatantsForMultipleCombats = maxCombatantsForMultipleCombats;
         }
 
         private const int DefaultMinLevel = 1;
         private const int DefaultMaxLevel = 7;
+        private const int DefaultMaxCombatantsForSingleCombat = 1000;
+        private const int DefaultMaxCombatantsForMultipleCombats = 10;
         private const int MinNamePatternLength = 3;
         private const int MaxNamePatternLength = 7;
 
@@ -37,9 +47,9 @@ namespace NPCConsoleTesting
 
         static Random _random = new();
 
-        public List<Combatant> BuildListOfCombatants(string connectionString)
+        public List<Combatant> BuildListOfCombatants(string connectionString, int numberBattling)
         {
-            int numberBattling = DetermineNumberBattling();
+            //int numberBattling = DetermineNumberBattling();
             int retrievalMethod = DetermineRetrievalMethod();
 
             List<Combatant> combatants = new();
@@ -51,8 +61,9 @@ namespace NPCConsoleTesting
             return combatants;
         }
 
-        private int DetermineNumberBattling()
+        public int DetermineNumberBattling(bool doingMultipleCombats)
         {
+            int maxNumberOfCombatants = doingMultipleCombats ? _MaxCombatantsForMultipleCombats : _MaxCombatantsForSingleCombat;
             int numberBattling = 0;
             while (numberBattling < 2)
             {
@@ -63,6 +74,12 @@ namespace NPCConsoleTesting
                     if (numberBattling < 2)
                     {
                         Console.WriteLine("At least two are needed for a battle.");
+                    }
+
+                    if (numberBattling > maxNumberOfCombatants)
+                    {
+                        Console.WriteLine($"Current settings won't allow for that many. Maximum number of combatants is {maxNumberOfCombatants} at this time.");
+                        numberBattling = 0;
                     }
                 }
                 catch (Exception)
@@ -87,7 +104,6 @@ namespace NPCConsoleTesting
         {
             //TODO: refactor / clean up. Should this method take an error message param?
             int integer = 0;
-            //bool exceptionThrown = false;
             while (integer < 1)
             {
                 bool exceptionThrown = false;
