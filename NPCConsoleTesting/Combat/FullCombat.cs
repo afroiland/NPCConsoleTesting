@@ -34,10 +34,9 @@ namespace NPCConsoleTesting.Combat
                     //wholeFightLog.ForEach(i => Console.WriteLine(i));
                 }
 
-                //lol
                 if (combatants.Count < 1)
                 {
-                    Console.WriteLine("lol");
+                    wholeFightLog.Add("The last two combatants simultaneously killed each other. A winner failed to emerge.");
                     break;
                 }
             }
@@ -70,7 +69,7 @@ namespace NPCConsoleTesting.Combat
 
         public static void DisplayPostCombatInformation(List<string> combatLog)
         {
-
+            combatLog.ForEach(i => Console.WriteLine(i));
         }
     }
 }

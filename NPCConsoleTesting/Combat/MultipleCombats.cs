@@ -1,6 +1,7 @@
 ﻿using NPCConsoleTesting.Characters;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NPCConsoleTesting.Combat
 {
@@ -18,14 +19,37 @@ namespace NPCConsoleTesting.Combat
 
             for (int i = 0; i < numberOfCombats; i++)
             {
-                List<string> combatLog = FullCombat.DoAFullCombat(combatants);
+                //deep clone list of combatants
+                List<Combatant> tempList = new List<Combatant>();
+                foreach (Combatant c in combatants)
+                {
+                    tempList.Add(c.DeepClone());
+                }
+
+                List<string> combatLog = FullCombat.DoAFullCombat(tempList);
 
                 //get winner's name from last item in combatLog and increment win counter for that character
                 string lastEntry = combatLog[combatLog.Count - 1];
+
+                if (lastEntry != "The last two combatants simultaneously killed each other. A winner failed to emerge.")
+                {
+                    string name = lastEntry.Replace(" won.", "");
+                    winners[winners.FindIndex(x => x.Name == name)].Wins++;
+                }
             }
 
-            //format data (convert wins to percentages)
-            //display results
+            List<Winner> orderedDescending = winners.OrderByDescending(x => x.Wins).ToList();
+            foreach (Winner w in orderedDescending)
+            {
+                string plural = w.Wins == 1 ? "" : "s";
+                int winPercentage = CalcWinPercentage(w.Wins, numberOfCombats);
+                Console.WriteLine($"{w.Name} won {w.Wins} time{plural}, a winrate of {winPercentage}%.");
+            }
+        }
+
+        private static int CalcWinPercentage(int wins, int numberOfCombats)
+        {
+            return (int)((double)wins / numberOfCombats * 100);
         }
 
         public static int GetNumberOfTimesToRun()

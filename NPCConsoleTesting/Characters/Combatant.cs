@@ -1,6 +1,7 @@
 ﻿using NPCConsoleTesting.Characters;
 using NPCConsoleTesting.Combat;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace NPCConsoleTesting
 {
@@ -54,6 +55,14 @@ namespace NPCConsoleTesting
             ActionForThisRound = "";
             GotHitThisRound = false;
             Statuses = new List<Status>();
+        }
+
+        //json constructor
+        public Combatant() { }
+
+        public Combatant DeepClone()
+        {
+            return JsonSerializer.Deserialize<Combatant>(JsonSerializer.Serialize(this, this.GetType()));
         }
     }
 }

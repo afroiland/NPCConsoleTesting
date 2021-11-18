@@ -69,6 +69,7 @@ namespace NPCConsoleTesting
                     List <Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
                     int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
+                    FullCombat.DisplayPreCombatInformation(combatants);
                     MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun);
                 }
 
