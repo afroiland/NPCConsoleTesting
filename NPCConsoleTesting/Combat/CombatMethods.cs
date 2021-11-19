@@ -13,6 +13,17 @@ namespace NPCConsoleTesting
         public ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
             ActionResults result = new(0);
+
+            //a held or sleeping combatant can be hit automatically for max damage
+            if (defender.Statuses.Any(s => s.Name == "asleep") || defender.Statuses.Any(s => s.Name == "held"))
+            {
+                RangeViaDice range = GetRangeViaDice(attacker.Weapon);
+                int damage = range.NumberOfDice * range.TypeOfDie + range.Modifier;
+                result.Damage = damage + CalcStrBonusToDmg(attacker.Strength, attacker.Ex_Strength) + attacker.MagicalBonus + attacker.OtherDmgBonus;
+
+                return result;
+            }
+
             int attackRoll = _random.Next(1, 21);
 
             //calculate defender's armor class
@@ -557,6 +568,10 @@ namespace NPCConsoleTesting
             }
             else
             {
+                if (target.Statuses.Any(s => s.Name == "asleep") || target.Statuses.Any(s => s.Name == "held"))
+                {
+                    entries.Add($"{target.Name}, helpless, is subject to a deliberate strike from {targeter.Name}...");
+                }
                 entries.Add($"{targeter.Name} struck {target.Name} for {damage} damage.");
             }
 

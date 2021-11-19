@@ -177,7 +177,7 @@ namespace NPCConsoleTesting
             int dex = attributes.Dexterity;
             int con = attributes.Constitution;
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
-            int currentHP = CalcMaxHP(HPByLevel, con, charClass);
+            int currentHP = CalcFullHP(HPByLevel, con, charClass);
             //int initMod = 0;
             string armor = SelectRandomArmor(charClass);
             string weapon = SelectRandomWeapon(charClass, level);
@@ -200,7 +200,7 @@ namespace NPCConsoleTesting
             int dex = attributes.Dexterity;
             int con = attributes.Constitution;
             List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
-            int currentHP = CalcMaxHP(HPByLevel, con, charClass);
+            int currentHP = CalcFullHP(HPByLevel, con, charClass);
             //TODO: option to build HPByLevel to sum to a specific number?
             //int initMod = GetPositiveIntFromUser();
             string weapon = GetWeapon(name, charClass, level);
@@ -681,7 +681,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public static int CalcMaxHP(List<int> HPByLevel, int con, string charClass)
+        public static int CalcFullHP(List<int> HPByLevel, int con, string charClass)
         {
             return HPByLevel.Sum() + CalcConBonusToHP(con, charClass);
         }
