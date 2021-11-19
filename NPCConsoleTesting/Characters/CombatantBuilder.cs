@@ -49,7 +49,6 @@ namespace NPCConsoleTesting
 
         public List<Combatant> BuildListOfCombatants(string connectionString, int numberBattling)
         {
-            //int numberBattling = DetermineNumberBattling();
             int retrievalMethod = DetermineRetrievalMethod();
 
             List<Combatant> combatants = new();

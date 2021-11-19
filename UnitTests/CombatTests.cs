@@ -309,7 +309,7 @@ namespace UnitTests
             };
 
             //Act
-            FullCombat.DoAFullCombat(fullCombatTestList);
+            FullCombat.DoAFullCombat(fullCombatTestList, false);
 
             //Assert
             Assert.LessOrEqual(fullCombatTestList.Count, 1);

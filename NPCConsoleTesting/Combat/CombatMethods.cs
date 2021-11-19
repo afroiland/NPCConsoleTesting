@@ -394,7 +394,7 @@ namespace NPCConsoleTesting
         {
             foreach (Combatant ch in combatants)
             {
-                if (ch.Target == "" || combatants.Where(x => x.Name == ch.Target).Count() == 0)
+                if (ch.Target == "" || !combatants.Any(x => x.Name == ch.Target))
                 {
                     DetermineTargetForOneCombatant(combatants, ch);
                 }
@@ -403,7 +403,9 @@ namespace NPCConsoleTesting
 
         public void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC)
         {
-            List<string> potentialTargets = combatants.Where(x => priorityC.Name != x.Name && x.CurrentHP > 0).Select(x => x.Name).ToList();
+            //TODO: fix this for affiliation = "none"
+            List<string> potentialTargets = combatants.Where(x => priorityC.Name != x.Name && x.CurrentHP > 0 && x.Affiliation != priorityC.Affiliation)
+                .Select(x => x.Name).ToList();
             priorityC.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
         }
 

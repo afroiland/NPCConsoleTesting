@@ -43,6 +43,21 @@ namespace NPCConsoleTesting
             bool userIsDoneWithProgram = false;
             while (!userIsDoneWithProgram)
             {
+                //TODO: refactor these two
+                Console.WriteLine("1 = Simulate a free-for-all battle, 2 = Simulate a team battle");
+                int teamResponse = 0;
+                while (teamResponse != 1 && teamResponse != 2)
+                {
+                    teamResponse = CombatantBuilder.GetPositiveIntFromUser();
+
+                    if (teamResponse != 1 && teamResponse != 2)
+                    {
+                        Console.WriteLine("1 or 2, those are your options.");
+                    }
+                }
+
+                bool isTeamBattle = teamResponse == 2;
+
                 Console.WriteLine("1 = Simulate a single combat instance, 2 = Run a simulation multiple times");
                 int response = 0;
                 while (response != 1 && response != 2)
@@ -61,9 +76,12 @@ namespace NPCConsoleTesting
                     List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
                     FullCombat.DisplayPreCombatInformation(combatants);
-                    MultipleCombats.PredictWinner(combatants);
+                    if (!isTeamBattle)
+                    {
+                        MultipleCombats.PredictWinner(combatants);
+                    }
                     FullCombat.DisplayCountdown();
-                    List<string> combatLog = FullCombat.DoAFullCombat(combatants);
+                    List<string> combatLog = FullCombat.DoAFullCombat(combatants, isTeamBattle);
                     FullCombat.DisplayPostCombatInformation(combatLog);
                 }
                 else if (response == 2)
@@ -74,7 +92,7 @@ namespace NPCConsoleTesting
                     int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
                     FullCombat.DisplayPreCombatInformation(combatants);
                     FullCombat.DisplayCountdown();
-                    List<Winner> winners = MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun);
+                    List<Winner> winners = MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun, isTeamBattle);
                     MultipleCombats.DisplayWinRates(winners);
                 }
 

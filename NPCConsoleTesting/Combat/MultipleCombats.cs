@@ -9,7 +9,7 @@ namespace NPCConsoleTesting.Combat
     {
         private const int MaxNumberOfTimesToRun = 1000;
 
-        public static List<Winner> DoMultipleCombats(List<Combatant> combatants, int numberOfCombats)
+        public static List<Winner> DoMultipleCombats(List<Combatant> combatants, int numberOfCombats, bool isTeamBattle)
         {
             List<Winner> winners = new();
             foreach (Combatant c in combatants)
@@ -26,7 +26,7 @@ namespace NPCConsoleTesting.Combat
                     tempList.Add(c.DeepClone());
                 }
 
-                List<string> combatLog = FullCombat.DoAFullCombat(tempList);
+                List<string> combatLog = FullCombat.DoAFullCombat(tempList, isTeamBattle);
 
                 string lastEntry = combatLog[^1];
                 if (lastEntry != "The last two combatants simultaneously killed each other. A winner failed to emerge.")
@@ -72,7 +72,7 @@ namespace NPCConsoleTesting.Combat
 
         public static void PredictWinner(List<Combatant> combatants)
         {
-            List<Winner> winners = DoMultipleCombats(combatants, 1000);
+            List<Winner> winners = DoMultipleCombats(combatants, 1000, false);
 
             string confidence = winners[0].WinPercentage switch
             {
