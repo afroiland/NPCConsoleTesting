@@ -16,6 +16,7 @@ namespace NPCConsoleTesting
         public int OtherHitBonus { get; set; }
         public int OtherDmgBonus { get; set; }
         public int OtherACBonus { get; set; }
+        public int InitMod { get; set; }
         public int Init
         {
             get { return init; }
@@ -25,11 +26,12 @@ namespace NPCConsoleTesting
         public string ActionForThisRound { get; set; }
         public bool GotHitThisRound { get; set; }
         public List<string> Spells { get; set; }
+        public string Affiliation { get; set; }
 
         public Combatant(string charName, string charClass, int charLevel, string charRace, int charStrength, int charDexterity, int charCon,
             List<int> charHP_By_Level, int charCurrentHP, int charInitMod = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0,
-            int otherACBonus = 0, int charEx_Strength = 0, string charArmor = "none", string charWeapon = "none", bool charHasShield = false,
-            List<string> charSpells = null)
+            int otherACBonus = 0, int initMod = 0, int charEx_Strength = 0, string charArmor = "none", string charWeapon = "none",
+            bool charHasShield = false, List<string> charSpells = null, string affiliation = "none")
         {
             Name = charName;
             CharacterClass = charClass;
@@ -49,7 +51,9 @@ namespace NPCConsoleTesting
             OtherHitBonus = otherHitBonus;
             OtherDmgBonus = otherDmgBonus;
             OtherACBonus = otherACBonus;
+            InitMod = initMod;
             Spells = charSpells;
+            Affiliation = affiliation;
             Init = 0;
             Target = "";
             ActionForThisRound = "";
