@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NPCConsoleTesting.Combat;
 using System.Collections.Generic;
 using System;
+using NPCConsoleTesting.Characters;
 
 namespace NPCConsoleTesting
 {
@@ -60,6 +61,8 @@ namespace NPCConsoleTesting
                     List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
                     FullCombat.DisplayPreCombatInformation(combatants);
+                    MultipleCombats.PredictWinner(combatants);
+                    FullCombat.DisplayCountdown();
                     List<string> combatLog = FullCombat.DoAFullCombat(combatants);
                     FullCombat.DisplayPostCombatInformation(combatLog);
                 }
@@ -70,7 +73,9 @@ namespace NPCConsoleTesting
 
                     int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
                     FullCombat.DisplayPreCombatInformation(combatants);
-                    MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun);
+                    FullCombat.DisplayCountdown();
+                    List<Winner> winners = MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun);
+                    MultipleCombats.DisplayWinRates(winners);
                 }
 
                 Console.WriteLine();

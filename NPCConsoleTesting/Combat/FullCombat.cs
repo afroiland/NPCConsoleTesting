@@ -55,7 +55,10 @@ namespace NPCConsoleTesting.Combat
                     Console.WriteLine($"{c.Name}, level {c.Level} {c.Race} {c.CharacterClass}, {c.CurrentHP} HP");
                 }
             }
+        }
 
+        public static void DisplayCountdown()
+        {
             Console.WriteLine();
             Console.WriteLine("Combatants are ready. Press any key to begin...");
             Console.ReadKey(true);

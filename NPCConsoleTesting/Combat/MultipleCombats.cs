@@ -9,7 +9,7 @@ namespace NPCConsoleTesting.Combat
     {
         private const int MaxNumberOfTimesToRun = 1000;
 
-        public static void DoMultipleCombats(List<Combatant> combatants, int numberOfCombats)
+        public static List<Winner> DoMultipleCombats(List<Combatant> combatants, int numberOfCombats)
         {
             List<Winner> winners = new();
             foreach (Combatant c in combatants)
@@ -28,28 +28,28 @@ namespace NPCConsoleTesting.Combat
 
                 List<string> combatLog = FullCombat.DoAFullCombat(tempList);
 
-                //get winner's name from last item in combatLog and increment win counter for that character
-                string lastEntry = combatLog[combatLog.Count - 1];
-
+                string lastEntry = combatLog[^1];
                 if (lastEntry != "The last two combatants simultaneously killed each other. A winner failed to emerge.")
                 {
+                    //get winner's name from last item in combatLog and increment win counter for that character
                     string name = lastEntry.Replace(" won.", "");
                     winners[winners.FindIndex(x => x.Name == name)].Wins++;
                 }
             }
 
             List<Winner> orderedDescending = winners.OrderByDescending(x => x.Wins).ToList();
-            foreach (Winner w in orderedDescending)
-            {
-                string plural = w.Wins == 1 ? "" : "s";
-                int winPercentage = CalcWinPercentage(w.Wins, numberOfCombats);
-                Console.WriteLine($"{w.Name} won {w.Wins} time{plural}, a winrate of {winPercentage}%.");
-            }
+            List<Winner> winnersWithWinPercentages = GetWinPercentages(orderedDescending, numberOfCombats);
+            return winnersWithWinPercentages;
         }
 
-        private static int CalcWinPercentage(int wins, int numberOfCombats)
+        private static List<Winner> GetWinPercentages(List<Winner> winners, int numberOfCombats)
         {
-            return (int)((double)wins / numberOfCombats * 100);
+            foreach (Winner w in winners)
+            {
+                w.WinPercentage = CalcWinPercentage(w.Wins, numberOfCombats);
+            }
+
+            return winners;
         }
 
         public static int GetNumberOfTimesToRun()
@@ -68,6 +68,37 @@ namespace NPCConsoleTesting.Combat
             }
 
             return numberOfTimesToRun;
+        }
+
+        public static void PredictWinner(List<Combatant> combatants)
+        {
+            List<Winner> winners = DoMultipleCombats(combatants, 1000);
+
+            string confidence = winners[0].WinPercentage switch
+            {
+                > 95 => "supremely",
+                > 85 => "very",
+                > 75 => "fairly",
+                > 65 => "somewhat",
+                _ => "not very"
+            };
+
+            Console.WriteLine();
+            Console.WriteLine($"{winners[0].Name} is predicted to win ({confidence} confident).");
+        }
+
+        public static void DisplayWinRates(List<Winner> winners)
+        {
+            foreach (Winner w in winners)
+            {
+                string plural = w.Wins == 1 ? "" : "s";
+                Console.WriteLine($"{w.Name} won {w.Wins} time{plural}, a winrate of {w.WinPercentage}%.");
+            }
+        }
+
+        private static int CalcWinPercentage(int wins, int numberOfCombats)
+        {
+            return (int)((double)wins / numberOfCombats * 100);
         }
     }
 }
