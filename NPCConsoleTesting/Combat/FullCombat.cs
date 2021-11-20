@@ -10,13 +10,12 @@ namespace NPCConsoleTesting.Combat
 
         public static List<string> DoAFullCombat(List<Combatant> combatants, bool isTeamBattle)
         {
-            //combatants fight until only one* remains.  (*in rare cases, zero)
-            List<string> wholeFightLog = new() { " ", "Here's what happened:" };
+            //combatants fight until only one combatant/team remains. (in rare cases, zero combatants will remain)
+            List<string> wholeFightLog = new() { " " };
             int roundNumber = 0;
 
             bool theBattleIsOver = false;
 
-            //while(combatants.Count > 1)
             while (!theBattleIsOver)
                 {
                 List<string> logResults = CombatRound.DoACombatRound(combatants, isTeamBattle);
@@ -31,20 +30,6 @@ namespace NPCConsoleTesting.Combat
                 wholeFightLog.AddRange(logResults);
 
                 theBattleIsOver = isTeamBattle ? DetermineIfTeamBattleIsOver(combatants, wholeFightLog) : DetermineIfFFAIsOver(combatants, wholeFightLog);
-
-                ////check if only one combatant remains
-                //if (combatants.Count == 1)
-                //{
-                //    //the fight has ended
-                //    wholeFightLog.Add($"{combatants[0].Name} won.");
-                //    //wholeFightLog.ForEach(i => Console.WriteLine(i));
-                //}
-
-                //if (combatants.Count < 1)
-                //{
-                //    wholeFightLog.Add("The last two combatants simultaneously killed each other. A winner failed to emerge.");
-                //    break;
-                //}
             }
 
             return wholeFightLog;
@@ -63,7 +48,7 @@ namespace NPCConsoleTesting.Combat
             string affiliation = combatants.First().Affiliation;
             if (combatants.All(c => c.Affiliation == affiliation))
             {
-                Console.WriteLine($"Those fighting for {affiliation} have won.");
+                wholeFightLog.Add($"Those fighting for {affiliation} have won.");
                 battleIsOver = true;
             }
 
@@ -89,15 +74,17 @@ namespace NPCConsoleTesting.Combat
             return battleIsOver;
         }
 
-        public static void DisplayPreCombatInformation(List<Combatant> combatants)
+        public static void DisplayPreCombatInformation(List<Combatant> combatants, bool isTeamBattle)
         {
             if (combatants.Count <= MaxNumberOfCombatantsToDisplay)
             {
                 Console.WriteLine();
                 Console.WriteLine("Here are the combatants:");
+                //TODO: group combatants by affiliation
                 foreach (Combatant c in combatants)
                 {
-                    Console.WriteLine($"{c.Name}, level {c.Level} {c.Race} {c.CharacterClass}, {c.CurrentHP} HP");
+                    string teamInfo = isTeamBattle ? $", fighting for {c.Affiliation}" : "";
+                    Console.WriteLine($"{c.Name}, level {c.Level} {c.Race} {c.CharacterClass}, {c.CurrentHP} HP{teamInfo}");
                 }
             }
         }

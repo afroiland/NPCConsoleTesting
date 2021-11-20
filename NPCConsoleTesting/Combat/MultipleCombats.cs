@@ -14,7 +14,25 @@ namespace NPCConsoleTesting.Combat
             List<Winner> winners = new();
             foreach (Combatant c in combatants)
             {
-                winners.Add(new Winner(c.Name, 0));
+                if (isTeamBattle)
+                {
+                    //TODO: there's probably a better way to do this
+                    if (winners.Count == 0)
+                    {
+                        winners.Add(new Winner(c.Affiliation, 0));
+                    }
+                    else
+                    {
+                        if (!winners.Any(w => w.Name == c.Affiliation))
+                        {
+                            winners.Add(new Winner(c.Affiliation, 0));
+                        }
+                    }
+                }
+                else
+                {
+                    winners.Add(new Winner(c.Name, 0));
+                }
             }
 
             for (int i = 0; i < numberOfCombats; i++)
@@ -31,9 +49,10 @@ namespace NPCConsoleTesting.Combat
                 string lastEntry = combatLog[^1];
                 if (lastEntry != "The last two combatants simultaneously killed each other. A winner failed to emerge.")
                 {
-                    //get winner's name from last item in combatLog and increment win counter for that character
-                    string name = lastEntry.Replace(" won.", "");
-                    winners[winners.FindIndex(x => x.Name == name)].Wins++;
+                    //get winner's name from last item in combatLog and increment win counter for that character / team
+                    string winner = isTeamBattle ? lastEntry.Replace("Those fighting for ", "").Replace(" have won.", "") : lastEntry.Replace(" won.", "");
+
+                    winners[winners.FindIndex(x => x.Name == winner)].Wins++;
                 }
             }
 
@@ -70,9 +89,9 @@ namespace NPCConsoleTesting.Combat
             return numberOfTimesToRun;
         }
 
-        public static void PredictWinner(List<Combatant> combatants)
+        public static void PredictWinner(List<Combatant> combatants, bool isTeamBattle)
         {
-            List<Winner> winners = DoMultipleCombats(combatants, 1000, false);
+            List<Winner> winners = DoMultipleCombats(combatants, 1000, isTeamBattle);
 
             string confidence = winners[0].WinPercentage switch
             {

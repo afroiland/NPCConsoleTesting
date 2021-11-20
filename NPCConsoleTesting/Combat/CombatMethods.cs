@@ -414,7 +414,10 @@ namespace NPCConsoleTesting
                 potentialTargets = combatants.Where(x => priorityC.Name != x.Name && x.CurrentHP > 0).Select(x => x.Name).ToList();
             }
 
-            priorityC.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
+            if (potentialTargets.Count != 0)
+            {
+                priorityC.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
+            }
         }
 
         public void DetermineInits(List<Combatant> combatants)
@@ -476,7 +479,8 @@ namespace NPCConsoleTesting
                 if (results.Damage < 0)   //a negative result indicates a healing spell, which gets applied to caster
                 {
                     targeter.CurrentHP -= results.Damage;
-                    entries.Add($"{targeter.Name} healed themselves for {-(results.Damage)} hit points.");
+                    string plural = results.Damage == -1 ? "" : "s";
+                    entries.Add($"{targeter.Name} healed themselves for {-(results.Damage)} hit point{plural}.");
                 }
             }
 

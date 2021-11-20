@@ -75,11 +75,8 @@ namespace NPCConsoleTesting
                     int numberBattling = combatantBuilder.DetermineNumberBattling(false);
                     List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
-                    FullCombat.DisplayPreCombatInformation(combatants);
-                    if (!isTeamBattle)
-                    {
-                        MultipleCombats.PredictWinner(combatants);
-                    }
+                    FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
+                    MultipleCombats.PredictWinner(combatants, isTeamBattle);
                     FullCombat.DisplayCountdown();
                     List<string> combatLog = FullCombat.DoAFullCombat(combatants, isTeamBattle);
                     FullCombat.DisplayPostCombatInformation(combatLog);
@@ -90,7 +87,7 @@ namespace NPCConsoleTesting
                     List <Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
                     int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
-                    FullCombat.DisplayPreCombatInformation(combatants);
+                    FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
                     FullCombat.DisplayCountdown();
                     List<Winner> winners = MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun, isTeamBattle);
                     MultipleCombats.DisplayWinRates(winners);
