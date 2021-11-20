@@ -244,7 +244,7 @@ namespace UnitTests
             List<Combatant> testList = new() {testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            List<string> logResults = CombatRound.DoACombatRound(testList);
+            List<string> logResults = CombatRound.DoACombatRound(testList, false);
 
             //Assert
             Assert.That(logResults, Is.Not.Null);
@@ -257,7 +257,7 @@ namespace UnitTests
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            combatMethods.DetermineTargets(testList);
+            combatMethods.DetermineTargets(testList, false);
 
             //Assert
             CollectionAssert.DoesNotContain(testList.Select(x => x.Target), "");
@@ -333,7 +333,7 @@ namespace UnitTests
             while (!simultaneousInit)
             {
 
-                CombatRound.DoACombatRound(twoCombatantTestList);
+                CombatRound.DoACombatRound(twoCombatantTestList, false);
                 
                 if (twoCombatantTestList[0].CurrentHP <= 0 && twoCombatantTestList[1].CurrentHP <= 0)
                 {

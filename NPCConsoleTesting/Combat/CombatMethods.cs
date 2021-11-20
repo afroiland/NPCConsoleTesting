@@ -390,22 +390,30 @@ namespace NPCConsoleTesting
             }
         }
 
-        public void DetermineTargets(List<Combatant> combatants)
+        public void DetermineTargets(List<Combatant> combatants, bool isTeamBattle)
         {
             foreach (Combatant ch in combatants)
             {
                 if (ch.Target == "" || !combatants.Any(x => x.Name == ch.Target))
                 {
-                    DetermineTargetForOneCombatant(combatants, ch);
+                    DetermineTargetForOneCombatant(combatants, ch, isTeamBattle);
                 }
             }
         }
 
-        public void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC)
+        public void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC, bool isTeamBattle)
         {
-            //TODO: fix this for affiliation = "none"
-            List<string> potentialTargets = combatants.Where(x => priorityC.Name != x.Name && x.CurrentHP > 0 && x.Affiliation != priorityC.Affiliation)
+            List<string> potentialTargets = new();
+            if (isTeamBattle)
+            {
+                potentialTargets = combatants.Where(x => priorityC.Name != x.Name && x.CurrentHP > 0 && x.Affiliation != priorityC.Affiliation)
                 .Select(x => x.Name).ToList();
+            }
+            else
+            {
+                potentialTargets = combatants.Where(x => priorityC.Name != x.Name && x.CurrentHP > 0).Select(x => x.Name).ToList();
+            }
+
             priorityC.Target = potentialTargets[_random.Next(0, potentialTargets.Count)];
         }
 

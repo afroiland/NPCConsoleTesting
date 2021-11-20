@@ -11,8 +11,8 @@ namespace NPCConsoleTesting
         void IncrementStatuses(List<Combatant> combatants, List<string> log);
         void DetermineActions(List<Combatant> combatants);
         void DetermineInits(List<Combatant> combatants);
-        void DetermineTargets(List<Combatant> combatants);
-        void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC);
+        void DetermineTargets(List<Combatant> combatants, bool isTeamBattle);
+        void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC, bool isTeamBattle);
         CombatantUpdateResults ApplyActionResultToCombatant(Combatant attacker, Combatant defender, ActionResults results, int segment);
     }
 }

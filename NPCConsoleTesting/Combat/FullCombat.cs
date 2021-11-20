@@ -19,7 +19,7 @@ namespace NPCConsoleTesting.Combat
             //while(combatants.Count > 1)
             while (!theBattleIsOver)
                 {
-                List<string> logResults = CombatRound.DoACombatRound(combatants);
+                List<string> logResults = CombatRound.DoACombatRound(combatants, isTeamBattle);
 
                 //Remove fallen combatants from list
                 combatants.RemoveAll(x => x.CurrentHP < 1);

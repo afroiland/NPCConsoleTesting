@@ -44,6 +44,7 @@ namespace NPCConsoleTesting
         static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear", "two-handed sword",
             "dagger", "darts", "staff", "club", "flail", "hammer", "mace", "none" };
         static List<string> armorList = new() { "none", "leather", "studded leather", "scale", "chain", "banded", "plate" };
+        static List<string> affiliationList = new() { "The Crown", "The Church", "House Tellerue", "Oriyama Clan" };
 
         static Random _random = new();
 
@@ -182,9 +183,10 @@ namespace NPCConsoleTesting
             string weapon = SelectRandomWeapon(charClass, level);
             bool hasShield = DetermineShieldPresence(charClass, weapon);
             List<string> spells = GenerateSpellList(charClass, level);
+            string affiliation = SelectRandomAffiliation();
 
             return new Combatant(name, charClass, level, race, str, dex, con, HPByLevel, currentHP, charEx_Strength: ex_str, charArmor: armor,
-                charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
+                charWeapon: weapon, charHasShield: hasShield, charSpells: spells, charAffiliation: affiliation);
         }
 
         public Combatant BuildCombatantViaConsole(int charNumber)
@@ -207,9 +209,10 @@ namespace NPCConsoleTesting
             bool hasShield = DetermineShieldPresence(charClass, weapon);
             //TODO: option to determine spells from user input?
             List<string> spells = GenerateSpellList(charClass, level);
+            string affiliation = GetAffiliation(name);
 
             return new Combatant(name, charClass, level, race, str, dex, con, HPByLevel, currentHP, charEx_Strength: ex_str, charArmor: armor,
-                charWeapon: weapon, charHasShield: hasShield, charSpells: spells);
+                charWeapon: weapon, charHasShield: hasShield, charSpells: spells, charAffiliation: affiliation);
         }
 
         public static string GetName(int charNumber)
@@ -264,6 +267,7 @@ namespace NPCConsoleTesting
                     "level" => CheckInputForLevel(inputString, minLevel, maxLevel),
                     "weapon" => CheckInputForWeapon(inputString, charClass),
                     "armor" => CheckInputForArmor(inputString, charClass),
+                    "affiliation" => inputString,
                     _ => ""
                 };
             }
@@ -484,6 +488,23 @@ namespace NPCConsoleTesting
                 "fighter" or "cleric" or "paladin" or "ranger" => armorList.Contains(armor),
                 _ => false
             };
+        }
+
+        private static string GetAffiliation(string name)
+        {
+            Console.WriteLine($"Determine {name}'s affiliation randomly or enter manually? 1 = Random, 2 = Manually.");
+            int affiliationSelectionTechnique = GetPositiveIntFromUser();
+
+            string affiliation = "";
+            while (affiliation == "")
+            {
+                affiliation = affiliationSelectionTechnique == 2 ? GetCharInfoStringFromUser("affiliation", name) : SelectRandomAffiliation();
+            }
+
+            Console.WriteLine($"Very well, {name} shall fight for {affiliation}.");
+            Console.WriteLine();
+
+            return affiliation;
         }
 
         public static string GenerateRandomName()
@@ -718,6 +739,7 @@ namespace NPCConsoleTesting
         {
             return charClass switch
             {
+                //the indices here are intentional to exclude certain options
                 "fighter" or "cleric" or "paladin" or "ranger" => armorList[_random.Next(1, armorList.Count)],
                 "druid" or "assassin" or "thief" => armorList[_random.Next(0, 2)],
                 _ => "none"
@@ -756,6 +778,11 @@ namespace NPCConsoleTesting
             }
 
             return result;
+        }
+
+        private static string SelectRandomAffiliation()
+        {
+            return affiliationList[_random.Next(0, affiliationList.Count)];
         }
 
         private static List<string> GenerateSpellList(string charClass, int level)

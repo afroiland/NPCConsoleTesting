@@ -7,14 +7,14 @@ namespace NPCConsoleTesting
 {
     public class CombatRound
     {
-        public static List<string> DoACombatRound(List<Combatant> combatants)
+        public static List<string> DoACombatRound(List<Combatant> combatants, bool isTeamBattle)
         {
             ICombatMethods combatMethods = new CombatMethods();
             List<String> logResults = new();
 
             combatMethods.IncrementStatuses(combatants, logResults);
             combatMethods.DetermineActions(combatants);
-            combatMethods.DetermineTargets(combatants);
+            combatMethods.DetermineTargets(combatants, isTeamBattle);
             combatMethods.DetermineInits(combatants);
 
             //clear GotHitThisRound status for all combatants
@@ -40,7 +40,7 @@ namespace NPCConsoleTesting
                 if (combatants[targetIndex].CurrentHP <= 0 && combatants[priorityIndex].ActionForThisRound == "melee attack" &&
                     combatants.Where(x => x.CurrentHP > 0).Count() > 1)
                 {
-                    combatMethods.DetermineTargetForOneCombatant(combatants, combatants[priorityIndex]);
+                    combatMethods.DetermineTargetForOneCombatant(combatants, combatants[priorityIndex], isTeamBattle);
                     targetIndex = combatants.FindIndex(x => x.Name == combatants[priorityIndex].Target);
                 }
 

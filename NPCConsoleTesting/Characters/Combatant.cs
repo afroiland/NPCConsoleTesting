@@ -31,7 +31,7 @@ namespace NPCConsoleTesting
         public Combatant(string charName, string charClass, int charLevel, string charRace, int charStrength, int charDexterity, int charCon,
             List<int> charHP_By_Level, int charCurrentHP, int charInitMod = 0, int magicalBonus = 0, int otherHitBonus = 0, int otherDmgBonus = 0,
             int otherACBonus = 0, int initMod = 0, int charEx_Strength = 0, string charArmor = "none", string charWeapon = "none",
-            bool charHasShield = false, List<string> charSpells = null, string affiliation = "none")
+            bool charHasShield = false, List<string> charSpells = null, string charAffiliation = "none")
         {
             Name = charName;
             CharacterClass = charClass;
@@ -53,7 +53,7 @@ namespace NPCConsoleTesting
             OtherACBonus = otherACBonus;
             InitMod = initMod;
             Spells = charSpells;
-            Affiliation = affiliation;
+            Affiliation = charAffiliation;
             Init = 0;
             Target = "";
             ActionForThisRound = "";
