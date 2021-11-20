@@ -450,7 +450,7 @@ namespace NPCConsoleTesting
                 //if a combatant whose round action is a spell takes damage before their turn, they take no action this round 
                 if (targeter.GotHitThisRound)
                 {
-                    entries.Add($"{targeter.Name}'s casting of {results.SpellName} was interrupted.");
+                    entries.Add($"{targeter.Name}'s casting of {results.SpellName} is interrupted.");
                     return new CombatantUpdateResults(entries, opportunityForSimulAttack);
                 }
 
@@ -466,13 +466,13 @@ namespace NPCConsoleTesting
                         }
                         else if (DoASavingThrow(target) == "success")
                         {
-                            entries.Add($"{targeter.Name} attempted to cast {results.SpellName} on {target.Name}, but {target.Name}'s saving throw was successful.");
+                            entries.Add($"{targeter.Name} attempts to cast {results.SpellName} on {target.Name}, but {target.Name}'s saving throw is successful.");
                         }
                     }
                     else
                     {
                         target.Statuses.Add(results.Status);
-                        entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+                        entries.Add($"{targeter.Name} casts {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
                     }
                 }
 
@@ -480,7 +480,7 @@ namespace NPCConsoleTesting
                 {
                     targeter.CurrentHP -= results.Damage;
                     string plural = results.Damage == -1 ? "" : "s";
-                    entries.Add($"{targeter.Name} healed themselves for {-(results.Damage)} hit point{plural}.");
+                    entries.Add($"{targeter.Name} heals themselves for {-(results.Damage)} hit point{plural}.");
                 }
             }
 
@@ -491,7 +491,7 @@ namespace NPCConsoleTesting
                 {
                     if (DoASavingThrow(target) == "success")
                     {
-                        entries.Add($"{target.Name}'s saving throw was successful; damage reduced by half.");
+                        entries.Add($"{target.Name}'s saving throw is successful; damage reduced by half.");
                         results.Damage /= 2;
                     }
                 }
@@ -578,7 +578,7 @@ namespace NPCConsoleTesting
 
             if (spellName != null)
             {
-                entries.Add($"{targeter.Name}'s {spellName} spell did {damage} damage to {target.Name}.");
+                entries.Add($"{targeter.Name}'s {spellName} spell does {damage} damage to {target.Name}.");
             }
             else
             {
@@ -586,12 +586,12 @@ namespace NPCConsoleTesting
                 {
                     entries.Add($"{target.Name}, helpless, is subject to a deliberate strike from {targeter.Name}...");
                 }
-                entries.Add($"{targeter.Name} struck {target.Name} for {damage} damage.");
+                entries.Add($"{targeter.Name} strikes {target.Name} for {damage} damage.");
             }
 
             if (target.CurrentHP < 1)
             {
-                entries.Add($"{target.Name} fell.");
+                entries.Add($"{target.Name} falls.");
 
                 //a combatant that falls during the segment where they were about to take their action still gets to take their action
                 if (target.Init == segment)

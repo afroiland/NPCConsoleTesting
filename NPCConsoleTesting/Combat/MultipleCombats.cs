@@ -47,10 +47,10 @@ namespace NPCConsoleTesting.Combat
                 List<string> combatLog = FullCombat.DoAFullCombat(tempList, isTeamBattle);
 
                 string lastEntry = combatLog[^1];
-                if (lastEntry != "The last two combatants simultaneously killed each other. A winner failed to emerge.")
+                if (lastEntry != "The last two combatants simultaneously kill each other. A winner fails to emerge.")
                 {
                     //get winner's name from last item in combatLog and increment win counter for that character / team
-                    string winner = isTeamBattle ? lastEntry.Replace("Those fighting for ", "").Replace(" have won.", "") : lastEntry.Replace(" won.", "");
+                    string winner = isTeamBattle ? lastEntry.Replace("Those fighting for ", "").Replace(" win.", "") : lastEntry.Replace(" wins.", "");
 
                     winners[winners.FindIndex(x => x.Name == winner)].Wins++;
                 }

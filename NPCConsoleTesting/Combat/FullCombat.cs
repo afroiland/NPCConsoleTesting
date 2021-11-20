@@ -41,15 +41,17 @@ namespace NPCConsoleTesting.Combat
 
             if (combatants.Count < 1)
             {
-                wholeFightLog.Add("The last two combatants simultaneously killed each other. A winner failed to emerge.");
+                wholeFightLog.Add("The last two combatants simultaneously kill each other. A winner fails to emerge.");
                 battleIsOver = true;
             }
-
-            string affiliation = combatants.First().Affiliation;
-            if (combatants.All(c => c.Affiliation == affiliation))
+            else
             {
-                wholeFightLog.Add($"Those fighting for {affiliation} have won.");
-                battleIsOver = true;
+                string affiliation = combatants.First().Affiliation;
+                if (combatants.All(c => c.Affiliation == affiliation))
+                {
+                    wholeFightLog.Add($"Those fighting for {affiliation} win.");
+                    battleIsOver = true;
+                }
             }
 
             return battleIsOver;
@@ -61,13 +63,13 @@ namespace NPCConsoleTesting.Combat
 
             if (combatants.Count < 1)
             {
-                wholeFightLog.Add("The last two combatants simultaneously killed each other. A winner failed to emerge.");
+                wholeFightLog.Add("The last two combatants simultaneously kill each other. A winner fails to emerge.");
                 battleIsOver = true;
             }
 
             if (combatants.Count == 1)
             {
-                wholeFightLog.Add($"{combatants[0].Name} won.");
+                wholeFightLog.Add($"{combatants[0].Name} wins.");
                 battleIsOver = true;
             }
 
