@@ -462,7 +462,7 @@ namespace NPCConsoleTesting
                         if (DoASavingThrow(target) == "failure")
                         {
                             target.Statuses.Add(results.Status);
-                            entries.Add($"{targeter.Name} cast {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
+                            entries.Add($"{targeter.Name} casts {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
                         }
                         else if (DoASavingThrow(target) == "success")
                         {

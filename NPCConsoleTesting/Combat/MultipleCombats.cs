@@ -8,6 +8,7 @@ namespace NPCConsoleTesting.Combat
     public class MultipleCombats
     {
         private const int MaxNumberOfTimesToRun = 1000;
+        private const int MaxNumberOfCombatantsToRunPrediction = 100;
 
         public static List<Winner> DoMultipleCombats(List<Combatant> combatants, int numberOfCombats, bool isTeamBattle)
         {
@@ -91,19 +92,22 @@ namespace NPCConsoleTesting.Combat
 
         public static void PredictWinner(List<Combatant> combatants, bool isTeamBattle)
         {
-            List<Winner> winners = DoMultipleCombats(combatants, 1000, isTeamBattle);
-
-            string confidence = winners[0].WinPercentage switch
+            if (combatants.Count <= MaxNumberOfCombatantsToRunPrediction)
             {
-                > 95 => "supremely",
-                > 85 => "very",
-                > 75 => "fairly",
-                > 65 => "somewhat",
-                _ => "not very"
-            };
+                List<Winner> winners = DoMultipleCombats(combatants, 1000, isTeamBattle);
 
-            Console.WriteLine();
-            Console.WriteLine($"{winners[0].Name} is predicted to win ({confidence} confident).");
+                string confidence = winners[0].WinPercentage switch
+                {
+                    > 95 => "supremely",
+                    > 85 => "very",
+                    > 75 => "fairly",
+                    > 65 => "somewhat",
+                    _ => "not very"
+                };
+
+                Console.WriteLine();
+                Console.WriteLine($"{winners[0].Name} is predicted to win ({confidence} confident).");
+            }
         }
 
         public static void DisplayWinRates(List<Winner> winners)

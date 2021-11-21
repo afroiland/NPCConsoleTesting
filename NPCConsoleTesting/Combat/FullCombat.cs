@@ -6,21 +6,20 @@ namespace NPCConsoleTesting.Combat
 {
     public class FullCombat
     {
-        const int MaxNumberOfCombatantsToDisplay = 10;
+        const int MaxNumberOfCombatantsToDisplay = 12;
 
         public static List<string> DoAFullCombat(List<Combatant> combatants, bool isTeamBattle)
         {
-            //combatants fight until only one combatant/team remains. (in rare cases, zero combatants will remain)
             List<string> wholeFightLog = new() { " " };
             int roundNumber = 0;
 
             bool theBattleIsOver = false;
 
             while (!theBattleIsOver)
-                {
+            {
                 List<string> logResults = CombatRound.DoACombatRound(combatants, isTeamBattle);
 
-                //Remove fallen combatants from list
+                //remove fallen combatants from list
                 combatants.RemoveAll(x => x.CurrentHP < 1);
 
                 roundNumber++;
@@ -29,6 +28,7 @@ namespace NPCConsoleTesting.Combat
                 //add roundLog to wholeFightLog
                 wholeFightLog.AddRange(logResults);
 
+                //combatants fight until only one combatant/team remains. (in rare cases, zero combatants will remain)
                 theBattleIsOver = isTeamBattle ? DetermineIfTeamBattleIsOver(combatants, wholeFightLog) : DetermineIfFFAIsOver(combatants, wholeFightLog);
             }
 
@@ -76,6 +76,40 @@ namespace NPCConsoleTesting.Combat
             return battleIsOver;
         }
 
+        public static bool DetermineIfTeamBattle()
+        {
+            Console.WriteLine("1 = Simulate a free-for-all battle, 2 = Simulate a team battle");
+            int isTeamBattle = 0;
+            while (isTeamBattle != 1 && isTeamBattle != 2)
+            {
+                isTeamBattle = CombatantBuilder.GetPositiveIntFromUser();
+
+                if (isTeamBattle != 1 && isTeamBattle != 2)
+                {
+                    Console.WriteLine("1 or 2, those are your options.");
+                }
+            }
+
+            return isTeamBattle == 2;
+        }
+
+        public static bool DetermineIfSingleBattle()
+        {
+            Console.WriteLine("1 = Simulate a single combat instance, 2 = Run a simulation multiple times");
+            int isSingleBattle = 0;
+            while (isSingleBattle != 1 && isSingleBattle != 2)
+            {
+                isSingleBattle = CombatantBuilder.GetPositiveIntFromUser();
+
+                if (isSingleBattle != 1 && isSingleBattle != 2)
+                {
+                    Console.WriteLine("1 or 2, those are your options.");
+                }
+            }
+
+            return isSingleBattle == 1;
+        }
+
         public static void DisplayPreCombatInformation(List<Combatant> combatants, bool isTeamBattle)
         {
             if (combatants.Count <= MaxNumberOfCombatantsToDisplay)
@@ -97,11 +131,13 @@ namespace NPCConsoleTesting.Combat
             Console.WriteLine("Combatants are ready. Press any key to begin...");
             Console.ReadKey(true);
             Console.WriteLine("3");
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(700);
             Console.WriteLine("2");
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(700);
             Console.WriteLine("1");
-            System.Threading.Thread.Sleep(1500);
+            System.Threading.Thread.Sleep(700);
+            Console.WriteLine("The fighting commences...");
+            System.Threading.Thread.Sleep(1000);
         }
 
         public static void DisplayPostCombatInformation(List<string> combatLog)
