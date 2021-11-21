@@ -10,9 +10,9 @@ namespace UnitTests
     {
         //Arrange
         ICombatMethods combatMethods = new CombatMethods();
-        Combatant testChar = new("testChar", "Fighter", 10, "Human", 12, 12, 12, new List<int>() { 1 }, 10);
-        Combatant testCharPoorAC = new("testCharPoorAC", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -5);
-        Combatant testCharGoodAC = new("testCharGoodAC", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 25);
+        Combatant testChar = new("testChar", "fighter", 10, "human", 12, 12, 12, new List<int>() { 1 }, 10);
+        Combatant testCharPoorAC = new("testCharPoorAC", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -5);
+        Combatant testCharGoodAC = new("testCharGoodAC", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 25);
         
         const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 100;
         const float ACCURACY_RANGE_FOR_5_PERCENT_OCCURENCE = .17F;
@@ -43,14 +43,14 @@ namespace UnitTests
         public void CalcThac0_returns_correct_values()
         {
             //Act
-            int fighterLvl1Thac0 = CombatMethods.CalcThac0("Fighter", 1);
-            int paladinLvl10Thac0 = CombatMethods.CalcThac0("Paladin", 10);
-            int muLvl6Thac0 = CombatMethods.CalcThac0("Magic-User", 6);
-            int illusionistLvl11Thac0 = CombatMethods.CalcThac0("Illusionist", 11);
-            int clericLvl4Thac0 = CombatMethods.CalcThac0("Cleric", 4);
-            int druidLvl10Thac0 = CombatMethods.CalcThac0("Druid", 10);
-            int thiefLvl2Thac0 = CombatMethods.CalcThac0("Thief", 2);
-            int assassinLvl10Thac0 = CombatMethods.CalcThac0("Assassin", 10);
+            int fighterLvl1Thac0 = CombatMethods.CalcThac0("fighter", 1);
+            int paladinLvl10Thac0 = CombatMethods.CalcThac0("paladin", 10);
+            int muLvl6Thac0 = CombatMethods.CalcThac0("magic-user", 6);
+            int illusionistLvl11Thac0 = CombatMethods.CalcThac0("illusionist", 11);
+            int clericLvl4Thac0 = CombatMethods.CalcThac0("cleric", 4);
+            int druidLvl10Thac0 = CombatMethods.CalcThac0("druid", 10);
+            int thiefLvl2Thac0 = CombatMethods.CalcThac0("thief", 2);
+            int assassinLvl10Thac0 = CombatMethods.CalcThac0("assassin", 10);
 
             //Assert
             Assert.Multiple(() =>
@@ -70,11 +70,11 @@ namespace UnitTests
         public void CalcNonMonkAC_returns_correct_value()
         {
             //Act
-            int chainWithShield = CombatMethods.CalcNonMonkAC("Chain", true, 12, 0);
-            int chainNoShield = CombatMethods.CalcNonMonkAC("Chain", false, 12, 0);
-            int leatherDex16 = CombatMethods.CalcNonMonkAC("Leather", false, 16, 0);
-            int noArmorDex18 = CombatMethods.CalcNonMonkAC("None", false, 18, 0);
-            int plateShieldAndBonus = CombatMethods.CalcNonMonkAC("Plate", true, 12, 5);
+            int chainWithShield = CombatMethods.CalcNonMonkAC("chain", true, 12, 0);
+            int chainNoShield = CombatMethods.CalcNonMonkAC("chain", false, 12, 0);
+            int leatherDex16 = CombatMethods.CalcNonMonkAC("leather", false, 16, 0);
+            int noArmorDex18 = CombatMethods.CalcNonMonkAC("none", false, 18, 0);
+            int plateShieldAndBonus = CombatMethods.CalcNonMonkAC("plate", true, 12, 5);
 
             //Assert
             Assert.Multiple(() =>
@@ -150,12 +150,12 @@ namespace UnitTests
         public void CalcConBonusToHP_returns_correct_value()
         {
             //Act
-            int fighter14Con = CombatMethods.CalcConBonusToHP(14, "Fighter");
-            int ranger18Con = CombatMethods.CalcConBonusToHP(18, "Ranger");
-            int paladin17Con = CombatMethods.CalcConBonusToHP(17, "Paladin");
-            int cleric15Con = CombatMethods.CalcConBonusToHP(15, "Cleric");
-            int monk17Con = CombatMethods.CalcConBonusToHP(17, "Monk");
-            int thief5Con = CombatMethods.CalcConBonusToHP(5, "Thief");
+            int fighter14Con = CombatantBuilder.CalcConBonusToHP(14, "fighter");
+            int ranger18Con = CombatantBuilder.CalcConBonusToHP(18, "ranger");
+            int paladin17Con = CombatantBuilder.CalcConBonusToHP(17, "paladin");
+            int cleric15Con = CombatantBuilder.CalcConBonusToHP(15, "cleric");
+            int monk17Con = CombatantBuilder.CalcConBonusToHP(17, "monk");
+            int thief5Con = CombatantBuilder.CalcConBonusToHP(5, "thief");
 
             //Assert
             Assert.Multiple(() =>
@@ -169,34 +169,30 @@ namespace UnitTests
             });
         }
 
-        //GetWeaponInfo
-
-        //GetCastingTime
-
-        //GetSpeedFactor
-
-        //CalcMeleeDmg_falls_within_range_for_non_monk()
-
         [Test]
         public void CalcNonMonkMeleeDmg_falls_within_range()
         {
             //Arrange
             CombatMethods combatMethods = new();
-            string weapon = "Longsword";
-            int str = 17;
-            int ex_str = 0;
-            int magicalBonus = 0;
-            int otherDmgBonus = 1;
-            List<int> resultsList = new();
+            List<int> longSwordResultsList = new();
+            List<int> dartsResultsList = new();
+            List<int> hammerResultsList = new();
 
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                resultsList.Add(combatMethods.CalcNonMonkMeleeDmg(weapon, str, ex_str, magicalBonus, otherDmgBonus));
+                longSwordResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("longsword", 17, 0, 0, 1));
+                dartsResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("darts", 12, 0, 0, 0));
+                hammerResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("hammer", 12, 0, 2, 0));
             }
 
             //Assert
-            Assert.That(resultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+            Assert.Multiple(() =>
+            {
+                Assert.That(longSwordResultsList, Is.All.GreaterThan(2) & Is.All.LessThan(11) & Has.Member(3) & Has.Member(10));
+                Assert.That(dartsResultsList, Is.All.GreaterThan(0) & Is.All.LessThan(4) & Has.Member(1) & Has.Member(3));
+                Assert.That(hammerResultsList, Is.All.GreaterThan(3) & Is.All.LessThan(8) & Has.Member(4) & Has.Member(7));
+            });
         }
 
         [Test]
@@ -205,7 +201,7 @@ namespace UnitTests
             //Arrange
             CombatMethods combatMethods = new();
             int level = 7;
-            string weapon = "None";
+            string weapon = "none";
             int magicalBonus = 0;
             int otherDmgBonus = 0;
             List<int> resultsList = new();
@@ -226,7 +222,7 @@ namespace UnitTests
             //Arrange
             CombatMethods combatMethods = new();
             int level = 7;
-            string weapon = "Dagger";
+            string weapon = "dagger";
             int magicalBonus = 0;
             int otherDmgBonus = 0;
             List<int> resultsList = new();
@@ -248,41 +244,57 @@ namespace UnitTests
             List<Combatant> testList = new() {testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            List<string> logResults = CombatRound.DoACombatRound(testList);
+            List<string> logResults = CombatRound.DoACombatRound(testList, false);
 
             //Assert
             Assert.That(logResults, Is.Not.Null);
         }
 
         [Test]
-        public void Targets_get_set_for_all_chars()
+        public void Targets_get_set_for_all_combatants()
         {
             //Arrange
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            combatMethods.DetermineTargets(testList);
+            combatMethods.DetermineTargets(testList, false);
 
             //Assert
             CollectionAssert.DoesNotContain(testList.Select(x => x.Target), "");
         }
 
         [Test]
-        public void Inits_get_set_for_all_chars()
+        public void DetermineInits_sets_inits_correctly()
         {
             //Arrange
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
+            testChar.ActionForThisRound = "melee attack";
+            testChar.Weapon = "two-handed sword";
+            testChar.InitMod = -1;
+            testCharGoodAC.Spells = new List<string>() { "web" };
+            testCharPoorAC.Spells = new List<string>() { "hold person" };
 
-            foreach (Combatant c in testList)
+            List<int> inits2hsword = new();
+            List<int> initsWeb = new();
+            List<int> initsHoldPerson = new();
+            
+            //Act
+            for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                c.ActionForThisRound = "Melee Attack";
+                combatMethods.DetermineInits(testList);
+                inits2hsword.Add(testList.Where(x => x.Name == "testChar").Select(c => c.Init).ToList()[0]);
+                initsWeb.Add(testList.Where(x => x.Name == "testCharGoodAC").Select(c => c.Init).ToList()[0]);
+                initsHoldPerson.Add(testList.Where(x => x.Name == "testCharPoorAC").Select(c => c.Init).ToList()[0]);
             }
 
-            //Act
-            combatMethods.DetermineInits(testList);
-
             //Assert
-            Assert.That(testList, Is.Ordered.By("Init"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(testList, Is.Ordered.By("Init"));
+                Assert.That(inits2hsword, Is.All.GreaterThan(9) & Is.All.LessThan(20) & Has.Member(10) & Has.Member(19));
+                Assert.That(initsWeb, Is.All.EqualTo(2));
+                Assert.That(initsHoldPerson, Is.All.EqualTo(5));
+            });
         }
 
         [Test]
@@ -291,16 +303,16 @@ namespace UnitTests
             //Arrange
             List<Combatant> fullCombatTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0),
-                new Combatant("testChar2", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0),
-                new Combatant("testChar3", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 10, 0)
+                new Combatant("testChar1", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 10, 0),
+                new Combatant("testChar2", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 10, 0),
+                new Combatant("testChar3", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 10, 0)
             };
 
             //Act
-            FullCombat.DoAFullCombat(fullCombatTestList);
+            FullCombat.DoAFullCombat(fullCombatTestList, false);
 
             //Assert
-            Assert.AreEqual(fullCombatTestList.Count, 1);
+            Assert.LessOrEqual(fullCombatTestList.Count, 1);
         }
 
         [Test]
@@ -309,8 +321,8 @@ namespace UnitTests
             //Arrange
             List<Combatant> twoCombatantTestList = new()
             {
-                new Combatant("testChar1", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20),
-                new Combatant("testChar2", "Fighter", 1, "Human", 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20)
+                new Combatant("testChar1", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20),
+                new Combatant("testChar2", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 1, 0, otherHitBonus: 20)
             };
 
             int init1 = 0;
@@ -321,7 +333,7 @@ namespace UnitTests
             while (!simultaneousInit)
             {
 
-                CombatRound.DoACombatRound(twoCombatantTestList);
+                CombatRound.DoACombatRound(twoCombatantTestList, false);
                 
                 if (twoCombatantTestList[0].CurrentHP <= 0 && twoCombatantTestList[1].CurrentHP <= 0)
                 {

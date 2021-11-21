@@ -6,17 +6,20 @@ namespace NPCConsoleTesting.Combat
 {
     public class FullCombat
     {
-        public static void DoAFullCombat(List<Combatant> combatants)
+        const int MaxNumberOfCombatantsToDisplay = 12;
+
+        public static List<string> DoAFullCombat(List<Combatant> combatants, bool isTeamBattle)
         {
-            //combatants fight until only one* remains.  (*in rare cases, zero)
-            List<string> wholeFightLog = new() { " ", "Here's what happened:" };
+            List<string> wholeFightLog = new() { " " };
             int roundNumber = 0;
 
-            while(combatants.Count > 1)
-            {
-                List<string> logResults = CombatRound.DoACombatRound(combatants);
+            bool theBattleIsOver = false;
 
-                //Remove fallen combatants from list
+            while (!theBattleIsOver)
+            {
+                List<string> logResults = CombatRound.DoACombatRound(combatants, isTeamBattle);
+
+                //remove fallen combatants from list
                 combatants.RemoveAll(x => x.CurrentHP < 1);
 
                 roundNumber++;
@@ -25,21 +28,121 @@ namespace NPCConsoleTesting.Combat
                 //add roundLog to wholeFightLog
                 wholeFightLog.AddRange(logResults);
 
-                //check if only one combatant remains
-                if (combatants.Count == 1)
-                {
-                    //the fight has ended
-                    wholeFightLog.Add($"{combatants[0].Name} won.");
-                    wholeFightLog.ForEach(i => Console.WriteLine(i));
-                }
+                //combatants fight until only one combatant/team remains. (in rare cases, zero combatants will remain)
+                theBattleIsOver = isTeamBattle ? DetermineIfTeamBattleIsOver(combatants, wholeFightLog) : DetermineIfFFAIsOver(combatants, wholeFightLog);
+            }
 
-                //lol
-                if (combatants.Count < 1)
+            return wholeFightLog;
+        }
+
+        private static bool DetermineIfTeamBattleIsOver(List<Combatant> combatants, List<string> wholeFightLog)
+        {
+            bool battleIsOver = false;
+
+            if (combatants.Count < 1)
+            {
+                wholeFightLog.Add("The last two combatants simultaneously kill each other. A winner fails to emerge.");
+                battleIsOver = true;
+            }
+            else
+            {
+                string affiliation = combatants.First().Affiliation;
+                if (combatants.All(c => c.Affiliation == affiliation))
                 {
-                    Console.WriteLine("lol");
-                    break;
+                    wholeFightLog.Add($"Those fighting for {affiliation} win.");
+                    battleIsOver = true;
                 }
             }
+
+            return battleIsOver;
+        }
+
+        private static bool DetermineIfFFAIsOver(List<Combatant> combatants, List<string> wholeFightLog)
+        {
+            bool battleIsOver = false;
+
+            if (combatants.Count < 1)
+            {
+                wholeFightLog.Add("The last two combatants simultaneously kill each other. A winner fails to emerge.");
+                battleIsOver = true;
+            }
+
+            if (combatants.Count == 1)
+            {
+                wholeFightLog.Add($"{combatants[0].Name} wins.");
+                battleIsOver = true;
+            }
+
+            return battleIsOver;
+        }
+
+        public static bool DetermineIfTeamBattle()
+        {
+            Console.WriteLine("1 = Simulate a free-for-all battle, 2 = Simulate a team battle");
+            int isTeamBattle = 0;
+            while (isTeamBattle != 1 && isTeamBattle != 2)
+            {
+                isTeamBattle = CombatantBuilder.GetPositiveIntFromUser();
+
+                if (isTeamBattle != 1 && isTeamBattle != 2)
+                {
+                    Console.WriteLine("1 or 2, those are your options.");
+                }
+            }
+
+            return isTeamBattle == 2;
+        }
+
+        public static bool DetermineIfSingleBattle()
+        {
+            Console.WriteLine("1 = Simulate a single combat instance, 2 = Run a simulation multiple times");
+            int isSingleBattle = 0;
+            while (isSingleBattle != 1 && isSingleBattle != 2)
+            {
+                isSingleBattle = CombatantBuilder.GetPositiveIntFromUser();
+
+                if (isSingleBattle != 1 && isSingleBattle != 2)
+                {
+                    Console.WriteLine("1 or 2, those are your options.");
+                }
+            }
+
+            return isSingleBattle == 1;
+        }
+
+        public static void DisplayPreCombatInformation(List<Combatant> combatants, bool isTeamBattle)
+        {
+            if (combatants.Count <= MaxNumberOfCombatantsToDisplay)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Here are the combatants:");
+                //TODO: group combatants by affiliation
+                foreach (Combatant c in combatants)
+                {
+                    string teamInfo = isTeamBattle ? $", fighting for {c.Affiliation}" : "";
+                    Console.WriteLine($"{c.Name}, level {c.Level} {c.Race} {c.CharacterClass}, {c.CurrentHP} HP{teamInfo}");
+                }
+            }
+        }
+
+        public static void DisplayCountdown()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Combatants are ready. Press any key to begin...");
+            Console.ReadKey(true);
+            Console.WriteLine("3");
+            System.Threading.Thread.Sleep(700);
+            Console.WriteLine("2");
+            System.Threading.Thread.Sleep(700);
+            Console.WriteLine("1");
+            System.Threading.Thread.Sleep(700);
+            Console.WriteLine("The fighting commences...");
+            System.Threading.Thread.Sleep(1000);
+        }
+
+        public static void DisplayPostCombatInformation(List<string> combatLog)
+        {
+            combatLog.ForEach(i => Console.WriteLine(i));
         }
     }
 }

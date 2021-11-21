@@ -9,8 +9,11 @@ namespace UnitTests
         //Arrange
         const int TIMES_TO_LOOP_FOR_RANDOM_TESTS = 50;
 
-        string damageSpellName = "Fireball";
-        string statusSpellName = "Sleep";
+        Combatant testClericFullHP = new("testClericFullHP", "cleric", 10, "human", 12, 12, 12, new List<int>() { 8, 4, 4 }, 16);
+        Combatant testClericDamaged = new("testClericDamaged", "cleric", 10, "human", 12, 12, 12, new List<int>() { 8, 4, 4 }, 10);
+
+        string damageSpellName = "fireball";
+        string statusSpellName = "sleep";
         int casterLevel = 5;
 
         [Test]
@@ -56,7 +59,26 @@ namespace UnitTests
             var results = SpellMethods.GetStatusName(statusSpellName);
 
             //Assert
-            Assert.That(results, Is.EqualTo("Asleep"));
+            Assert.That(results, Is.EqualTo("asleep"));
+        }
+
+        [Test]
+        public void SelectFromCombatantsSpells_returns_spell_as_expected()
+        {
+            //Arrange
+            testClericFullHP.Spells = new List<string>() { "cure light wounds", "hold person" };
+            testClericDamaged.Spells = new List<string>() { "cure light wounds", "hold person" };
+
+            //Act
+            string resultFullHP = SpellMethods.SelectFromCombatantsSpells(testClericFullHP);
+            string resultDamaged = SpellMethods.SelectFromCombatantsSpells(testClericDamaged);
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultFullHP, Is.EqualTo("hold person"));
+                Assert.That(resultDamaged, Is.EqualTo("cure light wounds"));
+            });
         }
 
     }

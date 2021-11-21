@@ -9,7 +9,7 @@ namespace NPCConsoleTesting
         public string title;
         //public string characterClass;
         //public int level;
-        public string race;
+        //public string race;
         public int age;
         public string gender;
         //public int currentHP;
@@ -25,20 +25,14 @@ namespace NPCConsoleTesting
         //public int con;
         //public int cha;
         public int gold;
-        public string armor;
-        public string weapon;
+        //public string armor;
+        //public string weapon;
         public string items;
         public int probity;
         public string affiliation;
         public string notes;
 
         //spellbook/memorized in a separate class? Or child classes for MU, cleric, etc.
-
-        //The following not needed? Determined during combat?
-        public int thac0;
-        public int numberOfAttackDice;
-        public int typeOfAttackDie;
-        public int dmgModifier;
 
         public Character()
         {

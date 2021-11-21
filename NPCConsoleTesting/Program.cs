@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NPCConsoleTesting.Combat;
 using System.Collections.Generic;
 using System;
+using NPCConsoleTesting.Characters;
 
 namespace NPCConsoleTesting
 {
@@ -34,22 +35,45 @@ namespace NPCConsoleTesting
                 .Build();
 
             var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
+            CombatantBuilder combatantBuilder = new();
 
-            bool weAreDone = false;
-            while (!weAreDone)
+            Console.WriteLine("Welcome to old-school combat simulator.");
+            Console.WriteLine();
+
+            bool userIsDoneWithProgram = false;
+            while (!userIsDoneWithProgram)
             {
-                //build combatant list
-                CombatantBuilder combatantBuilder = new();
-                List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString());
+                bool isTeamBattle = FullCombat.DetermineIfTeamBattle();
+                bool runningASingleBattle = FullCombat.DetermineIfSingleBattle();
 
-                //do a full combat
-                FullCombat.DoAFullCombat(combatants);
+                if (runningASingleBattle)
+                {
+                    int numberBattling = combatantBuilder.DetermineNumberBattling(false);
+                    List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
+
+                    FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
+                    MultipleCombats.PredictWinner(combatants, isTeamBattle);
+                    FullCombat.DisplayCountdown();
+                    List<string> combatLog = FullCombat.DoAFullCombat(combatants, isTeamBattle);
+                    FullCombat.DisplayPostCombatInformation(combatLog);
+                }
+                else //running multiple battles
+                {
+                    int numberBattling = combatantBuilder.DetermineNumberBattling(true);
+                    List <Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
+
+                    int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
+                    FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
+                    FullCombat.DisplayCountdown();
+                    List<Winner> winners = MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun, isTeamBattle);
+                    MultipleCombats.DisplayWinRates(winners);
+                }
 
                 Console.WriteLine();
                 Console.WriteLine($"Go again? Y/N");
-                if (Console.ReadLine().ToUpper() != "Y")
+                if (Console.ReadLine().ToLower() != "y")
                 {
-                    weAreDone = true;
+                    userIsDoneWithProgram = true;
                 }
             }
         }

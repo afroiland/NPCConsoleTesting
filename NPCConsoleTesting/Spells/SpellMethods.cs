@@ -1,4 +1,5 @@
 ﻿using NPCConsoleTesting.Characters;
+using NPCConsoleTesting.Combat;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,38 +8,36 @@ namespace NPCConsoleTesting
 {
     public class SpellMethods
     {
-        static Random _random = new();
-
-        public static List<string> DamageSpells = new() {
-            "Burning Hands",
-            "Cure Light Wounds",
-            "Fireball",
-            "Lightning Bolt",
-            "Magic Missile",
-            "Shocking Grasp"
+        private static List<string> damageSpells = new() {
+            "burning hands",
+            "cure light wounds",
+            "fireball",
+            "lightning bolt",
+            "magic missile",
+            "shocking grasp"
         };
 
-        public List<string> StatusSpells = new()
+        private static List<string> statusSpells = new()
         {
-            "Haste",
-            "Hold Person",
-            "Slow",
-            "Strength",
-            "Ray of Enfeeblement",
-            "Sleep",
-            "Web"
+            "haste",
+            "hold person",
+            "slow",
+            "strength",
+            "ray of enfeeblement",
+            "sleep",
+            "web"
         };
+
+        static Random _random = new();
 
         public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
-            string affectType = DamageSpells.Contains(spellName) ? "damage" : "status";
+            string effectType = damageSpells.Contains(spellName) ? "damage" : "status";
             Status status = new("", 0);
             int dmg = 0;
 
-            //TODO: somewhere in here we need to check if a saving throw is called for
-
             //TODO: add checks for input not in either list
-            if (affectType == "damage")
+            if (effectType == "damage")
             {
                 dmg = GetSpellDamage(spellName, casterLevel) + bonus;
             }
@@ -48,55 +47,61 @@ namespace NPCConsoleTesting
                 status.Duration = GetStatusDuration(spellName, casterLevel);
             }
 
-            return new ActionResults(dmg, spellName, affectType, status);
+            string savingThrowType = GetSavingThrowType(spellName);
+
+            return new ActionResults(dmg, spellName, effectType, savingThrowType, status);
         }
 
         public static int GetSpellDamage(string spellName, int casterLevel)
         {
-            int result = spellName switch
+            return spellName switch
             {
-                //TODO: calc damage by level where needed
-                "Burning Hands" => casterLevel,
-                "Cure Light Wounds" => -(_random.Next(1, 9)),
-                "Fireball" or "Lightning Bolt" => 18,                
-                "Magic Missile" => 5,
-                "Shocking Grasp" => _random.Next(1, 9) + casterLevel,
+                "burning hands" => casterLevel,
+                "cure light wounds" => -(_random.Next(1, 9)),
+                "fireball" or "lightning bolt" => CombatMethods.CalcMultipleDice(new RangeViaDice(casterLevel, 6, 0)),
+                //TODO: magic missile gets wrong # of missiles, and the +1 for each missile is not included
+                "magic missile" => CombatMethods.CalcMultipleDice(new RangeViaDice((int)Math.Floor(casterLevel / 2d) + 1, 4, 0)),
+                "shocking grasp" => _random.Next(1, 9) + casterLevel,
                 _ => 0
             };
-
-            return result;
         }
 
         public static string GetStatusName(string spellName)
         {
-            string result = spellName switch
+            return spellName switch
             {
-                "Haste" => "Hasted",
-                "Hold Person" or "Web" => "Held",
-                "Slow" => "Slowed",
-                "Strength" => "Strong",
-                "Ray of Enfeeblement" => "Weakened",
-                "Sleep" => "Asleep",
+                "haste" => "hasted",
+                "hold person" or "web" => "held",
+                "slow" => "slowed",
+                "strength" => "strengthened",
+                "ray of enfeeblement" => "weakened",
+                "sleep" => "asleep",
                 _ => ""
             };
-
-            return result;
         }
 
         public static int GetStatusDuration(string spellName, int casterLevel)
         {
-            int result = spellName switch
+            return spellName switch
             {
-                "Haste" => 3 + casterLevel,
-                "Hold Person" => 4 + casterLevel,
-                "Slow" => 3 + casterLevel,
-                "Strength" => 60 * casterLevel,
-                "Ray of Enfeeblement" => casterLevel,
-                "Sleep" => 5 * casterLevel,
+                "haste" => 3 + casterLevel,
+                "hold person" => 4 + casterLevel,
+                "slow" => 3 + casterLevel,
+                "strength" => 60 * casterLevel,
+                "ray of enfeeblement" => casterLevel,
+                "sleep" => 5 * casterLevel,
                 _ => 0
             };
+        }
 
-            return result;
+        public static string GetSavingThrowType(string spellName)
+        {
+            return spellName switch
+            {
+                "fireball" or "lightning bolt" => "half",
+                "hold person" or "ray of enfeeblement" or "web" => "negate",
+                _ => "none"
+            };
         }
 
         public static string SelectFromCombatantsSpells(Combatant combatant)
@@ -106,18 +111,18 @@ namespace NPCConsoleTesting
                 return "";
             }
 
-            List<string> cureSpells = combatant.Spells.Where(x => x.Contains("Cure")).ToList();
-            List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("Cure")).ToList();
+            List<string> cureSpells = combatant.Spells.Where(x => x.Contains("cure")).ToList();
+            List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("cure")).ToList();
 
             //a combatant at full HP with only cure spells will not cast a spell
-            if (combatant.CurrentHP >= (combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass)) &&
+            if (combatant.CurrentHP >= CombatantBuilder.CalcFullHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&
                 nonCureSpells.Count < 1)
             {
                 return "";
             }
 
             //unless the combatant is at full health, cure spells are prioritized
-            if (combatant.CurrentHP < combatant.HP_By_Level.Sum() + CombatMethods.CalcConBonusToHP(combatant.Constitution, combatant.CharacterClass) &&
+            if (combatant.CurrentHP < CombatantBuilder.CalcFullHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&
                 cureSpells.Count > 0)
             {
                 //select random cure spell
