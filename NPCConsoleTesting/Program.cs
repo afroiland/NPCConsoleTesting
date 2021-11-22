@@ -8,6 +8,7 @@ using NPCConsoleTesting.Combat;
 using System.Collections.Generic;
 using System;
 using NPCConsoleTesting.Characters;
+using Autofac;
 
 namespace NPCConsoleTesting
 {
@@ -15,75 +16,81 @@ namespace NPCConsoleTesting
     {
         static void Main()
         {
-            var builder = new ConfigurationBuilder();
-            BuildConfig(builder);
+            var container = ContainerConfig.Configure();
 
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Build())
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
+            using var scope = container.BeginLifetimeScope();
+            var app = scope.Resolve<IApplication>();
+            app.Run();
 
-            //Log.Logger.Information("App Starting");
+            //var builder = new ConfigurationBuilder();
+            //BuildConfig(builder);
 
-            var host = Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) =>
-                {
-                    services.AddTransient<IConnectionStringService, ConnectionStringService>();
-                })
-                .UseSerilog()
-                .Build();
+            //Log.Logger = new LoggerConfiguration()
+            //    .ReadFrom.Configuration(builder.Build())
+            //    .Enrich.FromLogContext()
+            //    .WriteTo.Console()
+            //    .CreateLogger();
 
-            var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
-            CombatantBuilder combatantBuilder = new();
+            ////Log.Logger.Information("App Starting");
 
-            Console.WriteLine("Welcome to old-school combat simulator.");
-            Console.WriteLine();
+            //var host = Host.CreateDefaultBuilder()
+            //    .ConfigureServices((context, services) =>
+            //    {
+            //        services.AddTransient<IConnectionStringService, ConnectionStringService>();
+            //    })
+            //    .UseSerilog()
+            //    .Build();
 
-            bool userIsDoneWithProgram = false;
-            while (!userIsDoneWithProgram)
-            {
-                bool isTeamBattle = FullCombat.DetermineIfTeamBattle();
-                bool runningASingleBattle = FullCombat.DetermineIfSingleBattle();
+            //var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
+            //CombatantBuilder combatantBuilder = new();
 
-                if (runningASingleBattle)
-                {
-                    int numberBattling = combatantBuilder.DetermineNumberBattling(false);
-                    List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
+            //Console.WriteLine("Welcome to old-school combat simulator.");
+            //Console.WriteLine();
 
-                    FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
-                    MultipleCombats.PredictWinner(combatants, isTeamBattle);
-                    FullCombat.DisplayCountdown();
-                    List<string> combatLog = FullCombat.DoAFullCombat(combatants, isTeamBattle);
-                    FullCombat.DisplayPostCombatInformation(combatLog);
-                }
-                else //running multiple battles
-                {
-                    int numberBattling = combatantBuilder.DetermineNumberBattling(true);
-                    List <Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
+            //bool userIsDoneWithProgram = false;
+            //while (!userIsDoneWithProgram)
+            //{
+            //    bool isTeamBattle = FullCombat.DetermineIfTeamBattle();
+            //    bool runningASingleBattle = FullCombat.DetermineIfSingleBattle();
 
-                    int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
-                    FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
-                    FullCombat.DisplayCountdown();
-                    List<Winner> winners = MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun, isTeamBattle);
-                    MultipleCombats.DisplayWinRates(winners);
-                }
+            //    if (runningASingleBattle)
+            //    {
+            //        int numberBattling = combatantBuilder.DetermineNumberBattling(false);
+            //        List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
-                Console.WriteLine();
-                Console.WriteLine($"Go again? Y/N");
-                if (Console.ReadLine().ToLower() != "y")
-                {
-                    userIsDoneWithProgram = true;
-                }
-            }
+            //        FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
+            //        MultipleCombats.PredictWinner(combatants, isTeamBattle);
+            //        FullCombat.DisplayCountdown();
+            //        List<string> combatLog = FullCombat.DoAFullCombat(combatants, isTeamBattle);
+            //        FullCombat.DisplayPostCombatInformation(combatLog);
+            //    }
+            //    else //running multiple battles
+            //    {
+            //        int numberBattling = combatantBuilder.DetermineNumberBattling(true);
+            //        List <Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
+
+            //        int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
+            //        FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
+            //        FullCombat.DisplayCountdown();
+            //        List<Winner> winners = MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun, isTeamBattle);
+            //        MultipleCombats.DisplayWinRates(winners);
+            //    }
+
+            //    Console.WriteLine();
+            //    Console.WriteLine($"Go again? Y/N");
+            //    if (Console.ReadLine().ToLower() != "y")
+            //    {
+            //        userIsDoneWithProgram = true;
+            //    }
+            //}
         }
 
-        static void BuildConfig(IConfigurationBuilder builder)
-        {
-            builder.SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                //.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("")}")
-                .AddEnvironmentVariables();
-        }
+        //static void BuildConfig(IConfigurationBuilder builder)
+        //{
+        //    builder.SetBasePath(Directory.GetCurrentDirectory())
+        //        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        //        //.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("")}")
+        //        .AddEnvironmentVariables();
+        //}
     }
 }

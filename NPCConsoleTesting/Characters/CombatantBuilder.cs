@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace NPCConsoleTesting
 {
-    public class CombatantBuilder
+    public class CombatantBuilder : ICombatantBuilder
     {
         private int _MinLevel;
         private int _MaxLevel;
@@ -94,7 +94,7 @@ namespace NPCConsoleTesting
             return numberBattling;
         }
 
-        private int DetermineRetrievalMethod()
+        private static int DetermineRetrievalMethod()
         {
             Console.WriteLine("How shall the combatants be selected? 1 = Random, 2 = Custom, 3 = Get from db.");
             return GetPositiveIntFromUser();
@@ -157,8 +157,7 @@ namespace NPCConsoleTesting
                 }
                 else
                 {
-                    CombatantBuilder cb = new();
-                    result.Add(cb.BuildCombatantRandomly());
+                    result.Add(BuildCombatantRandomly());
                 }
             }
 
