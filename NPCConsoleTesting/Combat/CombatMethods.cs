@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace NPCConsoleTesting
 {
-    public class CombatMethods : ICombatMethods
+    public class CombatMethods
     {
         static Random _random = new();
 
-        public ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender)
+        public static ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
             ActionResults result = new(0);
 
@@ -162,7 +162,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus)
+        public static int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus)
         {
             int result;
 
@@ -208,7 +208,7 @@ namespace NPCConsoleTesting
             return CalcMultipleDice(results);
         }
 
-        public int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus)
+        public static int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus)
         {
             RangeViaDice rangeViaDice = GetRangeViaDice(weapon);
 
@@ -361,7 +361,7 @@ namespace NPCConsoleTesting
             };
         }
 
-        public void IncrementStatuses(List<Combatant> combatants, List<string> log)
+        public static void IncrementStatuses(List<Combatant> combatants, List<string> log)
         {
             foreach (Combatant x in combatants)
             {
@@ -381,7 +381,7 @@ namespace NPCConsoleTesting
             }
         }
 
-        public void DetermineActions(List<Combatant> combatants)
+        public static void DetermineActions(List<Combatant> combatants)
         {
             foreach (Combatant ch in combatants)
             {
@@ -390,7 +390,7 @@ namespace NPCConsoleTesting
             }
         }
 
-        public void DetermineTargets(List<Combatant> combatants, bool isTeamBattle)
+        public static void DetermineTargets(List<Combatant> combatants, bool isTeamBattle)
         {
             foreach (Combatant ch in combatants)
             {
@@ -401,7 +401,7 @@ namespace NPCConsoleTesting
             }
         }
 
-        public void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC, bool isTeamBattle)
+        public static void DetermineTargetForOneCombatant(List<Combatant> combatants, Combatant priorityC, bool isTeamBattle)
         {
             List<string> potentialTargets = new();
             if (isTeamBattle)
@@ -420,7 +420,7 @@ namespace NPCConsoleTesting
             }
         }
 
-        public void DetermineInits(List<Combatant> combatants)
+        public static void DetermineInits(List<Combatant> combatants)
         {
             foreach (Combatant ch in combatants)
             {
@@ -439,7 +439,7 @@ namespace NPCConsoleTesting
             combatants.Sort((p, q) => p.Init.CompareTo(q.Init));
         }
 
-        public CombatantUpdateResults ApplyActionResultToCombatant(Combatant targeter, Combatant target, ActionResults results, int segment)
+        public static CombatantUpdateResults ApplyActionResultToCombatant(Combatant targeter, Combatant target, ActionResults results, int segment)
         {
             List<string> entries = new();
             bool opportunityForSimulAttack = false;
@@ -502,14 +502,14 @@ namespace NPCConsoleTesting
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
-        private string DoASavingThrow(Combatant target)
+        private static string DoASavingThrow(Combatant target)
         {
             int targetNumber = GetSavingThrowTargetNumber(target);
 
             return _random.Next(1, 21) < targetNumber ? "failure" : "success";
         }
 
-        private int GetSavingThrowTargetNumber(Combatant target)
+        private static int GetSavingThrowTargetNumber(Combatant target)
         {
             //TODO: refactor into nested switches
             int result;
@@ -570,7 +570,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, string spellName, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
+        public static bool ApplyDamageToCombatant(Combatant targeter, Combatant target, string spellName, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
         {
             //adjust target hp and GotHitThisRound status
             target.CurrentHP -= damage;

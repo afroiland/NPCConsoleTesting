@@ -41,8 +41,8 @@ namespace NPCConsoleTesting
         static List<string> druidWeaponList = new() { "club", "dagger", "darts", "hammer", "spear", "staff" };
         static List<string> thiefWeaponList = new() { "club", "dagger", "darts", "longsword", "shortsword" };
         static List<string> monkWeaponList = new() { "club", "darts", "dagger", "staff", "none" };
-        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear", "two-handed sword",
-            "dagger", "darts", "staff", "club", "flail", "hammer", "mace", "none" };
+        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear", "two-handed sword", "dagger",
+            "darts", "staff", "club", "flail", "hammer", "mace", "none" };
         static List<string> armorList = new() { "none", "leather", "studded leather", "scale", "chain", "banded", "plate" };
         static List<string> affiliationList = new() { "The Crown", "The Church", "House Tellerue", "Oriyama Clan" };
 
@@ -392,7 +392,7 @@ namespace NPCConsoleTesting
             int raceSelectionTechnique = GetPositiveIntFromUser();
 
             string race = "";
-            while(!races.Contains(race))
+            while (!races.Contains(race))
             {
                 race = raceSelectionTechnique == 2 ? GetCharInfoStringFromUser("race", name, charClass) : SelectRandomRace();
             }
@@ -509,19 +509,19 @@ namespace NPCConsoleTesting
 
         public static string GenerateRandomName()
         {
-            string[] consonants = {"b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "qu", "r", "s", "t", "v", "w", "x", "z"};
-            string[] startingBlends = {"bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "sl",
-                "sn", "sw", "tr", "tw", "wh", "wr", "scr", "shr", "sph", "spl", "spr", "squ", "str", "thr"};
-            string[] endingBlends = { "ch", "sc", "sh", "sk", "sm", "sp", "st", "th", "sch"};
-            char[] vowels = {'a', 'e', 'i', 'o', 'u', 'y' };
-            string[] doubleVowels = {"aa", "ae", "ai", "ao", "au", "ea", "ee", "ei", "eo", "eu", "ia", "ie",
-                "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo"};
+            string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "qu", "r", "s", "t", "v", "w", "x", "z" };
+            string[] startingBlends = { "bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "sl",
+                "sn", "sw", "tr", "tw", "wh", "wr", "scr", "shr", "sph", "spl", "spr", "squ", "str", "thr" };
+            string[] endingBlends = { "ch", "sc", "sh", "sk", "sm", "sp", "st", "th", "sch" };
+            char[] vowels = { 'a', 'e', 'i', 'o', 'u', 'y' };
+            string[] doubleVowels = { "aa", "ae", "ai", "ao", "au", "ea", "ee", "ei", "eo", "eu", "ia", "ie",
+                "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo" };
 
             int patternLength = _random.Next(MinNamePatternLength, MaxNamePatternLength);
             //the pattern will be a list of ints with values between 0 and 3, each int corresponding to a LetterGroup (consonants, etc.)
 
             //initialize the pattern with a random int between 0 and 3
-            List<int> pattern = new() {_random.Next(0, 4)};
+            List<int> pattern = new() { _random.Next(0, 4) };
             string name = new("");
 
             //add random ints to the pattern until patternLength is met
@@ -635,7 +635,7 @@ namespace NPCConsoleTesting
             switch (attribute)
             {
                 case "Strength":
-                    if(race == "halfling") { return -1; }
+                    if (race == "halfling") { return -1; }
                     break;
                 case "Constitution":
                     if (race == "dwarf") { return 1; }
@@ -657,7 +657,7 @@ namespace NPCConsoleTesting
         {
             Attributes result = charClass switch
             {
-                "fighter" => new Attributes() { Strength = 9},
+                "fighter" => new Attributes() { Strength = 9 },
                 "paladin" => new Attributes() { Strength = 12, Intelligence = 9, Wisdom = 13, Constitution = 9, Charisma = 17 },
                 "ranger" => new Attributes() { Strength = 13, Wisdom = 14, Constitution = 14 },
                 "magic-user" => new Attributes() { Intelligence = 9 },

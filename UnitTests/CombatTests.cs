@@ -9,7 +9,6 @@ namespace UnitTests
     class CombatTests
     {
         //Arrange
-        ICombatMethods combatMethods = new CombatMethods();
         Combatant testChar = new("testChar", "fighter", 10, "human", 12, 12, 12, new List<int>() { 1 }, 10);
         Combatant testCharPoorAC = new("testCharPoorAC", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: -5);
         Combatant testCharGoodAC = new("testCharGoodAC", "fighter", 1, "human", 12, 12, 12, new List<int>() { 1 }, 10, otherACBonus: 25);
@@ -27,8 +26,8 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                if (combatMethods.DoAMeleeAttack(testChar, testCharPoorAC).Damage == 0) { missesAgainstPoorAC++; }
-                if (combatMethods.DoAMeleeAttack(testChar, testCharGoodAC).Damage != 0) { hitsAgainstGoodAC++; }
+                if (CombatMethods.DoAMeleeAttack(testChar, testCharPoorAC).Damage == 0) { missesAgainstPoorAC++; }
+                if (CombatMethods.DoAMeleeAttack(testChar, testCharGoodAC).Damage != 0) { hitsAgainstGoodAC++; }
             }
 
             ////Assert
@@ -181,9 +180,9 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                longSwordResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("longsword", 17, 0, 0, 1));
-                dartsResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("darts", 12, 0, 0, 0));
-                hammerResultsList.Add(combatMethods.CalcNonMonkMeleeDmg("hammer", 12, 0, 2, 0));
+                longSwordResultsList.Add(CombatMethods.CalcNonMonkMeleeDmg("longsword", 17, 0, 0, 1));
+                dartsResultsList.Add(CombatMethods.CalcNonMonkMeleeDmg("darts", 12, 0, 0, 0));
+                hammerResultsList.Add(CombatMethods.CalcNonMonkMeleeDmg("hammer", 12, 0, 2, 0));
             }
 
             //Assert
@@ -209,7 +208,7 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                resultsList.Add(combatMethods.CalcMonkMeleeDmg(level, weapon, magicalBonus, otherDmgBonus));
+                resultsList.Add(CombatMethods.CalcMonkMeleeDmg(level, weapon, magicalBonus, otherDmgBonus));
             }
 
             //Assert
@@ -230,7 +229,7 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                resultsList.Add(combatMethods.CalcMonkMeleeDmg(level, weapon, magicalBonus, otherDmgBonus));
+                resultsList.Add(CombatMethods.CalcMonkMeleeDmg(level, weapon, magicalBonus, otherDmgBonus));
             }
 
             //Assert
@@ -257,7 +256,7 @@ namespace UnitTests
             List<Combatant> testList = new() { testChar, testCharGoodAC, testCharPoorAC };
 
             //Act
-            combatMethods.DetermineTargets(testList, false);
+            CombatMethods.DetermineTargets(testList, false);
 
             //Assert
             CollectionAssert.DoesNotContain(testList.Select(x => x.Target), "");
@@ -281,7 +280,7 @@ namespace UnitTests
             //Act
             for (int i = 0; i < TIMES_TO_LOOP_FOR_RANDOM_TESTS; i++)
             {
-                combatMethods.DetermineInits(testList);
+                CombatMethods.DetermineInits(testList);
                 inits2hsword.Add(testList.Where(x => x.Name == "testChar").Select(c => c.Init).ToList()[0]);
                 initsWeb.Add(testList.Where(x => x.Name == "testCharGoodAC").Select(c => c.Init).ToList()[0]);
                 initsHoldPerson.Add(testList.Where(x => x.Name == "testCharPoorAC").Select(c => c.Init).ToList()[0]);
