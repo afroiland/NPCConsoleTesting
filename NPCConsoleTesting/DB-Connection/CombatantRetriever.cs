@@ -40,8 +40,10 @@ namespace NPCConsoleTesting
                 "lightning bolt", "magic missile", "shocking grasp", "slow", "strength", "ray of enfeeblement", "sleep", "web"};
 
             List<string> listOfAllSpells = allSpells.Split(", ").ToList();
+            //TODO: if at some point everything in the db is standardized to use lowercase, the next line can be removed
+            List<string> allSpellsToLower = listOfAllSpells.Select(x => x.ToLower()).ToList();
 
-            return listOfAllSpells.Where(x => combatSpells.Contains(x)).ToList();
+            return allSpellsToLower.Where(x => combatSpells.Contains(x)).ToList();
         }
     }
 }
