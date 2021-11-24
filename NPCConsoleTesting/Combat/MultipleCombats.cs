@@ -5,12 +5,14 @@ using System.Linq;
 
 namespace NPCConsoleTesting.Combat
 {
-    public class MultipleCombats
+    public class MultipleCombats : IMultipleCombats
     {
         private const int MaxNumberOfTimesToRun = 1000;
         private const int MaxNumberOfCombatantsToRunPrediction = 100;
 
-        public static List<Winner> DoMultipleCombats(List<Combatant> combatants, int numberOfCombats, bool isTeamBattle)
+        FullCombat _fullCombat = new();
+
+        public List<Winner> DoMultipleCombats(List<Combatant> combatants, int numberOfCombats, bool isTeamBattle)
         {
             List<Winner> winners = new();
             foreach (Combatant c in combatants)
@@ -45,7 +47,7 @@ namespace NPCConsoleTesting.Combat
                     tempList.Add(c.DeepClone());
                 }
 
-                List<string> combatLog = FullCombat.DoAFullCombat(tempList, isTeamBattle);
+                List<string> combatLog = _fullCombat.DoAFullCombat(tempList, isTeamBattle);
 
                 string lastEntry = combatLog[^1];
                 if (lastEntry != "The last two combatants simultaneously kill each other. A winner fails to emerge.")
@@ -72,7 +74,7 @@ namespace NPCConsoleTesting.Combat
             return winners;
         }
 
-        public static int GetNumberOfTimesToRun()
+        public int GetNumberOfTimesToRun()
         {
             Console.WriteLine("How many times shall the simulation be run?");
             int numberOfTimesToRun = 0;
@@ -90,7 +92,7 @@ namespace NPCConsoleTesting.Combat
             return numberOfTimesToRun;
         }
 
-        public static void PredictWinner(List<Combatant> combatants, bool isTeamBattle)
+        public void PredictWinner(List<Combatant> combatants, bool isTeamBattle)
         {
             if (combatants.Count <= MaxNumberOfCombatantsToRunPrediction)
             {
@@ -110,7 +112,7 @@ namespace NPCConsoleTesting.Combat
             }
         }
 
-        public static void DisplayWinRates(List<Winner> winners)
+        public void DisplayWinRates(List<Winner> winners)
         {
             foreach (Winner w in winners)
             {

@@ -308,7 +308,9 @@ namespace UnitTests
             };
 
             //Act
-            FullCombat.DoAFullCombat(fullCombatTestList, false);
+            //TODO: clean up this instantiation
+            FullCombat fullCombat = new();
+            fullCombat.DoAFullCombat(fullCombatTestList, false);
 
             //Assert
             Assert.LessOrEqual(fullCombatTestList.Count, 1);

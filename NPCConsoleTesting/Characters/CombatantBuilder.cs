@@ -7,6 +7,27 @@ namespace NPCConsoleTesting
 {
     public class CombatantBuilder : ICombatantBuilder
     {
+        private const int DefaultMinLevel = 1;
+        private const int DefaultMaxLevel = 7;
+        private const int DefaultMaxCombatantsForSingleCombat = 1000;
+        private const int DefaultMaxCombatantsForMultipleCombats = 10;
+        private const int MinNamePatternLength = 3;
+        private const int MaxNamePatternLength = 7;
+
+        static List<string> charClasses = new() { "fighter", "paladin", "ranger", "magic-user", "cleric", "monk", "druid", "thief", "assassin" };
+        static List<string> races = new() { "human", "elf", "dwarf", "halfling" };
+        static List<string> muWeaponList = new() { "dagger", "darts", "staff" };
+        static List<string> clericWeaponList = new() { "club", "flail", "hammer", "mace", "staff" };
+        static List<string> druidWeaponList = new() { "club", "dagger", "darts", "hammer", "spear", "staff" };
+        static List<string> thiefWeaponList = new() { "club", "dagger", "darts", "longsword", "shortsword" };
+        static List<string> monkWeaponList = new() { "club", "darts", "dagger", "staff", "none" };
+        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear",
+            "two-handed sword", "dagger", "darts", "staff", "club", "flail", "hammer", "mace", "none" };
+        static List<string> armorList = new() { "none", "leather", "studded leather", "scale", "chain", "banded", "plate" };
+        static List<string> affiliationList = new() { "The Crown", "The Church", "House Tellerue", "Oriyama Clan" };
+
+        static Random _random = new();
+
         private int _MinLevel;
         private int _MaxLevel;
         private int _MaxCombatantsForSingleCombat;
@@ -26,27 +47,6 @@ namespace NPCConsoleTesting
             MaxCombatantsForSingleCombat = maxCombatantsForSingleCombat;
             MaxCombatantsForMultipleCombats = maxCombatantsForMultipleCombats;
         }
-
-        private const int DefaultMinLevel = 1;
-        private const int DefaultMaxLevel = 7;
-        private const int DefaultMaxCombatantsForSingleCombat = 1000;
-        private const int DefaultMaxCombatantsForMultipleCombats = 10;
-        private const int MinNamePatternLength = 3;
-        private const int MaxNamePatternLength = 7;
-
-        static List<string> charClasses = new() { "fighter", "paladin", "ranger", "magic-user", "cleric", "monk", "druid", "thief", "assassin" };
-        static List<string> races = new() { "human", "elf", "dwarf", "halfling" };
-        static List<string> muWeaponList = new() { "dagger", "darts", "staff" };
-        static List<string> clericWeaponList = new() { "club", "flail", "hammer", "mace", "staff" };
-        static List<string> druidWeaponList = new() { "club", "dagger", "darts", "hammer", "spear", "staff" };
-        static List<string> thiefWeaponList = new() { "club", "dagger", "darts", "longsword", "shortsword" };
-        static List<string> monkWeaponList = new() { "club", "darts", "dagger", "staff", "none" };
-        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear", "two-handed sword", "dagger",
-            "darts", "staff", "club", "flail", "hammer", "mace", "none" };
-        static List<string> armorList = new() { "none", "leather", "studded leather", "scale", "chain", "banded", "plate" };
-        static List<string> affiliationList = new() { "The Crown", "The Church", "House Tellerue", "Oriyama Clan" };
-
-        static Random _random = new();
 
         public List<Combatant> BuildListOfCombatants(string connectionString, int numberBattling)
         {

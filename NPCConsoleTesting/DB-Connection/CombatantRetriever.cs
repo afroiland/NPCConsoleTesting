@@ -41,7 +41,10 @@ namespace NPCConsoleTesting
 
             List<string> listOfAllSpells = allSpells.Split(", ").ToList();
 
-            return listOfAllSpells.Where(x => combatSpells.Contains(x)).ToList();
+            //TODO: if at some point everything in the db is standardized to use lowercase, the next line can be removed
+            List<string> allSpellsToLower = listOfAllSpells.Select(x => x.ToLower()).ToList();
+
+            return allSpellsToLower.Where(x => combatSpells.Contains(x)).ToList();
         }
     }
 }

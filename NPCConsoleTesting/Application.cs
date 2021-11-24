@@ -14,10 +14,14 @@ namespace NPCConsoleTesting
     public class Application : IApplication
     {
         ICombatantBuilder _combatantBuilder;
+        IFullCombat _fullCombat;
+        IMultipleCombats _multipleCombats;
 
-        public Application(ICombatantBuilder combatantBuilder)
+        public Application(ICombatantBuilder combatantBuilder, IFullCombat fullCombat, IMultipleCombats multipleCombats)
         {
             _combatantBuilder = combatantBuilder;
+            _fullCombat = fullCombat;
+            _multipleCombats = multipleCombats;
         }
 
         public void Run()
@@ -42,7 +46,10 @@ namespace NPCConsoleTesting
                 .Build();
 
             var connectionStringSvc = ActivatorUtilities.CreateInstance<ConnectionStringService>(host.Services);
-            CombatantBuilder combatantBuilder = new();
+
+
+
+            //-------------------------------------- App starts here --------------------------------------
 
             Console.WriteLine("Welcome to old-school combat simulator.");
             Console.WriteLine();
@@ -50,30 +57,30 @@ namespace NPCConsoleTesting
             bool userIsDoneWithProgram = false;
             while (!userIsDoneWithProgram)
             {
-                bool isTeamBattle = FullCombat.DetermineIfTeamBattle();
-                bool runningASingleBattle = FullCombat.DetermineIfSingleBattle();
+                bool isTeamBattle = _fullCombat.DetermineIfTeamBattle();
+                bool runningASingleBattle = _fullCombat.DetermineIfSingleBattle();
 
                 if (runningASingleBattle)
                 {
-                    int numberBattling = combatantBuilder.DetermineNumberBattling(false);
-                    List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
+                    int numberBattling = _combatantBuilder.DetermineNumberBattling(false);
+                    List<Combatant> combatants = _combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
-                    FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
-                    MultipleCombats.PredictWinner(combatants, isTeamBattle);
-                    FullCombat.DisplayCountdown();
-                    List<string> combatLog = FullCombat.DoAFullCombat(combatants, isTeamBattle);
-                    FullCombat.DisplayPostCombatInformation(combatLog);
+                    _fullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
+                    _multipleCombats.PredictWinner(combatants, isTeamBattle);
+                    _fullCombat.DisplayCountdown();
+                    List<string> combatLog = _fullCombat.DoAFullCombat(combatants, isTeamBattle);
+                    _fullCombat.DisplayPostCombatInformation(combatLog);
                 }
                 else //running multiple battles
                 {
-                    int numberBattling = combatantBuilder.DetermineNumberBattling(true);
-                    List<Combatant> combatants = combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
+                    int numberBattling = _combatantBuilder.DetermineNumberBattling(true);
+                    List<Combatant> combatants = _combatantBuilder.BuildListOfCombatants(connectionStringSvc.GetConnectionString(), numberBattling);
 
-                    int numberOfTimesToRun = MultipleCombats.GetNumberOfTimesToRun();
-                    FullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
-                    FullCombat.DisplayCountdown();
-                    List<Winner> winners = MultipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun, isTeamBattle);
-                    MultipleCombats.DisplayWinRates(winners);
+                    int numberOfTimesToRun = _multipleCombats.GetNumberOfTimesToRun();
+                    _fullCombat.DisplayPreCombatInformation(combatants, isTeamBattle);
+                    _fullCombat.DisplayCountdown();
+                    List<Winner> winners = _multipleCombats.DoMultipleCombats(combatants, numberOfTimesToRun, isTeamBattle);
+                    _multipleCombats.DisplayWinRates(winners);
                 }
 
                 Console.WriteLine();
