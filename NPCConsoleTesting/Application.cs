@@ -13,12 +13,15 @@ namespace NPCConsoleTesting
 {
     public class Application : IApplication
     {
+        IConfigurationBuilder _configBuilder;
         ICombatantBuilder _combatantBuilder;
         IFullCombat _fullCombat;
         IMultipleCombats _multipleCombats;
 
-        public Application(ICombatantBuilder combatantBuilder, IFullCombat fullCombat, IMultipleCombats multipleCombats)
+        public Application(IConfigurationBuilder configBuilder, ICombatantBuilder combatantBuilder, IFullCombat fullCombat,
+            IMultipleCombats multipleCombats)
         {
+            _configBuilder = configBuilder;
             _combatantBuilder = combatantBuilder;
             _fullCombat = fullCombat;
             _multipleCombats = multipleCombats;
@@ -26,11 +29,10 @@ namespace NPCConsoleTesting
 
         public void Run()
         {
-            var builder = new ConfigurationBuilder();
-            BuildConfig(builder);
+            BuildConfig(_configBuilder);
 
             Log.Logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Build())
+                .ReadFrom.Configuration(_configBuilder.Build())
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .CreateLogger();
