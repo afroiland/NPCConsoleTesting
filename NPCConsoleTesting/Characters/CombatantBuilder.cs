@@ -7,6 +7,8 @@ namespace NPCConsoleTesting
 {
     public class CombatantBuilder : ICombatantBuilder
     {
+        ICombatantRetriever _combatantRetriever;
+
         private const int DefaultMinLevel = 1;
         private const int DefaultMaxLevel = 7;
         private const int DefaultMaxCombatantsForSingleCombat = 1000;
@@ -38,10 +40,11 @@ namespace NPCConsoleTesting
         public int MaxCombatantsForSingleCombat { get => _MaxCombatantsForSingleCombat; set => _MaxCombatantsForSingleCombat = value; }
         public int MaxCombatantsForMultipleCombats { get => _MaxCombatantsForMultipleCombats; set => _MaxCombatantsForMultipleCombats = value; }
 
-        public CombatantBuilder(int minLevel = DefaultMinLevel, int maxLevel = DefaultMaxLevel,
+        public CombatantBuilder(ICombatantRetriever combatantRetriever, int minLevel = DefaultMinLevel, int maxLevel = DefaultMaxLevel,
             int maxCombatantsForSingleCombat = DefaultMaxCombatantsForSingleCombat,
             int maxCombatantsForMultipleCombats = DefaultMaxCombatantsForMultipleCombats)
         {
+            _combatantRetriever = combatantRetriever;
             MinLevel = minLevel;
             MaxLevel = maxLevel;
             MaxCombatantsForSingleCombat = maxCombatantsForSingleCombat;
@@ -148,7 +151,7 @@ namespace NPCConsoleTesting
                     string name = GetCustomNameFromUserInput(numberOfCombatants + 1);
                     try
                     {
-                        result.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                        result.Add(_combatantRetriever.GetCombatantByName(connectionString, name));
                     }
                     catch (Exception)
                     {

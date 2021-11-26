@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace NPCConsoleTesting
 {
-    public class CombatantRetriever
+    public class CombatantRetriever : ICombatantRetriever
     {
-        public static Combatant GetCombatantByName(string connectionString, string charName)
+        public Combatant GetCombatantByName(string connectionString, string charName)
         {
             string query = $"SELECT * FROM npcs WHERE name = '{charName}'";
 
@@ -36,8 +36,8 @@ namespace NPCConsoleTesting
 
         public static List<string> SelectOnlyCombatSpells(string allSpells)
         {
-            List<string> combatSpells = new() {"burning hands", "cure light wounds", "fireball", "flame arrow", "haste", "hold person",
-                "lightning bolt", "magic missile", "shocking grasp", "slow", "strength", "ray of enfeeblement", "sleep", "web"};
+            List<string> combatSpells = new() { "burning hands", "cure light wounds", "fireball", "flame arrow", "haste", "hold person",
+                "lightning bolt", "magic missile", "shocking grasp", "slow", "strength", "ray of enfeeblement", "sleep", "web" };
 
             List<string> listOfAllSpells = allSpells.Split(", ").ToList();
 

@@ -15,6 +15,7 @@ namespace NPCConsoleTesting
             builder.RegisterType<CombatantBuilder>().As<ICombatantBuilder>();
             builder.RegisterType<FullCombat>().As<IFullCombat>();
             builder.RegisterType<MultipleCombats>().As<IMultipleCombats>();
+            builder.RegisterType<CombatantRetriever>().As<ICombatantRetriever>();
 
             return builder.Build();
         }
