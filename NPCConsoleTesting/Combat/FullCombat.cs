@@ -4,11 +4,23 @@ using System.Linq;
 
 namespace NPCConsoleTesting.Combat
 {
-    public class FullCombat
+    public class FullCombat : IFullCombat
     {
-        const int MaxNumberOfCombatantsToDisplay = 12;
+        private const int DefaultMaxCombatantsToDisplay = 12;
 
-        public static List<string> DoAFullCombat(List<Combatant> combatants, bool isTeamBattle)
+        ICombatRound _combatRound;
+
+        private int _MaxNumberOfCombatantsToDisplay;
+
+        public int MaxNumberOfCombatantsToDisplay { get => _MaxNumberOfCombatantsToDisplay; set => _MaxNumberOfCombatantsToDisplay = value; }
+
+        public FullCombat(ICombatRound combatRound, int maxNumberOfCombatantsToDisplay = DefaultMaxCombatantsToDisplay)
+        {
+            _combatRound = combatRound;
+            MaxNumberOfCombatantsToDisplay = maxNumberOfCombatantsToDisplay;
+        }
+
+        public List<string> DoAFullCombat(List<Combatant> combatants, bool isTeamBattle)
         {
             List<string> wholeFightLog = new() { " " };
             int roundNumber = 0;
@@ -17,7 +29,7 @@ namespace NPCConsoleTesting.Combat
 
             while (!theBattleIsOver)
             {
-                List<string> logResults = CombatRound.DoACombatRound(combatants, isTeamBattle);
+                List<string> logResults = _combatRound.DoACombatRound(combatants, isTeamBattle);
 
                 //remove fallen combatants from list
                 combatants.RemoveAll(x => x.CurrentHP < 1);
@@ -76,7 +88,7 @@ namespace NPCConsoleTesting.Combat
             return battleIsOver;
         }
 
-        public static bool DetermineIfTeamBattle()
+        public bool DetermineIfTeamBattle()
         {
             Console.WriteLine("1 = Simulate a free-for-all battle, 2 = Simulate a team battle");
             int isTeamBattle = 0;
@@ -93,7 +105,7 @@ namespace NPCConsoleTesting.Combat
             return isTeamBattle == 2;
         }
 
-        public static bool DetermineIfSingleBattle()
+        public bool DetermineIfSingleBattle()
         {
             Console.WriteLine("1 = Simulate a single combat instance, 2 = Run a simulation multiple times");
             int isSingleBattle = 0;
@@ -110,9 +122,9 @@ namespace NPCConsoleTesting.Combat
             return isSingleBattle == 1;
         }
 
-        public static void DisplayPreCombatInformation(List<Combatant> combatants, bool isTeamBattle)
+        public void DisplayPreCombatInformation(List<Combatant> combatants, bool isTeamBattle)
         {
-            if (combatants.Count <= MaxNumberOfCombatantsToDisplay)
+            if (combatants.Count <= _MaxNumberOfCombatantsToDisplay)
             {
                 Console.WriteLine();
                 Console.WriteLine("Here are the combatants:");
@@ -125,7 +137,7 @@ namespace NPCConsoleTesting.Combat
             }
         }
 
-        public static void DisplayCountdown()
+        public void DisplayCountdown()
         {
             Console.WriteLine();
             Console.WriteLine("Combatants are ready. Press any key to begin...");
@@ -140,7 +152,7 @@ namespace NPCConsoleTesting.Combat
             System.Threading.Thread.Sleep(1000);
         }
 
-        public static void DisplayPostCombatInformation(List<string> combatLog)
+        public void DisplayPostCombatInformation(List<string> combatLog)
         {
             combatLog.ForEach(i => Console.WriteLine(i));
         }

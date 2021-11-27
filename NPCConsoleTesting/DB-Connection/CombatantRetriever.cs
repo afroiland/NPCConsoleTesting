@@ -1,13 +1,12 @@
 ﻿using NPCConsoleTesting.DB_Connection;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace NPCConsoleTesting
 {
-    public class CombatantRetriever
+    public class CombatantRetriever : ICombatantRetriever
     {
-        public static Combatant GetCombatantByName(string connectionString, string charName)
+        public Combatant GetCombatantByName(string connectionString, string charName)
         {
             string query = $"SELECT * FROM npcs WHERE name = '{charName}'";
 
@@ -36,12 +35,13 @@ namespace NPCConsoleTesting
 
         public static List<string> SelectOnlyCombatSpells(string allSpells)
         {
-            List<string> combatSpells = new() {"burning hands", "cure light wounds", "fireball", "flame arrow", "haste", "hold person",
-                "lightning bolt", "magic missile", "shocking grasp", "slow", "strength", "ray of enfeeblement", "sleep", "web"};
+            List<string> combatSpells = new() { "burning hands", "cure light wounds", "fireball", "flame arrow", "haste", "hold person",
+                "lightning bolt", "magic missile", "shocking grasp", "slow", "strength", "ray of enfeeblement", "sleep", "web" };
 
             List<string> listOfAllSpells = allSpells.Split(", ").ToList();
-
-            return listOfAllSpells.Where(x => combatSpells.Contains(x)).ToList();
+            //TODO: if at some point everything in the db is standardized to use lowercase, the next line can be removed
+            List<string> allSpellsToLower = listOfAllSpells.Select(x => x.ToLower()).ToList();
+            return allSpellsToLower.Where(x => combatSpells.Contains(x)).ToList();
         }
     }
 }
