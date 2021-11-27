@@ -705,36 +705,28 @@ namespace NPCConsoleTesting
 
         public int CalcFullHP(List<int> HPByLevel, int con, string charClass)
         {
-            return HPByLevel.Sum() + CalcConBonusToHP(con, charClass);
+            return HPByLevel.Sum() + CalcConBonusToHP(charClass, con);
         }
 
-        public static int CalcConBonusToHP(int con, string charClass)
+        public static int CalcConBonusToHP(string charClass, int con)
         {
-            //TODO: refactor to use nested switches
-            int result;
-
-            if (charClass == "fighter" || charClass == "ranger" || charClass == "paladin")
+            return charClass switch
             {
-                result = con switch
+                "fighter" or "ranger" or "paladin" => con switch
                 {
                     < 15 => 0,
                     15 => 1,
                     16 => 2,
                     17 => 3,
                     > 17 => 4
-                };
-            }
-            else
-            {
-                result = con switch
+                },
+                _ => con switch
                 {
                     < 15 => 0,
                     15 => 1,
                     > 15 => 2
-                };
-            }
-
-            return result;
+                }
+            };
         }
 
         private static string SelectRandomArmor(string charClass)

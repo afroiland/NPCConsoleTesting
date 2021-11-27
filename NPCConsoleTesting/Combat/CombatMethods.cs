@@ -508,23 +508,17 @@ namespace NPCConsoleTesting
 
         private static int GetSavingThrowTargetNumber(Combatant target)
         {
-            //TODO: refactor into nested switches
-            int result;
-
-            if (target.CharacterClass == "magic-user" || target.CharacterClass == "illusionist")
+            return target.CharacterClass switch
             {
-                result = target.Level switch
+                "magic-user" or "illusionist" => target.Level switch
                 {
                     < 6 => 12,
                     6 or 7 or 8 or 9 or 10 => 10,
                     11 or 12 or 13 or 14 or 15 => 8,
                     16 or 17 or 18 or 19 or 20 => 6,
                     > 20 => 4
-                };
-            }
-            else if (target.CharacterClass == "cleric" || target.CharacterClass == "druid")
-            {
-                result = target.Level switch
+                },
+                "cleric" or "druid" => target.Level switch
                 {
                     < 4 => 15,
                     4 or 5 or 6 => 14,
@@ -533,11 +527,8 @@ namespace NPCConsoleTesting
                     13 or 14 or 15 => 10,
                     16 or 17 or 18 => 9,
                     > 18 => 7
-                };
-            }
-            else if (target.CharacterClass == "thief" || target.CharacterClass == "assassin" || target.CharacterClass == "monk")
-            {
-                result = target.Level switch
+                },
+                "thief" or "assassin" or "monk" => target.Level switch
                 {
                     < 5 => 15,
                     5 or 6 or 7 or 8 => 13,
@@ -545,11 +536,8 @@ namespace NPCConsoleTesting
                     13 or 14 or 15 or 16 => 9,
                     17 or 18 or 19 or 20 => 7,
                     > 20 => 5
-                };
-            }
-            else
-            {
-                result = target.Level switch
+                },
+                _ => target.Level switch
                 {
                     < 1 => 19,
                     1 or 2 => 17,
@@ -561,10 +549,8 @@ namespace NPCConsoleTesting
                     13 or 14 => 8,
                     15 or 16 => 7,
                     > 16 => 6
-                };
-            }
-
-            return result;
+                }
+            };
         }
 
         public static bool ApplyDamageToCombatant(Combatant targeter, Combatant target, string spellName, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)

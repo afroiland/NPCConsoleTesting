@@ -155,12 +155,12 @@ namespace UnitTests
         public void CalcConBonusToHP_returns_correct_value()
         {
             //Act
-            int fighter14Con = CombatantBuilder.CalcConBonusToHP(14, "fighter");
-            int ranger18Con = CombatantBuilder.CalcConBonusToHP(18, "ranger");
-            int paladin17Con = CombatantBuilder.CalcConBonusToHP(17, "paladin");
-            int cleric15Con = CombatantBuilder.CalcConBonusToHP(15, "cleric");
-            int monk17Con = CombatantBuilder.CalcConBonusToHP(17, "monk");
-            int thief5Con = CombatantBuilder.CalcConBonusToHP(5, "thief");
+            int fighter14Con = CombatantBuilder.CalcConBonusToHP("fighter", 14);
+            int ranger18Con = CombatantBuilder.CalcConBonusToHP("ranger", 18);
+            int paladin17Con = CombatantBuilder.CalcConBonusToHP("paladin", 17);
+            int cleric15Con = CombatantBuilder.CalcConBonusToHP("cleric", 15);
+            int monk17Con = CombatantBuilder.CalcConBonusToHP("monk", 17);
+            int thief5Con = CombatantBuilder.CalcConBonusToHP("thief", 5);
 
             //Assert
             Assert.Multiple(() =>
