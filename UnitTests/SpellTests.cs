@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using NPCConsoleTesting;
 using System.Collections.Generic;
+using NPCConsoleTesting.Spells;
 
 namespace UnitTests
 {
@@ -19,8 +20,14 @@ namespace UnitTests
         [Test]
         public void DoASpell_returns_SpellResults_for_damage_spell()
         {
+            //Arrange
+            //TODO: clean up
+            CombatantRetriever combatantRetriever = new();
+            CombatantBuilder combatantBuilder = new(combatantRetriever);
+            SpellMethods spellMethods = new(combatantBuilder);
+
             //Act
-            var results = SpellMethods.DoASpell(damageSpellName, casterLevel);
+            var results = spellMethods.DoASpell(damageSpellName, casterLevel);
 
             //Assert
             Assert.That(results, Is.InstanceOf<ActionResults>());
@@ -29,8 +36,14 @@ namespace UnitTests
         [Test]
         public void DoASpell_returns_SpellResults_for_status_spell()
         {
+            //Arrange
+            //TODO: clean up
+            CombatantRetriever combatantRetriever = new();
+            CombatantBuilder combatantBuilder = new(combatantRetriever);
+            SpellMethods spellMethods = new(combatantBuilder);
+
             //Act
-            var results = SpellMethods.DoASpell(statusSpellName, casterLevel);
+            var results = spellMethods.DoASpell(statusSpellName, casterLevel);
 
             //Assert
             Assert.That(results, Is.InstanceOf<ActionResults>());
@@ -68,10 +81,14 @@ namespace UnitTests
             //Arrange
             testClericFullHP.Spells = new List<string>() { "cure light wounds", "hold person" };
             testClericDamaged.Spells = new List<string>() { "cure light wounds", "hold person" };
+            //TODO: clean up
+            CombatantRetriever combatantRetriever = new();
+            CombatantBuilder combatantBuilder = new(combatantRetriever);
+            SpellMethods spellMethods = new(combatantBuilder);
 
             //Act
-            string resultFullHP = SpellMethods.SelectFromCombatantsSpells(testClericFullHP);
-            string resultDamaged = SpellMethods.SelectFromCombatantsSpells(testClericDamaged);
+            string resultFullHP = spellMethods.SelectFromCombatantsSpells(testClericFullHP);
+            string resultDamaged = spellMethods.SelectFromCombatantsSpells(testClericDamaged);
 
             //Assert
             Assert.Multiple(() =>

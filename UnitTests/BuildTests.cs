@@ -14,7 +14,9 @@ namespace UnitTests
         {
 
             //Arrange
-            CombatantBuilder cBuilder = new();
+            //TODO: clean up instantiation
+            CombatantRetriever combatantRetriever = new();
+            CombatantBuilder cBuilder = new(combatantRetriever);
             List<Combatant> resultsList = new();
             List<string> resultsListClass = new();
             List<string> resultsListRace = new();

@@ -5,28 +5,8 @@ using System.Linq;
 
 namespace NPCConsoleTesting
 {
-    public class CombatantBuilder
+    public class CombatantBuilder : ICombatantBuilder
     {
-        private int _MinLevel;
-        private int _MaxLevel;
-        private int _MaxCombatantsForSingleCombat;
-        private int _MaxCombatantsForMultipleCombats;
-
-        public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
-        public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
-        public int MaxCombatantsForSingleCombat { get => _MaxCombatantsForSingleCombat; set => _MaxCombatantsForSingleCombat = value; }
-        public int MaxCombatantsForMultipleCombats { get => _MaxCombatantsForMultipleCombats; set => _MaxCombatantsForMultipleCombats = value; }
-
-        public CombatantBuilder(int minLevel = DefaultMinLevel, int maxLevel = DefaultMaxLevel,
-            int maxCombatantsForSingleCombat = DefaultMaxCombatantsForSingleCombat,
-            int maxCombatantsForMultipleCombats = DefaultMaxCombatantsForMultipleCombats)
-        {
-            MinLevel = minLevel;
-            MaxLevel = maxLevel;
-            MaxCombatantsForSingleCombat = maxCombatantsForSingleCombat;
-            MaxCombatantsForMultipleCombats = maxCombatantsForMultipleCombats;
-        }
-
         private const int DefaultMinLevel = 1;
         private const int DefaultMaxLevel = 7;
         private const int DefaultMaxCombatantsForSingleCombat = 1000;
@@ -41,12 +21,35 @@ namespace NPCConsoleTesting
         static List<string> druidWeaponList = new() { "club", "dagger", "darts", "hammer", "spear", "staff" };
         static List<string> thiefWeaponList = new() { "club", "dagger", "darts", "longsword", "shortsword" };
         static List<string> monkWeaponList = new() { "club", "darts", "dagger", "staff", "none" };
-        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear", "two-handed sword",
-            "dagger", "darts", "staff", "club", "flail", "hammer", "mace", "none" };
+        static List<string> fighterWeaponList = new() { "axe", "halberd", "longsword", "shortsword", "spear",
+            "two-handed sword", "dagger", "darts", "staff", "club", "flail", "hammer", "mace", "none" };
         static List<string> armorList = new() { "none", "leather", "studded leather", "scale", "chain", "banded", "plate" };
         static List<string> affiliationList = new() { "The Crown", "The Church", "House Tellerue", "Oriyama Clan" };
 
         static Random _random = new();
+
+        ICombatantRetriever _combatantRetriever;
+
+        private int _MinLevel;
+        private int _MaxLevel;
+        private int _MaxCombatantsForSingleCombat;
+        private int _MaxCombatantsForMultipleCombats;
+
+        public int MinLevel { get => _MinLevel; set => _MinLevel = value; }
+        public int MaxLevel { get => _MaxLevel; set => _MaxLevel = value; }
+        public int MaxCombatantsForSingleCombat { get => _MaxCombatantsForSingleCombat; set => _MaxCombatantsForSingleCombat = value; }
+        public int MaxCombatantsForMultipleCombats { get => _MaxCombatantsForMultipleCombats; set => _MaxCombatantsForMultipleCombats = value; }
+
+        public CombatantBuilder(ICombatantRetriever combatantRetriever, int minLevel = DefaultMinLevel, int maxLevel = DefaultMaxLevel,
+            int maxCombatantsForSingleCombat = DefaultMaxCombatantsForSingleCombat,
+            int maxCombatantsForMultipleCombats = DefaultMaxCombatantsForMultipleCombats)
+        {
+            _combatantRetriever = combatantRetriever;
+            MinLevel = minLevel;
+            MaxLevel = maxLevel;
+            MaxCombatantsForSingleCombat = maxCombatantsForSingleCombat;
+            MaxCombatantsForMultipleCombats = maxCombatantsForMultipleCombats;
+        }
 
         public List<Combatant> BuildListOfCombatants(string connectionString, int numberBattling)
         {
@@ -94,7 +97,7 @@ namespace NPCConsoleTesting
             return numberBattling;
         }
 
-        private int DetermineRetrievalMethod()
+        private static int DetermineRetrievalMethod()
         {
             Console.WriteLine("How shall the combatants be selected? 1 = Random, 2 = Custom, 3 = Get from db.");
             return GetPositiveIntFromUser();
@@ -148,7 +151,7 @@ namespace NPCConsoleTesting
                     string name = GetCustomNameFromUserInput(numberOfCombatants + 1);
                     try
                     {
-                        result.Add(CombatantRetriever.GetCombatantByName(connectionString, name));
+                        result.Add(_combatantRetriever.GetCombatantByName(connectionString, name));
                     }
                     catch (Exception)
                     {
@@ -157,8 +160,7 @@ namespace NPCConsoleTesting
                 }
                 else
                 {
-                    CombatantBuilder cb = new();
-                    result.Add(cb.BuildCombatantRandomly());
+                    result.Add(BuildCombatantRandomly());
                 }
             }
 
@@ -392,7 +394,7 @@ namespace NPCConsoleTesting
             int raceSelectionTechnique = GetPositiveIntFromUser();
 
             string race = "";
-            while(!races.Contains(race))
+            while (!races.Contains(race))
             {
                 race = raceSelectionTechnique == 2 ? GetCharInfoStringFromUser("race", name, charClass) : SelectRandomRace();
             }
@@ -509,19 +511,19 @@ namespace NPCConsoleTesting
 
         public static string GenerateRandomName()
         {
-            string[] consonants = {"b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "qu", "r", "s", "t", "v", "w", "x", "z"};
-            string[] startingBlends = {"bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "sl",
-                "sn", "sw", "tr", "tw", "wh", "wr", "scr", "shr", "sph", "spl", "spr", "squ", "str", "thr"};
-            string[] endingBlends = { "ch", "sc", "sh", "sk", "sm", "sp", "st", "th", "sch"};
-            char[] vowels = {'a', 'e', 'i', 'o', 'u', 'y' };
-            string[] doubleVowels = {"aa", "ae", "ai", "ao", "au", "ea", "ee", "ei", "eo", "eu", "ia", "ie",
-                "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo"};
+            string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "qu", "r", "s", "t", "v", "w", "x", "z" };
+            string[] startingBlends = { "bl", "br", "cl", "cr", "dr", "fl", "fr", "gl", "gr", "pl", "pr", "sl",
+                "sn", "sw", "tr", "tw", "wh", "wr", "scr", "shr", "sph", "spl", "spr", "squ", "str", "thr" };
+            string[] endingBlends = { "ch", "sc", "sh", "sk", "sm", "sp", "st", "th", "sch" };
+            char[] vowels = { 'a', 'e', 'i', 'o', 'u', 'y' };
+            string[] doubleVowels = { "aa", "ae", "ai", "ao", "au", "ea", "ee", "ei", "eo", "eu", "ia", "ie",
+                "io", "iu", "oa", "oe", "oi", "oo", "ou", "ua", "ue", "ui", "uo" };
 
             int patternLength = _random.Next(MinNamePatternLength, MaxNamePatternLength);
             //the pattern will be a list of ints with values between 0 and 3, each int corresponding to a LetterGroup (consonants, etc.)
 
             //initialize the pattern with a random int between 0 and 3
-            List<int> pattern = new() {_random.Next(0, 4)};
+            List<int> pattern = new() { _random.Next(0, 4) };
             string name = new("");
 
             //add random ints to the pattern until patternLength is met
@@ -635,7 +637,7 @@ namespace NPCConsoleTesting
             switch (attribute)
             {
                 case "Strength":
-                    if(race == "halfling") { return -1; }
+                    if (race == "halfling") { return -1; }
                     break;
                 case "Constitution":
                     if (race == "dwarf") { return 1; }
@@ -657,7 +659,7 @@ namespace NPCConsoleTesting
         {
             Attributes result = charClass switch
             {
-                "fighter" => new Attributes() { Strength = 9},
+                "fighter" => new Attributes() { Strength = 9 },
                 "paladin" => new Attributes() { Strength = 12, Intelligence = 9, Wisdom = 13, Constitution = 9, Charisma = 17 },
                 "ranger" => new Attributes() { Strength = 13, Wisdom = 14, Constitution = 14 },
                 "magic-user" => new Attributes() { Intelligence = 9 },
@@ -701,38 +703,30 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public static int CalcFullHP(List<int> HPByLevel, int con, string charClass)
+        public int CalcFullHP(List<int> HPByLevel, int con, string charClass)
         {
-            return HPByLevel.Sum() + CalcConBonusToHP(con, charClass);
+            return HPByLevel.Sum() + CalcConBonusToHP(charClass, con);
         }
 
-        public static int CalcConBonusToHP(int con, string charClass)
+        public static int CalcConBonusToHP(string charClass, int con)
         {
-            //TODO: refactor to use nested switches
-            int result;
-
-            if (charClass == "fighter" || charClass == "ranger" || charClass == "paladin")
+            return charClass switch
             {
-                result = con switch
+                "fighter" or "ranger" or "paladin" => con switch
                 {
                     < 15 => 0,
                     15 => 1,
                     16 => 2,
                     17 => 3,
                     > 17 => 4
-                };
-            }
-            else
-            {
-                result = con switch
+                },
+                _ => con switch
                 {
                     < 15 => 0,
                     15 => 1,
                     > 15 => 2
-                };
-            }
-
-            return result;
+                }
+            };
         }
 
         private static string SelectRandomArmor(string charClass)

@@ -1,14 +1,15 @@
 ﻿using NPCConsoleTesting.Characters;
-using NPCConsoleTesting.Combat;
+using NPCConsoleTesting.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NPCConsoleTesting
+namespace NPCConsoleTesting.Spells
 {
-    public class SpellMethods
+    public class SpellMethods : ISpellMethods
     {
-        private static List<string> damageSpells = new() {
+        private static List<string> damageSpells = new()
+        {
             "burning hands",
             "cure light wounds",
             "fireball",
@@ -30,7 +31,14 @@ namespace NPCConsoleTesting
 
         static Random _random = new();
 
-        public static ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
+        ICombatantBuilder _combatantBuilder;
+
+        public SpellMethods(ICombatantBuilder combatantBuilder)
+        {
+            _combatantBuilder = combatantBuilder;
+        }
+
+        public ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
             string effectType = damageSpells.Contains(spellName) ? "damage" : "status";
             Status status = new("", 0);
@@ -58,9 +66,9 @@ namespace NPCConsoleTesting
             {
                 "burning hands" => casterLevel,
                 "cure light wounds" => -(_random.Next(1, 9)),
-                "fireball" or "lightning bolt" => CombatMethods.CalcMultipleDice(new RangeViaDice(casterLevel, 6, 0)),
+                "fireball" or "lightning bolt" => SharedMethods.CalcMultipleDice(new RangeViaDice(casterLevel, 6, 0)),
                 //TODO: magic missile gets wrong # of missiles, and the +1 for each missile is not included
-                "magic missile" => CombatMethods.CalcMultipleDice(new RangeViaDice((int)Math.Floor(casterLevel / 2d) + 1, 4, 0)),
+                "magic missile" => SharedMethods.CalcMultipleDice(new RangeViaDice((int)Math.Floor(casterLevel / 2d) + 1, 4, 0)),
                 "shocking grasp" => _random.Next(1, 9) + casterLevel,
                 _ => 0
             };
@@ -104,7 +112,7 @@ namespace NPCConsoleTesting
             };
         }
 
-        public static string SelectFromCombatantsSpells(Combatant combatant)
+        public string SelectFromCombatantsSpells(Combatant combatant)
         {
             if (combatant.Spells == null || combatant.Spells.Count < 1)
             {
@@ -115,14 +123,14 @@ namespace NPCConsoleTesting
             List<string> nonCureSpells = combatant.Spells.Where(x => !x.Contains("cure")).ToList();
 
             //a combatant at full HP with only cure spells will not cast a spell
-            if (combatant.CurrentHP >= CombatantBuilder.CalcFullHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&
+            if (combatant.CurrentHP >= _combatantBuilder.CalcFullHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&
                 nonCureSpells.Count < 1)
             {
                 return "";
             }
 
             //unless the combatant is at full health, cure spells are prioritized
-            if (combatant.CurrentHP < CombatantBuilder.CalcFullHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&
+            if (combatant.CurrentHP < _combatantBuilder.CalcFullHP(combatant.HP_By_Level, combatant.Constitution, combatant.CharacterClass) &&
                 cureSpells.Count > 0)
             {
                 //select random cure spell

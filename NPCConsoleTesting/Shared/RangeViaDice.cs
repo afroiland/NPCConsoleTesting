@@ -1,4 +1,4 @@
-﻿namespace NPCConsoleTesting.Combat
+﻿namespace NPCConsoleTesting.Shared
 {
     public class RangeViaDice
     {

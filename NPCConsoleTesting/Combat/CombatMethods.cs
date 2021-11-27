@@ -1,5 +1,7 @@
 ﻿using NPCConsoleTesting.Characters;
 using NPCConsoleTesting.Combat;
+using NPCConsoleTesting.Shared;
+using NPCConsoleTesting.Spells;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,13 @@ namespace NPCConsoleTesting
     public class CombatMethods : ICombatMethods
     {
         static Random _random = new();
+
+        ISpellMethods _spellMethods;
+
+        public CombatMethods(ISpellMethods spellMethods)
+        {
+            _spellMethods = spellMethods;
+        }
 
         public ActionResults DoAMeleeAttack(IAttacker attacker, IDefender defender)
         {
@@ -149,9 +158,9 @@ namespace NPCConsoleTesting
                 int tempResult = ex_str switch
                 {
                     0 => 2,
-                    <76 => 3,
-                    <91 => 4,
-                    <100 => 5,
+                    < 76 => 3,
+                    < 91 => 4,
+                    < 100 => 5,
                     100 => 6,
                     _ => 2
                 };
@@ -162,7 +171,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus)
+        public static int CalcMonkMeleeDmg(int level, string weapon, int magicalDmgBonus, int otherDmgBonus)
         {
             int result;
 
@@ -173,7 +182,7 @@ namespace NPCConsoleTesting
             else
             {
                 RangeViaDice rangeViaDice = GetRangeViaDice(weapon);
-                result = CalcMultipleDice(rangeViaDice);
+                result = SharedMethods.CalcMultipleDice(rangeViaDice);
 
                 //monk weapon damage bonus
                 result += level / 2;
@@ -205,26 +214,14 @@ namespace NPCConsoleTesting
                 _ => new(1, 3, 0)
             };
 
-            return CalcMultipleDice(results);
+            return SharedMethods.CalcMultipleDice(results);
         }
 
-        public int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus)
+        public static int CalcNonMonkMeleeDmg(string weapon, int str, int ex_str, int magicalDmgBonus, int otherDmgBonus)
         {
             RangeViaDice rangeViaDice = GetRangeViaDice(weapon);
 
-            return CalcMultipleDice(rangeViaDice) + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
-        }
-
-        public static int CalcMultipleDice(RangeViaDice rangeViaDice)
-        {
-            int result = 0;
-
-            for (int i = 0; i < rangeViaDice.NumberOfDice; i++)
-            {
-                result += _random.Next(1, rangeViaDice.TypeOfDie + 1);
-            }
-
-            return result + rangeViaDice.Modifier;
+            return SharedMethods.CalcMultipleDice(rangeViaDice) + CalcStrBonusToDmg(str, ex_str) + magicalDmgBonus + otherDmgBonus;
         }
 
         private static int CalcWeaponVsArmorAdjustment(string weapon, string armor, bool hasShield)
@@ -324,9 +321,9 @@ namespace NPCConsoleTesting
                 "dagger" => new(1, 4, 0),
                 "flail" or "hammer" => new(1, 4, 1),
                 "club" or "mace" or "shortsword" or "spear" or "staff" => new(1, 6, 0),
-                "axe" or "longsword" => new(1, 8, 0 ),
+                "axe" or "longsword" => new(1, 8, 0),
                 "halberd" or "two-handed sword" => new(1, 10, 0),
-                _ => new(1, 3, 0 )
+                _ => new(1, 3, 0)
             };
 
             return results;
@@ -385,7 +382,7 @@ namespace NPCConsoleTesting
         {
             foreach (Combatant ch in combatants)
             {
-                string spellName = SpellMethods.SelectFromCombatantsSpells(ch);
+                string spellName = _spellMethods.SelectFromCombatantsSpells(ch);
                 ch.ActionForThisRound = spellName == "" ? "melee attack" : spellName;
             }
         }
@@ -424,7 +421,7 @@ namespace NPCConsoleTesting
         {
             foreach (Combatant ch in combatants)
             {
-                if(ch.ActionForThisRound != "melee attack")
+                if (ch.ActionForThisRound != "melee attack")
                 {
                     //ch.Init = _random.Next(1, 11) + GetCastingTime(ch.Spells[0]) + ch.InitMod;
                     ch.Init = GetCastingTime(ch.Spells[0]) + ch.InitMod;
@@ -502,32 +499,26 @@ namespace NPCConsoleTesting
             return new CombatantUpdateResults(entries, opportunityForSimulAttack);
         }
 
-        private string DoASavingThrow(Combatant target)
+        private static string DoASavingThrow(Combatant target)
         {
             int targetNumber = GetSavingThrowTargetNumber(target);
 
             return _random.Next(1, 21) < targetNumber ? "failure" : "success";
         }
 
-        private int GetSavingThrowTargetNumber(Combatant target)
+        private static int GetSavingThrowTargetNumber(Combatant target)
         {
-            //TODO: refactor into nested switches
-            int result;
-
-            if (target.CharacterClass == "magic-user" || target.CharacterClass == "illusionist")
+            return target.CharacterClass switch
             {
-                result = target.Level switch
+                "magic-user" or "illusionist" => target.Level switch
                 {
                     < 6 => 12,
                     6 or 7 or 8 or 9 or 10 => 10,
                     11 or 12 or 13 or 14 or 15 => 8,
                     16 or 17 or 18 or 19 or 20 => 6,
                     > 20 => 4
-                };
-            }
-            else if (target.CharacterClass == "cleric" || target.CharacterClass == "druid")
-            {
-                result = target.Level switch
+                },
+                "cleric" or "druid" => target.Level switch
                 {
                     < 4 => 15,
                     4 or 5 or 6 => 14,
@@ -536,11 +527,8 @@ namespace NPCConsoleTesting
                     13 or 14 or 15 => 10,
                     16 or 17 or 18 => 9,
                     > 18 => 7
-                };
-            }
-            else if (target.CharacterClass == "thief" || target.CharacterClass == "assassin" || target.CharacterClass == "monk")
-            {
-                result = target.Level switch
+                },
+                "thief" or "assassin" or "monk" => target.Level switch
                 {
                     < 5 => 15,
                     5 or 6 or 7 or 8 => 13,
@@ -548,11 +536,8 @@ namespace NPCConsoleTesting
                     13 or 14 or 15 or 16 => 9,
                     17 or 18 or 19 or 20 => 7,
                     > 20 => 5
-                };
-            }
-            else
-            {
-                result = target.Level switch
+                },
+                _ => target.Level switch
                 {
                     < 1 => 19,
                     1 or 2 => 17,
@@ -564,13 +549,11 @@ namespace NPCConsoleTesting
                     13 or 14 => 8,
                     15 or 16 => 7,
                     > 16 => 6
-                };
-            }
-
-            return result;
+                }
+            };
         }
 
-        public bool ApplyDamageToCombatant(Combatant targeter, Combatant target, string spellName, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
+        public static bool ApplyDamageToCombatant(Combatant targeter, Combatant target, string spellName, int damage, List<string> entries, int segment, bool opportunityForSimulAttack)
         {
             //adjust target hp and GotHitThisRound status
             target.CurrentHP -= damage;
