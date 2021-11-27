@@ -8,12 +8,15 @@ namespace NPCConsoleTesting.Combat
     {
         private const int DefaultMaxCombatantsToDisplay = 12;
 
+        ICombatRound _combatRound;
+
         private int _MaxNumberOfCombatantsToDisplay;
 
         public int MaxNumberOfCombatantsToDisplay { get => _MaxNumberOfCombatantsToDisplay; set => _MaxNumberOfCombatantsToDisplay = value; }
 
-        public FullCombat(int maxNumberOfCombatantsToDisplay = DefaultMaxCombatantsToDisplay)
+        public FullCombat(ICombatRound combatRound, int maxNumberOfCombatantsToDisplay = DefaultMaxCombatantsToDisplay)
         {
+            _combatRound = combatRound;
             MaxNumberOfCombatantsToDisplay = maxNumberOfCombatantsToDisplay;
         }
 
@@ -26,7 +29,7 @@ namespace NPCConsoleTesting.Combat
 
             while (!theBattleIsOver)
             {
-                List<string> logResults = CombatRound.DoACombatRound(combatants, isTeamBattle);
+                List<string> logResults = _combatRound.DoACombatRound(combatants, isTeamBattle);
 
                 //remove fallen combatants from list
                 combatants.RemoveAll(x => x.CurrentHP < 1);

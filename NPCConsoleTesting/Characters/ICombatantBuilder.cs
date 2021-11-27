@@ -13,5 +13,6 @@ namespace NPCConsoleTesting
         Combatant BuildCombatantViaConsole(int charNumber);
         List<Combatant> BuildListOfCombatants(string connectionString, int numberBattling);
         int DetermineNumberBattling(bool doingMultipleCombats);
+        int CalcFullHP(List<int> HPByLevel, int con, string charClass);
     }
 }

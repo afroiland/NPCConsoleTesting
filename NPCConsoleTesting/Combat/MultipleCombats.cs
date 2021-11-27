@@ -10,7 +10,13 @@ namespace NPCConsoleTesting.Combat
         private const int MaxNumberOfTimesToRun = 1000;
         private const int MaxNumberOfCombatantsToRunPrediction = 100;
 
-        FullCombat _fullCombat = new();
+        IFullCombat _fullCombat;
+
+        //FullCombat _fullCombat = new();
+        public MultipleCombats(IFullCombat fullCombat)
+        {
+            _fullCombat = fullCombat;
+        }
 
         public List<Winner> DoMultipleCombats(List<Combatant> combatants, int numberOfCombats, bool isTeamBattle)
         {

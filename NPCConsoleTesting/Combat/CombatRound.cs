@@ -1,24 +1,34 @@
 ﻿using NPCConsoleTesting.Combat;
+using NPCConsoleTesting.Spells;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace NPCConsoleTesting
 {
-    public class CombatRound
+    public class CombatRound : ICombatRound
     {
-        public static List<string> DoACombatRound(List<Combatant> combatants, bool isTeamBattle)
+        ICombatMethods _combatMethods;
+        ISpellMethods _spellMethods;
+
+        public CombatRound(ICombatMethods combatMethods, ISpellMethods spellMethods)
+        {
+            _combatMethods = combatMethods;
+            _spellMethods = spellMethods;
+        }
+
+        public List<string> DoACombatRound(List<Combatant> combatants, bool isTeamBattle)
         {
             List<String> logResults = new();
 
-            CombatMethods.IncrementStatuses(combatants, logResults);
-            CombatMethods.DetermineActions(combatants);
-            CombatMethods.DetermineTargets(combatants, isTeamBattle);
-            CombatMethods.DetermineInits(combatants);
+            _combatMethods.IncrementStatuses(combatants, logResults);
+            _combatMethods.DetermineActions(combatants);
+            _combatMethods.DetermineTargets(combatants, isTeamBattle);
+            _combatMethods.DetermineInits(combatants);
 
             //clear GotHitThisRound status for all combatants
             combatants.ForEach(x => x.GotHitThisRound = false);
-                
+
             int segment = 0;
             int priorityIndex = 0;
             int targetIndex = 0;
@@ -39,7 +49,7 @@ namespace NPCConsoleTesting
                 if (combatants[targetIndex].CurrentHP <= 0 && combatants[priorityIndex].ActionForThisRound == "melee attack" &&
                     combatants.Where(x => x.CurrentHP > 0).Count() > 1)
                 {
-                    CombatMethods.DetermineTargetForOneCombatant(combatants, combatants[priorityIndex], isTeamBattle);
+                    _combatMethods.DetermineTargetForOneCombatant(combatants, combatants[priorityIndex], isTeamBattle);
                     targetIndex = combatants.FindIndex(x => x.Name == combatants[priorityIndex].Target);
                 }
 
@@ -60,15 +70,15 @@ namespace NPCConsoleTesting
             return logResults;
         }
 
-        private static bool DoActionAndApplyResults(Combatant priorityCombatant, Combatant targetCombatant, int segment, List<String> logResults)
+        private bool DoActionAndApplyResults(Combatant priorityCombatant, Combatant targetCombatant, int segment, List<String> logResults)
         {
             //priority combatant does an action
             ActionResults actionResults = priorityCombatant.ActionForThisRound == "melee attack" ?
-                CombatMethods.DoAMeleeAttack(priorityCombatant, targetCombatant) :
-                SpellMethods.DoASpell(priorityCombatant.ActionForThisRound, priorityCombatant.Level);
+                _combatMethods.DoAMeleeAttack(priorityCombatant, targetCombatant) :
+                _spellMethods.DoASpell(priorityCombatant.ActionForThisRound, priorityCombatant.Level);
 
             //update combatants with action results
-            CombatantUpdateResults updateResults = CombatMethods.ApplyActionResultToCombatant(priorityCombatant, targetCombatant, actionResults, segment);
+            CombatantUpdateResults updateResults = _combatMethods.ApplyActionResultToCombatant(priorityCombatant, targetCombatant, actionResults, segment);
 
             //update log
             logResults.AddRange(updateResults.LogEntries);

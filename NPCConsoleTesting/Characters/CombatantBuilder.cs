@@ -7,8 +7,6 @@ namespace NPCConsoleTesting
 {
     public class CombatantBuilder : ICombatantBuilder
     {
-        ICombatantRetriever _combatantRetriever;
-
         private const int DefaultMinLevel = 1;
         private const int DefaultMaxLevel = 7;
         private const int DefaultMaxCombatantsForSingleCombat = 1000;
@@ -29,6 +27,8 @@ namespace NPCConsoleTesting
         static List<string> affiliationList = new() { "The Crown", "The Church", "House Tellerue", "Oriyama Clan" };
 
         static Random _random = new();
+
+        ICombatantRetriever _combatantRetriever;
 
         private int _MinLevel;
         private int _MaxLevel;
@@ -703,7 +703,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public static int CalcFullHP(List<int> HPByLevel, int con, string charClass)
+        public int CalcFullHP(List<int> HPByLevel, int con, string charClass)
         {
             return HPByLevel.Sum() + CalcConBonusToHP(con, charClass);
         }
