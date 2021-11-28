@@ -24,7 +24,7 @@ namespace NPCConsoleTesting
             ActionResults result = new(0);
 
             //a held or sleeping combatant can be hit automatically for max damage
-            if (defender.Statuses.Any(s => s.Name == "asleep") || defender.Statuses.Any(s => s.Name == "held"))
+            if (defender.Statuses != null && (defender.Statuses.Any(s => s.Name == "asleep") || defender.Statuses.Any(s => s.Name == "held")))
             {
                 RangeViaDice range = GetRangeViaDice(attacker.Weapon);
                 int damage = range.NumberOfDice * range.TypeOfDie + range.Modifier;
@@ -362,19 +362,26 @@ namespace NPCConsoleTesting
         {
             foreach (Combatant x in combatants)
             {
-                //TODO: possible check here for haste and slow effets canceling each other out
-
-                foreach (Status y in x.Statuses)
+                if (x.Statuses != null)
                 {
-                    y.Duration--;
-                    if (y.Duration < 1)
+                    while (x.Statuses.Any(y => y.Name == "hasted") && x.Statuses.Any(z => z.Name == "slowed"))
                     {
-                        log.Add($"{x.Name} is no longer {y.Name}.");
+                        x.Statuses.RemoveAt(x.Statuses.FindIndex(a => a.Name == "hasted"));
+                        x.Statuses.RemoveAt(x.Statuses.FindIndex(a => a.Name == "slowed"));
                     }
-                }
 
-                //when the duration of a status reaches zero, that status is removed
-                x.Statuses.RemoveAll(z => z.Duration < 1);
+                    foreach (Status y in x.Statuses)
+                    {
+                        y.Duration--;
+                        if (y.Duration < 1)
+                        {
+                            log.Add($"{x.Name} is no longer {y.Name}.");
+                        }
+                    }
+
+                    //when the duration of a status reaches zero, that status is removed
+                    x.Statuses.RemoveAll(z => z.Duration < 1);
+                }
             }
         }
 
@@ -458,6 +465,11 @@ namespace NPCConsoleTesting
                     {
                         if (DoASavingThrow(target) == "failure")
                         {
+                            //???
+                            if (target.Statuses == null)
+                            {
+                                target.Statuses = new List<Status>();
+                            }
                             target.Statuses.Add(results.Status);
                             entries.Add($"{targeter.Name} casts {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
                         }
@@ -468,6 +480,11 @@ namespace NPCConsoleTesting
                     }
                     else
                     {
+                        //???
+                        if (target.Statuses == null)
+                        {
+                            target.Statuses = new List<Status>();
+                        }
                         target.Statuses.Add(results.Status);
                         entries.Add($"{targeter.Name} casts {results.SpellName} on {target.Name}. {target.Name} is {results.Status.Name} for {results.Status.Duration} rounds.");
                     }
@@ -565,7 +582,7 @@ namespace NPCConsoleTesting
             }
             else
             {
-                if (target.Statuses.Any(s => s.Name == "asleep") || target.Statuses.Any(s => s.Name == "held"))
+                if (target.Statuses != null && (target.Statuses.Any(s => s.Name == "asleep") || target.Statuses.Any(s => s.Name == "held")))
                 {
                     entries.Add($"{target.Name}, helpless, is subject to a deliberate strike from {targeter.Name}...");
                 }
@@ -584,7 +601,7 @@ namespace NPCConsoleTesting
             }
 
             //a sleeping character who takes damage (and survives) wakes up
-            if (target.Statuses.FindIndex(x => x.Name == "asleep") >= 0)
+            if (target.Statuses != null && target.Statuses.FindIndex(x => x.Name == "asleep") >= 0)
             {
                 entries.Add($"{target.Name} is no longer asleep.");
                 target.Statuses.RemoveAll(r => r.Name == "asleep");

@@ -8,11 +8,10 @@ namespace NPCConsoleTesting.Combat
     public class MultipleCombats : IMultipleCombats
     {
         private const int MaxNumberOfTimesToRun = 1000;
-        private const int MaxNumberOfCombatantsToRunPrediction = 100;
+        private const int MaxNumberOfCombatantsToRunPrediction = 50;
 
         IFullCombat _fullCombat;
 
-        //FullCombat _fullCombat = new();
         public MultipleCombats(IFullCombat fullCombat)
         {
             _fullCombat = fullCombat;

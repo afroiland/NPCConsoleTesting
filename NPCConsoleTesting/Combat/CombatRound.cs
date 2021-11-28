@@ -55,7 +55,7 @@ namespace NPCConsoleTesting
 
                 //no attacks by or against dead combatants, unless there is a simultaneous attack
                 if ((combatants[priorityIndex].CurrentHP <= 0 && !opportunityForSimulAttack) || combatants[targetIndex].CurrentHP <= 0 ||
-                    combatants[priorityIndex].Statuses.Any(x => x.Name == "held" || x.Name == "asleep"))
+                    (combatants[priorityIndex].Statuses != null && combatants[priorityIndex].Statuses.Any(x => x.Name == "held" || x.Name == "asleep")))
                 {
                     priorityIndex++;
                     break;
