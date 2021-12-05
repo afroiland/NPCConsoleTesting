@@ -40,11 +40,11 @@ namespace NPCConsoleTesting.Spells
 
         public ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
+            //TODO: convert to switch to handle spells other than damage and status
             string effectType = damageSpells.Contains(spellName) ? "damage" : "status";
             Status status = new("", 0);
             int dmg = 0;
 
-            //TODO: add checks for input not in either list
             if (effectType == "damage")
             {
                 dmg = GetSpellDamage(spellName, casterLevel) + bonus;

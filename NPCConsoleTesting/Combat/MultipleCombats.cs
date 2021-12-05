@@ -101,7 +101,12 @@ namespace NPCConsoleTesting.Combat
         {
             if (combatants.Count <= MaxNumberOfCombatantsToRunPrediction)
             {
-                List<Winner> winners = DoMultipleCombats(combatants, 1000, isTeamBattle);
+                if (combatants.Count > 20)
+                {
+                    Console.WriteLine("Consulting the sages...");
+                }
+
+                List <Winner> winners = DoMultipleCombats(combatants, 1000, isTeamBattle);
 
                 string confidence = winners[0].WinPercentage switch
                 {

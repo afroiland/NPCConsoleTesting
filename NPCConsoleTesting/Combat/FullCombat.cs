@@ -128,8 +128,10 @@ namespace NPCConsoleTesting.Combat
             {
                 Console.WriteLine();
                 Console.WriteLine("Here are the combatants:");
-                //TODO: group combatants by affiliation
-                foreach (Combatant c in combatants)
+
+                List<Combatant> sortedByAffiliation = combatants.OrderBy(x => x.Affiliation).ToList();
+
+                foreach (Combatant c in sortedByAffiliation)
                 {
                     string teamInfo = isTeamBattle ? $", fighting for {c.Affiliation}" : "";
                     Console.WriteLine($"{c.Name}, level {c.Level} {c.Race} {c.CharacterClass}, {c.CurrentHP} HP{teamInfo}");
