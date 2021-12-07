@@ -178,7 +178,7 @@ namespace NPCConsoleTesting
             int ex_str = attributes.Ex_Strength;
             int dex = attributes.Dexterity;
             int con = attributes.Constitution;
-            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
+            List<int> HPByLevel = GetHPByLevel(charClass, level);
             int currentHP = CalcFullHP(HPByLevel, con, charClass);
             //int initMod = 0;
             string armor = SelectRandomArmor(charClass);
@@ -202,9 +202,9 @@ namespace NPCConsoleTesting
             int ex_str = attributes.Ex_Strength;
             int dex = attributes.Dexterity;
             int con = attributes.Constitution;
-            List<int> HPByLevel = GenerateHPByLevelByCharClass(charClass, level);
-            int currentHP = CalcFullHP(HPByLevel, con, charClass);
             //TODO: option to build HPByLevel to sum to a specific number?
+            List<int> HPByLevel = GetHPByLevel(charClass, level);
+            int currentHP = CalcFullHP(HPByLevel, con, charClass);
             //int initMod = GetPositiveIntFromUser();
             string weapon = GetWeapon(name, charClass, level);
             string armor = GetArmor(name, charClass);
@@ -215,6 +215,16 @@ namespace NPCConsoleTesting
 
             return new Combatant(name, charClass, level, race, str, dex, con, HPByLevel, currentHP, charEx_Strength: ex_str, charArmor: armor,
                 charWeapon: weapon, charHasShield: hasShield, charSpells: spells, charAffiliation: affiliation);
+        }
+
+        private List<int> GetHPByLevel(string charClass, int level)
+        {
+            List<int> result = new();
+            bool givingMax = true;  //DetermineIfGivingMax();
+
+            result = GenerateHPByLevelByCharClass(charClass, level, givingMax);
+
+            return result;
         }
 
         public static string GetName(int charNumber)
@@ -674,7 +684,7 @@ namespace NPCConsoleTesting
             return result;
         }
 
-        public static List<int> GenerateHPByLevelByCharClass(string charClass, int level)
+        public static List<int> GenerateHPByLevelByCharClass(string charClass, int level, bool givingMax)
         {
             int dieType = charClass switch
             {
@@ -697,7 +707,14 @@ namespace NPCConsoleTesting
             //HD values for levels beyond first assigned randomly
             for (int i = 1; i < level; i++)
             {
-                result.Add(_random.Next(1, dieType + 1));
+                if (givingMax)
+                {
+                    result.Add(dieType);
+                }
+                else
+                {
+                    result.Add(_random.Next(1, dieType + 1));
+                }
             }
 
             return result;
