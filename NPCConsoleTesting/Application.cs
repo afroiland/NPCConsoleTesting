@@ -86,7 +86,7 @@ namespace NPCConsoleTesting
                 }
 
                 Console.WriteLine();
-                Console.WriteLine($"Go again? Y/N");
+                Console.WriteLine($"Run another simulation? Y/N");
                 if (Console.ReadLine().ToLower() != "y")
                 {
                     userIsDoneWithProgram = true;
