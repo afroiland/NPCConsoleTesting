@@ -40,11 +40,11 @@ namespace NPCConsoleTesting.Spells
 
         public ActionResults DoASpell(string spellName, int casterLevel, int bonus = 0)
         {
+            //TODO: convert to switch to handle spells other than damage and status
             string effectType = damageSpells.Contains(spellName) ? "damage" : "status";
             Status status = new("", 0);
             int dmg = 0;
 
-            //TODO: add checks for input not in either list
             if (effectType == "damage")
             {
                 dmg = GetSpellDamage(spellName, casterLevel) + bonus;
@@ -67,11 +67,23 @@ namespace NPCConsoleTesting.Spells
                 "burning hands" => casterLevel,
                 "cure light wounds" => -(_random.Next(1, 9)),
                 "fireball" or "lightning bolt" => SharedMethods.CalcMultipleDice(new RangeViaDice(casterLevel, 6, 0)),
-                //TODO: magic missile gets wrong # of missiles, and the +1 for each missile is not included
-                "magic missile" => SharedMethods.CalcMultipleDice(new RangeViaDice((int)Math.Floor(casterLevel / 2d) + 1, 4, 0)),
+                "magic missile" => CalcMagicMissileDamage(casterLevel),
                 "shocking grasp" => _random.Next(1, 9) + casterLevel,
                 _ => 0
             };
+        }
+
+        private static int CalcMagicMissileDamage(int level)
+        {
+            int damage = 0;
+            int numberOfMissiles = (int)(Math.Floor(level / 2.1d) + 1);
+
+            for (int i = 0; i < numberOfMissiles; i++)
+            {
+                damage += _random.Next(1, 5) + 1;
+            }
+
+            return damage;
         }
 
         public static string GetStatusName(string spellName)

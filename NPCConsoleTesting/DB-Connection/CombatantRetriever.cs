@@ -1,4 +1,6 @@
-﻿using NPCConsoleTesting.DB_Connection;
+﻿using NPCConsoleTesting.Characters;
+using NPCConsoleTesting.DB_Connection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,9 +30,10 @@ namespace NPCConsoleTesting
             string weapon = queryResult[0].Weapon;
             bool hasShield = queryResult[0].HasShield;
             List<string> spells = SelectOnlyCombatSpells(queryResult[0].Memorized);
+            List<Status> statuses = CreateStatuses(queryResult[0].Statuses);
 
             return new Combatant(name, charClass, level, race, str, dex, con, HP_By_Level, HP, ex_str, charArmor: armor, charWeapon: weapon,
-                charHasShield: hasShield, charSpells: spells);
+                charHasShield: hasShield, charSpells: spells, charStatuses: statuses);
         }
 
         public static List<string> SelectOnlyCombatSpells(string allSpells)
@@ -42,6 +45,23 @@ namespace NPCConsoleTesting
             //TODO: if at some point everything in the db is standardized to use lowercase, the next line can be removed
             List<string> allSpellsToLower = listOfAllSpells.Select(x => x.ToLower()).ToList();
             return allSpellsToLower.Where(x => combatSpells.Contains(x)).ToList();
+        }
+
+        public static List<Status> CreateStatuses(string commaSeparatedStatuses)
+        {
+            List<string> listOfStatuses = commaSeparatedStatuses.Split(", ").ToList();
+            List<Status> statuses = new();
+
+            if (listOfStatuses[0] != "Normal")  //TODO: update this when db gets standardized
+            {
+                foreach (string s in listOfStatuses)
+                {
+                    int separatorIndex = s.IndexOf("_");
+                    statuses.Add(new Status(s[..separatorIndex], Int32.Parse(s[(separatorIndex + 1)..])));
+                }
+            }
+
+            return statuses;
         }
     }
 }

@@ -94,11 +94,11 @@ namespace UnitTests
         public void GenerateHPByLevelByCharClass_returns_values_within_range()
         {
             //Act
-            List<int> fighterLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("fighter", 1);
-            List<int> rangerLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("ranger", 1);
-            List<int> rangerLvl7 = CombatantBuilder.GenerateHPByLevelByCharClass("ranger", 7);
-            List<int> thiefLvl3 = CombatantBuilder.GenerateHPByLevelByCharClass("thief", 3);
-            List<int> monkLvl5 = CombatantBuilder.GenerateHPByLevelByCharClass("monk", 5);
+            List<int> fighterLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("fighter", 1, false);
+            List<int> rangerLvl1 = CombatantBuilder.GenerateHPByLevelByCharClass("ranger", 1, false);
+            List<int> rangerLvl7 = CombatantBuilder.GenerateHPByLevelByCharClass("ranger", 7, false);
+            List<int> thiefLvl3 = CombatantBuilder.GenerateHPByLevelByCharClass("thief", 3, false);
+            List<int> monkLvl5 = CombatantBuilder.GenerateHPByLevelByCharClass("monk", 5, false);
 
             //for testing the range of each values, the first int is excluded for monks and rangers
             List<int> rangerLvl7Copy = new(rangerLvl7);

@@ -8,11 +8,10 @@ namespace NPCConsoleTesting.Combat
     public class MultipleCombats : IMultipleCombats
     {
         private const int MaxNumberOfTimesToRun = 1000;
-        private const int MaxNumberOfCombatantsToRunPrediction = 100;
+        private const int MaxNumberOfCombatantsToRunPrediction = 50;
 
         IFullCombat _fullCombat;
 
-        //FullCombat _fullCombat = new();
         public MultipleCombats(IFullCombat fullCombat)
         {
             _fullCombat = fullCombat;
@@ -102,7 +101,12 @@ namespace NPCConsoleTesting.Combat
         {
             if (combatants.Count <= MaxNumberOfCombatantsToRunPrediction)
             {
-                List<Winner> winners = DoMultipleCombats(combatants, 1000, isTeamBattle);
+                if (combatants.Count > 20)
+                {
+                    Console.WriteLine("Consulting the sages...");
+                }
+
+                List <Winner> winners = DoMultipleCombats(combatants, 1000, isTeamBattle);
 
                 string confidence = winners[0].WinPercentage switch
                 {

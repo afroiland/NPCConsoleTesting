@@ -13,7 +13,7 @@
         public string HP_by_lvl { get; set; }
         public int AC_adj { get; set; }
         public int Att_adj { get; set; }
-        public string Status { get; set; }
+        public string Statuses { get; set; }
         public int Str { get; set; }
         public int Ex_str { get; set; }
         public int Intel { get; set; }
