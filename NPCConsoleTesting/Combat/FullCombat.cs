@@ -144,6 +144,7 @@ namespace NPCConsoleTesting.Combat
             Console.WriteLine();
             Console.WriteLine("Combatants are ready. Press any key to begin...");
             Console.ReadKey(true);
+            System.Threading.Thread.Sleep(700);
             Console.WriteLine("3");
             System.Threading.Thread.Sleep(700);
             Console.WriteLine("2");
@@ -151,7 +152,7 @@ namespace NPCConsoleTesting.Combat
             Console.WriteLine("1");
             System.Threading.Thread.Sleep(700);
             Console.WriteLine("The fighting commences...");
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(2000);
         }
 
         public void DisplayPostCombatInformation(List<string> combatLog)

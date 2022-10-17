@@ -117,7 +117,7 @@ namespace NPCConsoleTesting
                 catch (Exception e)
                 {
                     //TODO: update error message (or filter) for numbers too large or small for Int32
-                    Console.WriteLine($"e: {e}");
+                    //Console.WriteLine($"e: {e}");
                     Console.WriteLine("We're looking for a positive integer...");
                     exceptionThrown = true;
                 }
